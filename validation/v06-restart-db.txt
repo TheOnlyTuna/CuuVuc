@@ -1,0 +1,15 @@
+              player_id               | slot | ready 
+--------------------------------------+------+-------
+ cd01e4e1-9513-4c7b-b83a-ba2ad8a09e1c |    1 | t
+(1 row)
+
+               token_id               |              player_id               | resource_id 
+--------------------------------------+--------------------------------------+-------------
+ 9131b13c-b4dd-489f-a0ab-2af0ec3f884f | cd01e4e1-9513-4c7b-b83a-ba2ad8a09e1c | linh_thach
+(1 row)
+
+ balance | cultivation_xp 
+---------+----------------
+       8 |            100
+(1 row)
+

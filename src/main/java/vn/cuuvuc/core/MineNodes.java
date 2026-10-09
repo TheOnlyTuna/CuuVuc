@@ -25,8 +25,8 @@ import java.util.UUID;
 import java.util.function.BooleanSupplier;
 
 /**
- * Điểm mỏ giữ nguyên khối và hủy phá khối vanilla. Cooldown và phần thưởng nằm trong
- * cùng transaction nên không có bước hoàn trả block/vật phẩm khi DB lỗi hoặc restart.
+ * Hủy phá vanilla, commit phần thưởng rồi mới ẩn khối và tái tạo bằng scheduler vùng.
+ * Cooldown và phần thưởng cùng transaction; restart dựng lại khối, cooldown DB vẫn giữ.
  * Listener đọc khối tại vùng phát sự kiện; tác vụ dựng mỏ chạy bằng RegionScheduler.
  */
 public final class MineNodes implements Listener {
@@ -34,21 +34,24 @@ public final class MineNodes implements Listener {
     private final JavaPlugin plugin;
     private final GameDatabase database;
     private final PlayerTasks tasks;
+    private final PhysicalItems items;
     private final Domain.Catalog catalog;
     private final BooleanSupplier ready;
     private final String worldName;
     private final List<Node> nodes;
     private final int cooldown;
 
-    public MineNodes(JavaPlugin plugin, GameDatabase database, PlayerTasks tasks, Domain.Catalog catalog,
+    public MineNodes(JavaPlugin plugin, GameDatabase database, PlayerTasks tasks, PhysicalItems items, Domain.Catalog catalog,
                      BooleanSupplier ready, String worldName, List<String> definitions, int cooldown) {
         if (cooldown < 1 || cooldown > 3600) throw new IllegalArgumentException("cooldown-seconds phải từ 1 đến 3600.");
-        this.plugin = plugin; this.database = database; this.tasks = tasks; this.catalog = catalog;
+        this.plugin = plugin; this.database = database; this.tasks = tasks; this.items = items; this.catalog = catalog;
         this.ready = ready; this.worldName = worldName; this.cooldown = cooldown;
         this.nodes = definitions.stream().map(MineNodes::parse).toList();
         if (nodes.isEmpty() || nodes.stream().map(node -> node.x() + ":" + node.y() + ":" + node.z()).distinct().count() != nodes.size())
             throw new IllegalArgumentException("Danh sách điểm mỏ rỗng hoặc trùng tọa độ.");
         for (Node node : nodes) {
+            if (worldName.equals(PlayableWorld.PRISON) && (node.x() < 0 || node.x() > 15 || node.z() < 0 || node.z() > 15 || node.y() != 100))
+                throw new IllegalArgumentException("Mạch Prison phải nằm trong chunk (0,0), tại y=100: " + node);
             Domain.Resource resource = Domain.resource(catalog, node.resource());
             if (resource.xp() <= 0 || !Material.valueOf(resource.block()).isBlock())
                 throw new IllegalArgumentException("Tài nguyên mỏ không hợp lệ: " + node.resource());
@@ -64,6 +67,13 @@ public final class MineNodes implements Listener {
     private Optional<Node> node(Block block) {
         if (!block.getWorld().getName().equals(worldName)) return Optional.empty();
         return nodes.stream().filter(node -> node.x() == block.getX() && node.y() == block.getY() && node.z() == block.getZ()).findFirst();
+    }
+
+    public boolean handles(Block block) { return node(block).isPresent(); }
+
+    public void buildWorld(World world) {
+        if (!world.getName().equals(worldName)) throw new IllegalArgumentException("Sai world mỏ: " + world.getName());
+        for (Node node : nodes) world.getBlockAt(node.x(), node.y(), node.z()).setType(Material.valueOf(Domain.resource(catalog, node.resource()).block()), false);
     }
 
     @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
@@ -84,7 +94,16 @@ public final class MineNodes implements Listener {
         String playerName = player.getName();
         String nodeId = event.getBlock().getWorld().getUID() + ":" + node.x() + ":" + node.y() + ":" + node.z();
         UUID request = UUID.randomUUID();
-        tasks.submit(player, request, () -> database.mine(request, playerId, playerName, nodeId, resource.id(), cooldown));
+        Location location = event.getBlock().getLocation();
+        tasks.submitView(player, request, () -> database.view(playerId, database.mine(request, playerId, playerName, nodeId, resource.id(), cooldown)), view -> {
+            items.sync(player, view);
+            if (view.message().startsWith("+1")) {
+                Bukkit.getRegionScheduler().execute(plugin, location, () -> {
+                    location.getBlock().setType(Material.AIR, false);
+                    Bukkit.getRegionScheduler().runDelayed(plugin, location, task -> location.getBlock().setType(Material.valueOf(resource.block()), false), cooldown * 20L);
+                });
+            }
+        });
     }
 
     public void build(Player player) {

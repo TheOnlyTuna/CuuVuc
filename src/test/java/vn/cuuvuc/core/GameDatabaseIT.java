@@ -308,7 +308,7 @@ final class GameDatabaseIT {
     @Test void futureSchemaAndCatalogMismatchFailClosed() throws SQLException {
         execute("UPDATE schema_version SET version=99");
         assertEquals("55000", assertThrows(SQLException.class, database::initialize).getSQLState());
-        execute("UPDATE schema_version SET version=2");
+        execute("UPDATE schema_version SET version=3");
         execute("UPDATE economy_policy SET catalog_sha256='different-catalog'");
         assertEquals("55000", assertThrows(SQLException.class, database::initialize).getSQLState());
     }
@@ -333,12 +333,96 @@ final class GameDatabaseIT {
         execute("INSERT INTO ledger(request_id,player_id,delta,balance_after,reason) VALUES ('" + request + "','" + player + "',600,600,'NPC_SELL:linh_thach_tho')");
         database.initialize(); database.initialize();
         assertEquals(600, balance(player)); assertEquals(3, stock(player));
-        assertEquals(2, number("SELECT version FROM schema_version"));
-        assertEquals(2, number("SELECT count(*) FROM migration_history"));
+        assertEquals(3, number("SELECT version FROM schema_version"));
+        assertEquals(3, number("SELECT count(*) FROM migration_history"));
         assertEquals(600, number("SELECT sum(minted) FROM player_mint_daily"));
         assertTrue(database.receipt(player, request).contains("legacy_success"));
         assertThrows(IllegalArgumentException.class, () -> database.sell(UUID.randomUUID(), player, "Legacy", "linh_thach_tho", 1));
         assertEquals(3, stock(player));
+    }
+
+    @Test void physicalTokensSurviveReconnectAndConsumptionInvalidatesCopies() throws SQLException {
+        UUID player = UUID.randomUUID(); mine(player, 5);
+        Domain.PlayerView before = database.view(player, "before");
+        assertEquals(5, before.items().size());
+        assertEquals(before.items(), database.view(player, "reconnect").items());
+        database.craft(UUID.randomUUID(), player, "Cultivator", "ket_tinh", 1);
+        Domain.PlayerView after = database.view(player, "after");
+        assertEquals(1, after.items().size()); assertEquals("linh_thach", after.items().getFirst().resource());
+        assertTrue(after.revision() > before.revision());
+        assertTrue(before.items().stream().noneMatch(after.items()::contains));
+        database.sell(UUID.randomUUID(), player, "Cultivator", "linh_thach", 1);
+        assertTrue(database.view(player, "sold").items().isEmpty());
+        assertEquals(18, balance(player));
+        assertThrows(IllegalArgumentException.class, () -> database.sell(UUID.randomUUID(), player, "Cultivator", "linh_thach", 1));
+    }
+
+    @Test void tokenProjectionIsBoundedAndDoesNotSpendMailboxStock() throws SQLException {
+        UUID player = UUID.randomUUID(); stockFixture(player, 1_000_000_000L);
+        Domain.PlayerView view = database.view(player, "full inventory");
+        assertEquals(36, view.items().size()); assertEquals(1_000_000_000L, stock(player));
+        assertEquals(0, number("SELECT count(*) FROM operations"));
+        assertEquals(view.items(), database.view(player, "retry").items());
+        assertThrows(IllegalArgumentException.class, () -> database.view(UUID.randomUUID(), "foreign"));
+    }
+
+    @Test void failedSaleKeepsPhysicalTokensAndRevision() throws SQLException {
+        UUID player = UUID.randomUUID(); stockFixture(player, 2);
+        Domain.PlayerView before = database.view(player, "before");
+        assertThrows(IllegalArgumentException.class, () -> database.sell(UUID.randomUUID(), player, "Cultivator", "linh_thach_tho", 3));
+        Domain.PlayerView after = database.view(player, "after");
+        assertEquals(before.items(), after.items()); assertEquals(before.revision(), after.revision());
+    }
+
+    @Test void concurrentIslandRequestsReserveOneStableSlot() throws Exception {
+        UUID player = UUID.randomUUID();
+        ExecutorService executor = Executors.newFixedThreadPool(8);
+        try {
+            List<Callable<Domain.Island>> requests = IntStream.range(0, 8).mapToObj(index -> (Callable<Domain.Island>) () -> database.reserveIsland(player, "Cultivator")).toList();
+            for (Future<Domain.Island> result : executor.invokeAll(requests)) assertEquals(1, result.get().slot());
+        } finally { executor.shutdownNow(); }
+        assertEquals(1, database.islands().islands().size());
+        assertEquals(2, database.reserveIsland(UUID.randomUUID(), "Friend").slot());
+        assertFalse(database.reserveIsland(player, "Cultivator").ready());
+        database.islandReady(player);
+        assertTrue(database.reserveIsland(player, "Cultivator").ready());
+    }
+
+    @Test void builderRightsAreBoundedPersistedAndRevocable() throws SQLException {
+        UUID owner = UUID.randomUUID(); UUID builder = UUID.randomUUID(); UUID stranger = UUID.randomUUID();
+        database.register(builder, "Friend"); database.reserveIsland(owner, "Cultivator");
+        Domain.Claims before = database.islandReady(owner);
+        Domain.Island island = before.islands().getFirst();
+        assertTrue(Domain.canBuild(island, owner)); assertFalse(Domain.canBuild(island, builder));
+        Domain.Claims invited = database.inviteBuilder(owner, builder);
+        assertTrue(Domain.canBuild(invited.islands().getFirst(), builder));
+        assertFalse(Domain.canBuild(invited.islands().getFirst(), stranger));
+        assertTrue(invited.revision() > before.revision());
+        assertTrue(Domain.islandAt(invited.islands(), 64, 0).isPresent());
+        assertTrue(Domain.islandAt(invited.islands(), 79, 15).isPresent());
+        assertTrue(Domain.islandAt(invited.islands(), 80, 15).isEmpty());
+        Domain.Claims revoked = database.revokeBuilder(owner, builder);
+        assertFalse(Domain.canBuild(revoked.islands().getFirst(), builder));
+        assertTrue(revoked.revision() > invited.revision());
+        assertEquals(revoked, database.islands());
+        assertThrows(SQLException.class, () -> database.inviteBuilder(stranger, builder));
+    }
+
+    @Test void v051MigrationPreservesMoneyCatalogAndCreatesPhysicalProjection() throws SQLException, IOException {
+        legacySchema();
+        try (Connection connection = DriverManager.getConnection(url, user, password)) {
+            connection.setSchema(schema); connection.setAutoCommit(false);
+            Migrations.apply(connection, Migrations.load().subList(0, 2), Migrations.resource("/db/schema-fingerprint.sql"));
+            connection.commit();
+        }
+        UUID player = UUID.randomUUID();
+        execute("INSERT INTO profiles(player_id,player_name,balance,cultivation_xp) VALUES ('" + player + "','Legacy',18,50)");
+        execute("INSERT INTO inventory VALUES ('" + player + "','linh_thach',1)");
+        database.initialize();
+        assertEquals(3, number("SELECT version FROM schema_version"));
+        Domain.PlayerView view = database.view(player, "upgraded");
+        assertEquals(18, view.balance()); assertEquals(50, view.xp()); assertEquals(1, view.items().size());
+        assertEquals(0, number("SELECT count(*) FROM operations"));
     }
 
     @Test void failedMigrationRollsBackDdlAndHistory() throws SQLException, IOException {

@@ -14,6 +14,8 @@ import java.sql.Statement;
 import java.time.Duration;
 import java.util.List;
 import java.util.Map;
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.TimeUnit;
@@ -39,7 +41,7 @@ public final class GameDatabase implements AutoCloseable {
     }
 
     @FunctionalInterface
-    private interface SqlWork { String apply(Connection connection) throws SQLException; }
+    private interface SqlWork<T> { T apply(Connection connection) throws SQLException; }
 
     public GameDatabase(String url, String user, String password, String schema, Domain.Catalog catalog, Domain.EconomyPolicy policy) {
         if (!schema.matches("[a-z][a-z0-9_]*")) throw new IllegalArgumentException("Tên schema PostgreSQL không hợp lệ.");
@@ -208,7 +210,7 @@ public final class GameDatabase implements AutoCloseable {
         });
     }
 
-    private String operation(UUID request, UUID player, String fingerprint, SqlWork work) throws SQLException {
+    private String operation(UUID request, UUID player, String fingerprint, SqlWork<String> work) throws SQLException {
         return retry(fingerprint + " request=" + request, connection -> {
             try (PreparedStatement statement = connection.prepareStatement("SELECT pg_advisory_xact_lock(hashtextextended(?,0))")) {
                 statement.setString(1, request.toString()); statement.execute();
@@ -233,7 +235,7 @@ public final class GameDatabase implements AutoCloseable {
         });
     }
 
-    private String retry(String context, SqlWork work) throws SQLException {
+    private <T> T retry(String context, SqlWork<T> work) throws SQLException {
         UUID ticket = UUID.randomUUID();
         synchronized (lifecycle) {
             if (closing) throw new SQLException("Database đang dừng; không nhận thao tác " + context, "57P01");
@@ -243,7 +245,7 @@ public final class GameDatabase implements AutoCloseable {
         finally { release(ticket); }
     }
 
-    private String query(String context, SqlWork work) throws SQLException {
+    private <T> T query(String context, SqlWork<T> work) throws SQLException {
         return retry(context, connection -> {
             connection.setTransactionIsolation(Connection.TRANSACTION_REPEATABLE_READ);
             connection.setReadOnly(true);
@@ -251,11 +253,11 @@ public final class GameDatabase implements AutoCloseable {
         });
     }
 
-    private String retryOpen(String context, SqlWork work) throws SQLException {
+    private <T> T retryOpen(String context, SqlWork<T> work) throws SQLException {
         for (int attempt = 1; attempt <= 3; attempt++) {
             try (Connection connection = pool.getConnection()) {
                 connection.setAutoCommit(false);
-                String result = work.apply(connection);
+                T result = work.apply(connection);
                 connection.commit();
                 return result;
             } catch (SQLException failure) {
@@ -304,6 +306,115 @@ public final class GameDatabase implements AutoCloseable {
                 if (statement.executeUpdate() != 1) throw new IllegalArgumentException("Không đủ nguyên liệu: " + resource);
             }
         }
+        if (delta < 0) {
+            try (PreparedStatement statement = connection.prepareStatement("DELETE FROM item_tokens WHERE player_id=? AND resource_id=?")) {
+                statement.setObject(1, player); statement.setString(2, resource); statement.executeUpdate();
+            }
+        }
+        try (PreparedStatement statement = connection.prepareStatement("UPDATE profiles SET inventory_revision=inventory_revision+1 WHERE player_id=?")) {
+            statement.setObject(1, player); statement.executeUpdate();
+        }
+    }
+
+    /** Vật phẩm là bản thể hiện quyền sở hữu đã commit; tối đa 36 token mỗi loại, phần còn lại chờ trong kho. */
+    public Domain.PlayerView view(UUID player, String message) throws SQLException {
+        return retry("items:" + player, connection -> {
+            lockPlayer(connection, player);
+            long revision; long xp; long balance;
+            try (PreparedStatement statement = connection.prepareStatement("SELECT inventory_revision,cultivation_xp,balance FROM profiles WHERE player_id=?")) {
+                statement.setObject(1, player);
+                try (ResultSet result = statement.executeQuery()) {
+                    result.next(); revision = result.getLong(1); xp = result.getLong(2); balance = result.getLong(3);
+                }
+            }
+            try (PreparedStatement statement = connection.prepareStatement("INSERT INTO item_tokens(player_id,resource_id,ordinal) SELECT i.player_id,i.resource_id,n FROM inventory i CROSS JOIN LATERAL generate_series(1,least(i.quantity,36)::integer) n WHERE i.player_id=? ON CONFLICT(player_id,resource_id,ordinal) DO NOTHING")) {
+                statement.setObject(1, player); statement.executeUpdate();
+            }
+            Map<String, Long> stock = new HashMap<>();
+            try (PreparedStatement statement = connection.prepareStatement("SELECT resource_id,quantity FROM inventory WHERE player_id=? AND quantity>0 ORDER BY resource_id")) {
+                statement.setObject(1, player);
+                try (ResultSet result = statement.executeQuery()) { while (result.next()) stock.put(result.getString(1), result.getLong(2)); }
+            }
+            List<Domain.ItemToken> items = new ArrayList<>();
+            try (PreparedStatement statement = connection.prepareStatement("SELECT token_id,resource_id FROM item_tokens WHERE player_id=? ORDER BY ordinal,resource_id")) {
+                statement.setObject(1, player);
+                try (ResultSet result = statement.executeQuery()) {
+                    while (result.next()) items.add(new Domain.ItemToken(result.getObject(1, UUID.class), player, result.getString(2)));
+                }
+            }
+            return new Domain.PlayerView(player, revision, xp, balance, stock, items, message);
+        });
+    }
+
+    public Domain.Island reserveIsland(UUID player, String name) throws SQLException {
+        return retry("island:" + player, connection -> {
+            ensureProfile(connection, player, name); lockPlayer(connection, player);
+            try (PreparedStatement statement = connection.prepareStatement("INSERT INTO islands(player_id) SELECT ? WHERE NOT EXISTS(SELECT 1 FROM islands WHERE player_id=?)")) {
+                statement.setObject(1, player); statement.setObject(2, player);
+                if (statement.executeUpdate() == 1) bumpClaims(connection);
+            }
+            return readIslands(connection).stream().filter(island -> island.owner().equals(player)).findFirst().orElseThrow();
+        });
+    }
+
+    public Domain.Claims islands() throws SQLException { return query("claims", GameDatabase::readClaims); }
+
+    private static void bumpClaims(Connection connection) throws SQLException {
+        try (Statement statement = connection.createStatement()) { statement.executeUpdate("UPDATE world_state SET revision=revision+1 WHERE singleton"); }
+    }
+
+    private static Domain.Claims readClaims(Connection connection) throws SQLException {
+        long revision;
+        try (Statement statement = connection.createStatement(); ResultSet result = statement.executeQuery("SELECT revision FROM world_state WHERE singleton")) {
+            if (!result.next()) throw new SQLException("Thiếu revision quyền đất.", "55000");
+            revision = result.getLong(1);
+        }
+        return new Domain.Claims(revision, readIslands(connection));
+    }
+
+    private static List<Domain.Island> readIslands(Connection connection) throws SQLException {
+        List<Domain.Island> islands = new ArrayList<>();
+        try (Statement statement = connection.createStatement(); ResultSet result = statement.executeQuery("SELECT i.player_id,i.slot,i.ready,coalesce(array_agg(b.builder_id) FILTER (WHERE b.builder_id IS NOT NULL),'{}'::uuid[]) FROM islands i LEFT JOIN island_builders b ON b.owner_id=i.player_id GROUP BY i.player_id ORDER BY i.slot")) {
+            while (result.next()) {
+                java.sql.Array array = result.getArray(4);
+                UUID[] builders = (UUID[]) array.getArray();
+                islands.add(new Domain.Island(result.getObject(1, UUID.class), result.getInt(2), result.getBoolean(3), List.of(builders)));
+                array.free();
+            }
+        }
+        return List.copyOf(islands);
+    }
+
+    public Domain.Claims islandReady(UUID player) throws SQLException {
+        return retry("island_ready:" + player, connection -> {
+            try (PreparedStatement statement = connection.prepareStatement("UPDATE islands SET ready=true WHERE player_id=?")) {
+                statement.setObject(1, player);
+                if (statement.executeUpdate() != 1) throw new IllegalArgumentException("Chưa cấp động phủ cho " + player);
+            }
+            bumpClaims(connection);
+            return readClaims(connection);
+        });
+    }
+
+    public Domain.Claims inviteBuilder(UUID owner, UUID builder) throws SQLException {
+        if (owner.equals(builder)) throw new IllegalArgumentException("Chủ động phủ đã có quyền xây dựng.");
+        return retry("island_invite:" + owner + ":" + builder, connection -> {
+            bumpClaims(connection);
+            try (PreparedStatement statement = connection.prepareStatement("INSERT INTO island_builders VALUES (?,?) ON CONFLICT DO NOTHING")) {
+                statement.setObject(1, owner); statement.setObject(2, builder); statement.executeUpdate();
+            }
+            return readClaims(connection);
+        });
+    }
+
+    public Domain.Claims revokeBuilder(UUID owner, UUID builder) throws SQLException {
+        return retry("island_revoke:" + owner + ":" + builder, connection -> {
+            bumpClaims(connection);
+            try (PreparedStatement statement = connection.prepareStatement("DELETE FROM island_builders WHERE owner_id=? AND builder_id=?")) {
+                statement.setObject(1, owner); statement.setObject(2, builder); statement.executeUpdate();
+            }
+            return readClaims(connection);
+        });
     }
 
     private static void changeMoney(Connection connection, UUID request, UUID player, long delta, String reason) throws SQLException {

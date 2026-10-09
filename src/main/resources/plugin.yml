@@ -1,8 +1,8 @@
 name: CuuVucCore
-version: '0.5.1'
+version: '0.6.0'
 main: vn.cuuvuc.core.CuuVucPlugin
 api-version: '26.3'
-description: Cửu Vực Tu Tiên — nguyên mẫu V0.5
+description: Cửu Vực Tu Tiên — Playable World V0.6
 commands:
   cv:
     description: Hồ sơ, kho, tu luyện và giao dịch

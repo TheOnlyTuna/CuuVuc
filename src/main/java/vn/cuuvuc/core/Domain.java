@@ -3,6 +3,7 @@ package vn.cuuvuc.core;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
+import java.util.Optional;
 
 public interface Domain {
     record EconomyPolicy(long serverDailyMint, long playerDailyMint) {
@@ -23,6 +24,25 @@ public interface Domain {
     }
     record Profile(UUID id, String name, long xp, long balance, Map<String, Long> inventory) {
         public Profile { inventory = Map.copyOf(inventory); }
+    }
+    record ItemToken(UUID id, UUID owner, String resource) { }
+    record PlayerView(UUID player, long revision, long xp, long balance, Map<String, Long> stock,
+                      List<ItemToken> items, String message) {
+        public PlayerView { stock = Map.copyOf(stock); items = List.copyOf(items); }
+    }
+    record Island(UUID owner, int slot, boolean ready, List<UUID> builders) {
+        public Island { builders = List.copyOf(builders); }
+    }
+    record Claims(long revision, List<Island> islands) {
+        public Claims { islands = List.copyOf(islands); }
+    }
+
+    static Optional<Island> islandAt(List<Island> islands, int x, int z) {
+        return islands.stream().filter(island -> x >= island.slot() * 64 && x < island.slot() * 64 + 16 && z >= 0 && z < 16).findFirst();
+    }
+
+    static boolean canBuild(Island island, UUID player) {
+        return island.ready() && (island.owner().equals(player) || island.builders().contains(player));
     }
 
     static long quantity(String raw) {

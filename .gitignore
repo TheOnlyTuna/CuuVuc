@@ -2,6 +2,7 @@
 /.tools/
 /run/
 /run-v051/
+/run-v06/
 /backups/
 /release/
 /.env

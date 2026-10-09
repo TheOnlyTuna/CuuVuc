@@ -21,11 +21,17 @@ import java.util.concurrent.atomic.AtomicBoolean;
 public final class PlayerTasks {
     @FunctionalInterface
     public interface DatabaseAction { String execute() throws SQLException; }
+    @FunctionalInterface
+    public interface ViewAction { Domain.PlayerView execute() throws SQLException; }
+    @FunctionalInterface
+    public interface ViewReply { void apply(Domain.PlayerView view); }
 
     private final JavaPlugin plugin;
     private final Semaphore capacity;
     private final Map<UUID, UUID> pending = new ConcurrentHashMap<>();
     private final AtomicBoolean accepting = new AtomicBoolean(true);
+    private final Map<UUID, Domain.PlayerView> views = new ConcurrentHashMap<>();
+    private final Map<UUID, ViewReply> callbacks = new ConcurrentHashMap<>();
 
     public PlayerTasks(JavaPlugin plugin, int maximum) {
         if (maximum < 1 || maximum > 128) throw new IllegalArgumentException("max-pending phải từ 1 đến 128.");
@@ -33,14 +39,28 @@ public final class PlayerTasks {
         this.capacity = new Semaphore(maximum);
     }
 
-    public synchronized void submit(Player player, UUID request, DatabaseAction action) {
+    /** Giữ dữ liệu I/O riêng; chỉ callback trên scheduler entity mới đọc hoặc sửa inventory. */
+    public synchronized void submitView(Player player, UUID request, ViewAction action, ViewReply callback) {
+        if (pending.containsKey(player.getUniqueId()) || !accepting.get()) {
+            player.sendPlainMessage("Thao tác trước đang xử lý hoặc máy chủ đang dừng."); return;
+        }
+        callbacks.put(request, callback);
+        boolean accepted = submit(player, request, () -> {
+            Domain.PlayerView view = action.execute();
+            views.put(request, view);
+            return view.message();
+        });
+        if (!accepted) callbacks.remove(request);
+    }
+
+    public synchronized boolean submit(Player player, UUID request, DatabaseAction action) {
         UUID playerId = player.getUniqueId();
-        if (!accepting.get()) { player.sendPlainMessage("Cửu Vực đang dừng."); return; }
-        if (pending.putIfAbsent(playerId, request) != null) { player.sendPlainMessage("Giao dịch trước đang xử lý."); return; }
+        if (!accepting.get()) { player.sendPlainMessage("Cửu Vực đang dừng."); return false; }
+        if (pending.putIfAbsent(playerId, request) != null) { player.sendPlainMessage("Giao dịch trước đang xử lý."); return false; }
         if (!capacity.tryAcquire()) {
             pending.remove(playerId);
             player.sendPlainMessage("Máy chủ đang bận, vui lòng thử lại.");
-            return;
+            return false;
         }
         plugin.getSLF4JLogger().atInfo().addKeyValue("player", playerId).addKeyValue("request", request).log("player_request_accepted");
         try {
@@ -57,28 +77,40 @@ public final class PlayerTasks {
             } finally {
                 pending.remove(playerId);
                 capacity.release();
+                if (!accepting.get()) { views.remove(request); callbacks.remove(request); }
             }
           });
         } catch (IllegalPluginAccessException failure) {
             pending.remove(playerId);
             capacity.release();
             plugin.getSLF4JLogger().atWarn().addKeyValue("request", request).setCause(failure).log("request_not_scheduled_plugin_stopping");
+            return false;
         }
+        return true;
     }
 
     private synchronized void reply(Player player, UUID playerId, UUID request, String message) {
         if (!accepting.get()) return;
         try {
-          player.getScheduler().run(plugin, task -> player.sendPlainMessage(message),
-                () -> plugin.getSLF4JLogger().atInfo().addKeyValue("player", playerId)
-                        .addKeyValue("request", request).log("player_retired_before_reply"));
+          player.getScheduler().run(plugin, task -> {
+                Domain.PlayerView view = views.remove(request);
+                ViewReply callback = callbacks.remove(request);
+                player.sendPlainMessage(message);
+                if (view != null && callback != null) callback.apply(view);
+            }, () -> {
+                views.remove(request); callbacks.remove(request);
+                plugin.getSLF4JLogger().atInfo().addKeyValue("player", playerId)
+                        .addKeyValue("request", request).log("player_retired_before_reply");
+            });
         } catch (IllegalPluginAccessException failure) {
+            views.remove(request); callbacks.remove(request);
             plugin.getSLF4JLogger().atWarn().addKeyValue("request", request).setCause(failure).log("reply_not_scheduled_plugin_stopping");
         }
     }
 
     public synchronized Map<UUID, UUID> stop() {
         accepting.set(false);
+        views.clear(); callbacks.clear();
         pending.forEach((player, request) -> plugin.getSLF4JLogger().atWarn()
                 .addKeyValue("player", player).addKeyValue("request", request).log("request_pending_at_shutdown"));
         return Map.copyOf(pending);

@@ -1,0 +1,17 @@
+  resource_id   | quantity 
+----------------+----------
+ linh_thach_tho |        0
+ linh_thach     |        1
+ huyen_thiet    |        0
+(3 rows)
+
+ balance | cultivation_xp | ledger_total 
+---------+----------------+--------------
+       8 |            100 |            8
+(1 row)
+
+ minted | burned 
+--------+--------
+     28 |     20
+(1 row)
+

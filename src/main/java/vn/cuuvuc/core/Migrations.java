@@ -22,7 +22,7 @@ public interface Migrations {
     record Migration(int version, String sql, String checksum, String schemaChecksum) { }
 
     static List<Migration> load() throws IOException {
-        return List.of(loadOne(1, "V001__baseline"), loadOne(2, "V002__hardening"));
+        return List.of(loadOne(1, "V001__baseline"), loadOne(2, "V002__hardening"), loadOne(3, "V003__playable_world"));
     }
 
     static Migration loadOne(int version, String name) throws IOException {

@@ -3,10 +3,10 @@ $ErrorActionPreference = 'Stop'
 $projectRoot = Split-Path $PSScriptRoot -Parent
 $runPath = Join-Path $projectRoot 'run'
 $pluginPath = Join-Path $runPath 'plugins/CuuVucCore'
-$artifact = Join-Path $projectRoot 'target/CuuVucCore-0.5.1.jar'
+$artifact = Join-Path $projectRoot 'target/CuuVucCore-0.6.0.jar'
 if (-not (Test-Path -LiteralPath $artifact)) { throw 'Build trước: ./mvnw.cmd clean package' }
 New-Item -ItemType Directory -Force $pluginPath | Out-Null
-$oldPlugins = @(Get-ChildItem -LiteralPath (Join-Path $runPath 'plugins') -Filter 'CuuVucCore-*.jar' -File | Where-Object Name -ne 'CuuVucCore-0.5.1.jar')
+$oldPlugins = @(Get-ChildItem -LiteralPath (Join-Path $runPath 'plugins') -Filter 'CuuVucCore-*.jar' -File | Where-Object Name -ne 'CuuVucCore-0.6.0.jar')
 if ($oldPlugins.Count -gt 0) {
     $backupPath = Join-Path $runPath 'plugin-backups'
     New-Item -ItemType Directory -Force $backupPath | Out-Null
@@ -24,7 +24,7 @@ if (-not (Test-Path -LiteralPath $serverJar)) {
 if ((Get-FileHash -LiteralPath $serverJar -Algorithm SHA256).Hash.ToLowerInvariant() -ne $expectedHash) {
     throw 'Checksum Paper không khớp build 166. Kiểm tra run/paper.jar trước khi chạy.'
 }
-Copy-Item -LiteralPath $artifact -Destination (Join-Path $runPath 'plugins/CuuVucCore-0.5.1.jar') -Force
+Copy-Item -LiteralPath $artifact -Destination (Join-Path $runPath 'plugins/CuuVucCore-0.6.0.jar') -Force
 $configPath = Join-Path $pluginPath 'config.yml'
 if (-not (Test-Path -LiteralPath $configPath)) {
     Copy-Item -LiteralPath (Join-Path $projectRoot 'src/main/resources/config.yml') -Destination $configPath

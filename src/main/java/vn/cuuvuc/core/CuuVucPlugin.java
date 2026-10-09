@@ -7,6 +7,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerJoinEvent;
+import org.bukkit.event.player.PlayerRespawnEvent;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import java.io.IOException;
@@ -30,12 +31,15 @@ public final class CuuVucPlugin extends JavaPlugin implements Listener {
     private PlayerTasks tasks;
     private MineNodes mine;
     private Domain.Catalog catalog;
+    private PhysicalItems items;
+    private PlayableWorld world;
+    private PlayableMenu menu;
     private Duration shutdownTimeout;
 
     @Override public void onEnable() {
         saveDefaultConfig();
         long timeoutMillis = getConfig().getLong("shutdown.drain-timeout-ms");
-        if (timeoutMillis < 1 || timeoutMillis > 30000) throw new IllegalStateException("Cần cấu hình shutdown.drain-timeout-ms từ 1 đến 30000 cho V0.5.1.");
+        if (timeoutMillis < 1 || timeoutMillis > 30000) throw new IllegalStateException("Cần cấu hình shutdown.drain-timeout-ms từ 1 đến 30000.");
         shutdownTimeout = Duration.ofMillis(timeoutMillis);
         try { catalog = CatalogFile.read(getResource("catalog.properties")); }
         catch (IOException failure) { throw new IllegalStateException("Không đọc được catalog.", failure); }
@@ -47,15 +51,24 @@ public final class CuuVucPlugin extends JavaPlugin implements Listener {
                 Objects.requireNonNull(getConfig().getString("database.schema")), catalog,
                 new Domain.EconomyPolicy(getConfig().getLong("economy.server-daily-mint"), getConfig().getLong("economy.player-daily-mint")));
         tasks = new PlayerTasks(this, getConfig().getInt("mine.max-pending"));
-        mine = new MineNodes(this, database, tasks, catalog, this::isReady,
+        items = new PhysicalItems(this, catalog);
+        if (!PlayableWorld.PRISON.equals(getConfig().getString("mine.world"))) throw new IllegalStateException("V0.6 cần mine.world=cv_prison và danh sách node trong chunk (0,0). Cập nhật config theo mẫu trước khi chạy.");
+        mine = new MineNodes(this, database, tasks, items, catalog, this::isReady,
                 Objects.requireNonNull(getConfig().getString("mine.world")), getConfig().getStringList("mine.nodes"),
                 getConfig().getInt("mine.cooldown-seconds"));
         getServer().getPluginManager().registerEvents(this, this);
         getServer().getPluginManager().registerEvents(mine, this);
+        world = new PlayableWorld(this, database, mine, this::isReady);
+        menu = new PlayableMenu(database, tasks, items, catalog, world);
+        getServer().getPluginManager().registerEvents(items, this);
+        getServer().getPluginManager().registerEvents(world, this);
+        getServer().getPluginManager().registerEvents(menu, this);
+        world.create();
         Objects.requireNonNull(getCommand("cv")).setExecutor(this);
         Bukkit.getAsyncScheduler().runNow(this, task -> {
             try {
                 database.initialize();
+                world.publish(database.islands());
                 if (state.compareAndSet(State.STARTING, State.READY)) getSLF4JLogger().info("cuuvuc_database_ready");
             } catch (SQLException | IOException failure) {
                 getSLF4JLogger().atError().setCause(failure).log("cuuvuc_startup_failed");
@@ -67,7 +80,7 @@ public final class CuuVucPlugin extends JavaPlugin implements Listener {
 
     @EventHandler public void join(PlayerJoinEvent event) {
         if (isReady()) register(event.getPlayer());
-        else event.getPlayer().sendPlainMessage("Cửu Vực đang khởi động. Dùng /cv profile sau ít giây.");
+        else event.getPlayer().sendPlainMessage("Cửu Vực đang khởi động. Dùng /cv start sau ít giây.");
     }
 
     private void showProfile(Player player) {
@@ -79,15 +92,22 @@ public final class CuuVucPlugin extends JavaPlugin implements Listener {
     private void register(Player player) {
         UUID id = player.getUniqueId();
         String name = player.getName();
-        tasks.submit(player, UUID.randomUUID(), () -> database.register(id, name));
+        tasks.submitView(player, UUID.randomUUID(), () -> database.view(id, database.register(id, name) + " /cv để mở menu."), view -> items.sync(player, view));
+    }
+
+    @EventHandler public void respawn(PlayerRespawnEvent event) {
+        if (!isReady()) return;
+        Player player = event.getPlayer();
+        player.getScheduler().runDelayed(this, task -> register(player), () -> getSLF4JLogger().info("respawn_player_retired"), 1L);
     }
 
     @Override public boolean onCommand(CommandSender sender, Command command, String label, String[] arguments) {
-        if (!(sender instanceof Player player)) { sender.sendMessage("CuuVucCore V0.5.1 | database-ready=" + isReady()); return true; }
+        if (!(sender instanceof Player player)) { sender.sendMessage("CuuVucCore V0.6.0 | database-ready=" + isReady()); return true; }
         if (!player.hasPermission("cuuvuc.play")) { player.sendPlainMessage("Bạn không có quyền cuuvuc.play."); return true; }
         if (!isReady()) { player.sendPlainMessage("Cơ sở dữ liệu chưa sẵn sàng."); return true; }
-        if (arguments.length == 0 || arguments[0].equals("help")) {
-            player.sendPlainMessage("/cv start | profile | kho | catalog | craft <recipe> <1..1000> | buy/sell <resource> <1..1000> | pay <UUID> <1..1000> | ledger | receipt <request UUID> | economy (OP) | minebuild (OP)");
+        if (arguments.length == 0) { menu.request(player); return true; }
+        if (arguments[0].equals("help")) {
+            player.sendPlainMessage("/cv menu | prison | home | visit/invite/revoke <UUID> | start | profile | kho | catalog | craft <recipe> <1..1000> | buy/sell <resource> <1..1000> | pay <UUID> <1..1000> | ledger | receipt <UUID> | economy (OP)");
             return true;
         }
         UUID id = player.getUniqueId();
@@ -96,7 +116,20 @@ public final class CuuVucPlugin extends JavaPlugin implements Listener {
         try {
             switch (arguments[0]) {
                 case "start" -> register(player);
-                case "profile", "kho" -> showProfile(player);
+                case "profile" -> showProfile(player);
+                case "menu", "kho" -> menu.request(player);
+                case "prison" -> world.prison(player);
+                case "home" -> world.home(player);
+                case "visit" -> {
+                    if (arguments.length != 2) throw new IllegalArgumentException("Dùng /cv visit <UUID-chủ-động-phủ>.");
+                    world.visit(player, UUID.fromString(arguments[1]));
+                }
+                case "invite", "revoke" -> {
+                    if (arguments.length != 2) throw new IllegalArgumentException("Dùng /cv invite <UUID> hoặc /cv revoke <UUID>.");
+                    UUID builder = UUID.fromString(arguments[1]);
+                    if (arguments[0].equals("invite")) world.invite(player, builder);
+                    else world.revoke(player, builder);
+                }
                 case "catalog" -> {
                     for (Domain.Resource resource : catalog.resources().values()) player.sendPlainMessage(resource.id() + " | " + resource.name() + " | mua=" + resource.buy() + " bán=" + resource.sell());
                     for (Domain.Recipe recipe : catalog.recipes().values()) player.sendPlainMessage(recipe.id() + " | " + recipe.inputCount() + " " + recipe.input() + " → " + recipe.outputCount() + " " + recipe.output());
@@ -119,17 +152,17 @@ public final class CuuVucPlugin extends JavaPlugin implements Listener {
                 case "craft" -> {
                     requireThree(arguments); String recipe = arguments[1]; long count = Domain.quantity(arguments[2]);
                     Domain.recipe(catalog, recipe);
-                    tasks.submit(player, request, () -> database.craft(request, id, name, recipe, count));
+                    tasks.submitView(player, request, () -> database.view(id, database.craft(request, id, name, recipe, count)), view -> items.sync(player, view));
                 }
                 case "sell" -> {
                     requireThree(arguments); String resource = arguments[1]; long count = Domain.quantity(arguments[2]);
                     Domain.resource(catalog, resource);
-                    tasks.submit(player, request, () -> database.sell(request, id, name, resource, count));
+                    tasks.submitView(player, request, () -> database.view(id, database.sell(request, id, name, resource, count)), view -> items.sync(player, view));
                 }
                 case "buy" -> {
                     requireThree(arguments); String resource = arguments[1]; long count = Domain.quantity(arguments[2]);
                     Domain.resource(catalog, resource);
-                    tasks.submit(player, request, () -> database.buy(request, id, name, resource, count));
+                    tasks.submitView(player, request, () -> database.view(id, database.buy(request, id, name, resource, count)), view -> items.sync(player, view));
                 }
                 case "pay" -> {
                     requireThree(arguments); UUID target = UUID.fromString(arguments[1]); long count = Domain.quantity(arguments[2]);
