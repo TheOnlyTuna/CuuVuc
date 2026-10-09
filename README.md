@@ -67,6 +67,6 @@ $env:CUUVUC_TEST_PASSWORD = 'replace-with-your-test-password'
 
 DB test phải riêng; mỗi ca tạo/xóa duy nhất schema `cv_test_<uuid>`. Thiếu DB test là lỗi, không bỏ qua integration tests. [Kết quả V0.6](validation/V0.6-RESULTS.md) ghi tests, client và phần chưa xác minh; [RESULTS V0.5.1](validation/RESULTS.md) là lịch sử baseline.
 
-`.github/workflows/verify.yml` chạy khi push, pull request hoặc gọi thủ công: Java 25 + PostgreSQL 18.4 thật, `clean verify`, lưu JAR/checksum/JUnit 14 ngày. Actions khóa theo commit SHA đã xác minh. Workflow đã kiểm tra cú pháp cục bộ; chưa tuyên bố GitHub CI xanh trước khi nhánh được commit/push và workflow thực sự chạy.
+`.github/workflows/verify.yml` chạy khi push, pull request hoặc gọi thủ công: Java 25 + PostgreSQL 18.4 thật, `clean verify`, lưu JAR/checksum/JUnit 14 ngày. Actions khóa theo commit SHA đã xác minh. Workflow đã kiểm tra cú pháp cục bộ; [lần chạy đầu trên GitHub](https://github.com/TheOnlyTuna/CuuVuc/actions/runs/37992513554) bị chặn trước khi bắt đầu do tài khoản bị khóa vì billing. CI chưa được xác minh thành công; cần xử lý billing rồi chạy lại.
 
 Tham chiếu: [Paper PDC](https://docs.papermc.io/paper/dev/pdc/), [custom InventoryHolder](https://docs.papermc.io/paper/dev/custom-inventory-holder/), [teleportAsync](https://docs.papermc.io/paper/dev/entity-teleport/), [hướng dẫn scheduler được cung cấp](docs/references/Folia-scheduler-guide.md), [audit baseline](docs/references/CuuVucCore-V0.5-Technical-Audit.md). [V3-POC.md](V3-POC.md) là kế hoạch riêng; **không có heightmap V3 được cung cấp hoặc nhập**.
