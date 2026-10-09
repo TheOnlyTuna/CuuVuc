@@ -1,0 +1,17 @@
+database:
+  url: jdbc:postgresql://127.0.0.1:55432/cuuvuc
+  user: cuuvuc
+  password-environment: CUUVUC_DB_PASSWORD
+  schema: public
+economy:
+  server-daily-mint: 10000
+  player-daily-mint: 500
+shutdown:
+  drain-timeout-ms: 15000
+mine:
+  world: world
+  cooldown-seconds: 3
+  nodes:
+    - '8,100,8,linh_thach_tho'
+    - '10,100,8,huyen_thiet'
+  max-pending: 32

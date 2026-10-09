@@ -1,0 +1,25 @@
+DROP TRIGGER
+DROP FUNCTION
+ balance | cultivation_xp 
+---------+----------------
+      13 |             50
+(1 row)
+
+  resource_id   | quantity 
+----------------+----------
+ linh_thach_tho |        0
+ linh_thach     |        0
+ huyen_thiet    |        0
+(3 rows)
+
+ business_day | minted | burned 
+--------------+--------+--------
+ 2026-10-09   |     23 |     10
+(1 row)
+
+              request_id              |                       result                       
+--------------------------------------+----------------------------------------------------
+ 3c2bdfb3-60b3-4f4a-a0bc-8ee138df9eb3 | Đã bán 1 huyen_thiet: +5 linh tệ.                 +
+                                      | Mã giao dịch: 3c2bdfb3-60b3-4f4a-a0bc-8ee138df9eb3
+(1 row)
+

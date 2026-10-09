@@ -1,0 +1,9 @@
+/target/
+/.tools/
+/run/
+/run-v051/
+/backups/
+/release/
+/.env
+*.log
+!/validation/*.log

@@ -1,0 +1,16 @@
+ balance | ledger_total 
+---------+--------------
+      13 |           13
+(1 row)
+
+ version 
+---------
+       2
+(1 row)
+
+              request_id              |                       result                       
+--------------------------------------+----------------------------------------------------
+ 3c2bdfb3-60b3-4f4a-a0bc-8ee138df9eb3 | Đã bán 1 huyen_thiet: +5 linh tệ.                 +
+                                      | Mã giao dịch: 3c2bdfb3-60b3-4f4a-a0bc-8ee138df9eb3
+(1 row)
+

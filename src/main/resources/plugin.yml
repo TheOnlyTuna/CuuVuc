@@ -1,0 +1,14 @@
+name: CuuVucCore
+version: '0.5.1'
+main: vn.cuuvuc.core.CuuVucPlugin
+api-version: '26.3'
+description: Cửu Vực Tu Tiên — nguyên mẫu V0.5
+commands:
+  cv:
+    description: Hồ sơ, kho, tu luyện và giao dịch
+    usage: /cv help
+permissions:
+  cuuvuc.play:
+    default: true
+  cuuvuc.admin:
+    default: op

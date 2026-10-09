@@ -1,0 +1,125 @@
+[02:28:37] [ServerMain/INFO]: [bootstrap] Running Java 25 (OpenJDK 64-Bit Server VM 25.0.4.1+10-LTS; Amazon.com Inc. Corretto-25.0.4.10.1) on Windows 11 10.0 (amd64)
+[02:28:37] [ServerMain/INFO]: [bootstrap] Loading Paper 26.3-166-main@cc7b98a (2026-10-09T00:54:07Z) for Minecraft 26.3
+[02:28:37] [ServerMain/INFO]: [PluginInitializerManager] Initializing plugins...
+[02:28:37] [ServerMain/INFO]: [PluginInitializerManager] Initialized 1 plugin
+[02:28:37] [ServerMain/INFO]: [PluginInitializerManager] Bukkit plugins (1):
+ - CuuVucCore (0.5.1)
+[02:28:38] [CrashReport preload thread/ERROR]: [oshi.driver.windows.registry.HkeyPerformanceDataUtil] Unable to locate English counter names in registry Perflib 009. Counters may need to be rebuilt: 
+com.sun.jna.platform.win32.Win32Exception: The parameter is incorrect.
+	at com.sun.jna.platform.win32.Advapi32Util.registryGetStringArray(Advapi32Util.java:921) ~[jna-platform-5.17.0.jar:5.17.0 (b0)]
+	at com.sun.jna.platform.win32.Advapi32Util.registryGetStringArray(Advapi32Util.java:898) ~[jna-platform-5.17.0.jar:5.17.0 (b0)]
+	at oshi.driver.windows.registry.HkeyPerformanceDataUtil.mapCounterIndicesFromRegistry(HkeyPerformanceDataUtil.java:274) ~[oshi-core-6.9.0.jar:6.9.0]
+	at oshi.driver.windows.registry.HkeyPerformanceDataUtil.<clinit>(HkeyPerformanceDataUtil.java:51) ~[oshi-core-6.9.0.jar:6.9.0]
+	at oshi.driver.windows.registry.ProcessPerformanceData.buildProcessMapFromRegistry(ProcessPerformanceData.java:45) ~[oshi-core-6.9.0.jar:6.9.0]
+	at oshi.software.os.windows.WindowsOperatingSystem.queryProcessMapFromRegistry(WindowsOperatingSystem.java:328) ~[oshi-core-6.9.0.jar:6.9.0]
+	at oshi.util.Memoizer$1.get(Memoizer.java:65) ~[oshi-core-6.9.0.jar:6.9.0]
+	at oshi.software.os.windows.WindowsOperatingSystem.processMapToList(WindowsOperatingSystem.java:298) ~[oshi-core-6.9.0.jar:6.9.0]
+	at oshi.software.os.windows.WindowsOperatingSystem.getProcess(WindowsOperatingSystem.java:292) ~[oshi-core-6.9.0.jar:6.9.0]
+	at oshi.software.os.OperatingSystem.getCurrentProcess(OperatingSystem.java:246) ~[oshi-core-6.9.0.jar:6.9.0]
+	at net.minecraft.SystemReport.lambda$putSoftware$0(SystemReport.java:115) ~[paper-26.3.jar:26.3-166-cc7b98a]
+	at net.minecraft.SystemReport.ignoreErrors(SystemReport.java:120) ~[paper-26.3.jar:26.3-166-cc7b98a]
+	at net.minecraft.SystemReport.putSoftware(SystemReport.java:115) ~[paper-26.3.jar:26.3-166-cc7b98a]
+	at net.minecraft.SystemReport.lambda$new$7(SystemReport.java:68) ~[paper-26.3.jar:26.3-166-cc7b98a]
+	at net.minecraft.SystemReport.ignoreErrors(SystemReport.java:120) ~[paper-26.3.jar:26.3-166-cc7b98a]
+	at net.minecraft.SystemReport.<init>(SystemReport.java:68) ~[paper-26.3.jar:26.3-166-cc7b98a]
+	at net.minecraft.CrashReport.<init>(CrashReport.java:32) ~[paper-26.3.jar:26.3-166-cc7b98a]
+	at net.minecraft.CrashReport.preload(CrashReport.java:240) ~[paper-26.3.jar:26.3-166-cc7b98a]
+	at java.base/java.lang.Thread.run(Thread.java:1474) ~[?:?]
+[02:28:38] [CrashReport preload thread/WARN]: [oshi.util.platform.windows.PerfCounterQuery] Unable to locate English counter names in registry Perflib 009. Assuming English counters. Error 0x80070057. See https://support.microsoft.com/en-us/help/300956/how-to-manually-rebuild-performance-counter-library-values
+[02:28:40] [DataConverter MCTypeRegistry init thread/INFO]: [ca.spottedleaf.dataconverter.minecraft.datatypes.MCTypeRegistry] Initialising converters for DataConverter...
+[02:28:40] [ServerMain/INFO]: [com.destroystokyo.paper.profile.PaperServicesDiscoveryService] Environment: Environment[discoveryUrl=https://discovery.minecraftservices.com/minecraft/client, name=PROD]
+[02:28:40] [DataConverter MCTypeRegistry init thread/INFO]: [ca.spottedleaf.dataconverter.minecraft.datatypes.MCTypeRegistry] Finished initialising converters for DataConverter in 215.2ms
+[02:28:41] [Worker-Main-5/INFO]: Loaded 1866 advancements
+[02:28:41] [Server thread/INFO]: Starting minecraft server version 26.3
+[02:28:41] [Server thread/INFO]: Loading properties
+[02:28:41] [Server thread/INFO]: This server is running Paper version 26.3-166-main@cc7b98a (2026-10-09T00:54:07Z) (Implementing API version 26.3.build.166-beta)
+[02:28:41] [Server thread/INFO]: [spark] This server bundles the spark profiler. For more information please visit https://docs.papermc.io/paper/profiling
+[02:28:41] [Server thread/INFO]: Using 4 threads for Netty based IO
+[02:28:41] [Server thread/INFO]: Server Ping Player Sample Count: 12
+[02:28:41] [Server thread/INFO]: [MoonriseCommon] Paper is using 6 worker threads, 1 I/O threads
+[02:28:41] [Server thread/INFO]: Default game type: SURVIVAL
+[02:28:41] [Server thread/INFO]: Generating keypair
+[02:28:41] [Server thread/INFO]: Starting Minecraft server on 127.0.0.1:25579
+[02:28:41] [Server thread/INFO]: Paper: Using Java compression from Velocity.
+[02:28:41] [Server thread/INFO]: Paper: Using Java cipher from Velocity.
+[02:28:42] [Server thread/INFO]: [CuuVucCore] Loading server plugin CuuVucCore v0.5.1
+[02:28:42] [Server thread/INFO]: Preparing level "world"
+[02:28:42] [Server thread/INFO]: Loading 0 persistent chunks for level 'minecraft:overworld'...
+[02:28:42] [Server thread/INFO]: Prepared spawn area in 1 ms
+[02:28:42] [Server thread/INFO]: Loading 0 persistent chunks for level 'minecraft:the_nether'...
+[02:28:42] [Server thread/INFO]: Prepared spawn area in 2 ms
+[02:28:42] [Server thread/INFO]: Loading 0 persistent chunks for level 'minecraft:the_end'...
+[02:28:42] [Server thread/INFO]: Prepared spawn area in 2 ms
+[02:28:42] [Server thread/INFO]: Done preparing level "world" (0.316s)
+[02:28:42] [Server thread/INFO]: [CuuVucCore] Enabling CuuVucCore v0.5.1
+[02:28:42] [Server thread/INFO]: [vn.cuuvuc.internal.hikari.HikariDataSource] HikariPool-1 - Starting...
+[02:28:42] [Server thread/INFO]: [vn.cuuvuc.internal.hikari.HikariDataSource] HikariPool-1 - Start completed.
+[02:28:42] [Server thread/INFO]: [spark] Starting background profiler...
+[02:28:42] [Server thread/INFO]: [spark] The async-profiler engine is not supported for your os/arch (windows11/amd64), so the built-in Java engine will be used instead.
+[02:28:42] [Server thread/INFO]: Saving chunks for level 'ServerLevel[world]'/minecraft:overworld
+[02:28:42] [Server thread/INFO]: Saving chunks for level 'ServerLevel[world]'/minecraft:the_nether
+[02:28:42] [Server thread/INFO]: Saving chunks for level 'ServerLevel[world]'/minecraft:the_end
+[02:28:42] [Server thread/INFO]: Running delayed init tasks
+[02:28:42] [Server thread/INFO]: Done (5.397s)! For help, type "help"
+[02:28:42] [Folia Async Scheduler Thread #0/INFO]: [CuuVucCore] cuuvuc_database_ready
+[02:28:43] [Paper Async Task Handler Thread - 1/INFO]: *** Currently you are 3 builds behind ***
+[02:28:43] [Paper Async Task Handler Thread - 1/INFO]: *** It is highly recommended to download the latest build from https://papermc.io/downloads/paper ***
+[02:29:12] [User Authenticator #0/INFO]: UUID of player TyninWorld is cd01e4e1-9513-4c7b-b83a-ba2ad8a09e1c
+[02:29:13] [Server thread/INFO]: [CuuVucCore] player_request_accepted
+[02:29:13] [Server thread/INFO]: System chat: TyninWorld joined the game
+[02:29:13] [Server thread/INFO]: TyninWorld[/127.0.0.1:60182] logged in with entity id 1 at ([minecraft:overworld]7.5, -60.0, 3.5)
+[02:29:21] [Server thread/INFO]: TyninWorld issued server command: /cv profile
+[02:29:21] [Server thread/INFO]: [CuuVucCore] player_request_accepted
+[02:29:37] [Server thread/INFO]: System chat: Made TyninWorld a server operator
+[02:29:37] [Server thread/INFO]: System chat: Successfully filled 35 block(s)
+[02:29:37] [Server thread/INFO]: System chat: Teleported TyninWorld to 8.500000, 100.000000, 6.500000
+[02:29:37] [Server thread/INFO]: System chat: Gave 1 [Diamond Pickaxe] to TyninWorld
+[02:29:37] [Server thread/INFO]: System chat: Applied effect Haste to TyninWorld
+[02:29:48] [Server thread/INFO]: TyninWorld issued server command: /cv minebuild
+[02:29:57] [Server thread/INFO]: [CuuVucCore] player_request_accepted
+[02:30:16] [Server thread/INFO]: [CuuVucCore] player_request_accepted
+[02:31:39] [Server thread/INFO]: [CuuVucCore] player_request_accepted
+[02:32:26] [Server thread/INFO]: [CuuVucCore] player_request_accepted
+[02:32:44] [Server thread/INFO]: [CuuVucCore] player_request_accepted
+[02:33:02] [Server thread/INFO]: TyninWorld issued server command: /cv craft ket_tinh 1
+[02:33:02] [Server thread/INFO]: [CuuVucCore] player_request_accepted
+[02:33:22] [Server thread/INFO]: TyninWorld issued server command: /cv sell linh_thach 1
+[02:33:22] [Server thread/INFO]: [CuuVucCore] player_request_accepted
+[02:33:46] [Server thread/INFO]: TyninWorld issued server command: /cv buy huyen_thiet 1
+[02:33:46] [Server thread/INFO]: [CuuVucCore] player_request_accepted
+[02:34:31] [Server thread/INFO]: System chat: TyninWorld has the following entity data: [{Slot: 0b, id: "minecraft:diamond_pickaxe", count: 1, components: {"minecraft:enchantments": {"minecraft:efficiency": 5}}}]
+[02:34:31] [Server thread/INFO]: System chat: Stopping the server
+[02:34:31] [Server thread/INFO]: Stopping server
+[02:34:31] [Server thread/INFO]: [CuuVucCore] Disabling CuuVucCore v0.5.1
+[02:34:31] [Server thread/INFO]: [vn.cuuvuc.internal.hikari.HikariDataSource] HikariPool-1 - Shutdown initiated...
+[02:34:31] [Server thread/INFO]: [vn.cuuvuc.internal.hikari.HikariDataSource] HikariPool-1 - Shutdown completed.
+[02:34:31] [Server thread/INFO]: [vn.cuuvuc.core.GameDatabase] database_drain_complete
+[02:34:31] [Server thread/INFO]: Saving players
+[02:34:31] [Server thread/INFO]: TyninWorld lost connection: Disconnected
+[02:34:31] [Server thread/INFO]: System chat: TyninWorld left the game
+[02:34:31] [Server thread/INFO]: Saving worlds
+[02:34:31] [Server thread/INFO]: Saving chunks for level 'ServerLevel[world]'/minecraft:overworld
+[02:34:31] [Server thread/INFO]: [ChunkHolderManager] Waiting 60s for chunk system to halt for world 'minecraft:overworld'
+[02:34:31] [Server thread/INFO]: [ChunkHolderManager] Halted chunk system for world 'minecraft:overworld'
+[02:34:31] [Server thread/INFO]: [ChunkHolderManager] Saving all chunkholders for world 'minecraft:overworld'
+[02:34:31] [Server thread/INFO]: [ChunkHolderManager] Saved 968 block chunks, 7 entity chunks, 0 poi chunks in world 'minecraft:overworld' in 0.13s
+[02:34:31] [Server thread/INFO]: [ChunkHolderManager] Waiting 60s for chunk I/O to halt for world 'minecraft:overworld'
+[02:34:31] [Server thread/INFO]: [ChunkHolderManager] Halted I/O scheduler for world 'minecraft:overworld'
+[02:34:31] [Server thread/INFO]: Saving chunks for level 'ServerLevel[world]'/minecraft:the_nether
+[02:34:31] [Server thread/INFO]: [ChunkHolderManager] Waiting 60s for chunk system to halt for world 'minecraft:the_nether'
+[02:34:31] [Server thread/INFO]: [ChunkHolderManager] Halted chunk system for world 'minecraft:the_nether'
+[02:34:31] [Server thread/INFO]: [ChunkHolderManager] Saving all chunkholders for world 'minecraft:the_nether'
+[02:34:31] [Server thread/INFO]: [ChunkHolderManager] Saved 0 block chunks, 0 entity chunks, 0 poi chunks in world 'minecraft:the_nether' in 0.00s
+[02:34:31] [Server thread/INFO]: [ChunkHolderManager] Waiting 60s for chunk I/O to halt for world 'minecraft:the_nether'
+[02:34:31] [Server thread/INFO]: [ChunkHolderManager] Halted I/O scheduler for world 'minecraft:the_nether'
+[02:34:31] [Server thread/INFO]: Saving chunks for level 'ServerLevel[world]'/minecraft:the_end
+[02:34:31] [Server thread/INFO]: [ChunkHolderManager] Waiting 60s for chunk system to halt for world 'minecraft:the_end'
+[02:34:31] [Server thread/INFO]: [ChunkHolderManager] Halted chunk system for world 'minecraft:the_end'
+[02:34:31] [Server thread/INFO]: [ChunkHolderManager] Saving all chunkholders for world 'minecraft:the_end'
+[02:34:31] [Server thread/INFO]: [ChunkHolderManager] Saved 0 block chunks, 0 entity chunks, 0 poi chunks in world 'minecraft:the_end' in 0.00s
+[02:34:31] [Server thread/INFO]: [ChunkHolderManager] Waiting 60s for chunk I/O to halt for world 'minecraft:the_end'
+[02:34:31] [Server thread/INFO]: [ChunkHolderManager] Halted I/O scheduler for world 'minecraft:the_end'
+[02:34:31] [Server thread/INFO]: Waiting for all RegionFile I/O tasks to complete...
+[02:34:31] [Server thread/INFO]: All RegionFile I/O tasks to complete
+[02:34:31] [Server thread/INFO]: [MoonriseCommon] Awaiting termination of worker pool for up to 60s...
+[02:34:31] [Server thread/INFO]: [MoonriseCommon] Awaiting termination of I/O pool for up to 60s...

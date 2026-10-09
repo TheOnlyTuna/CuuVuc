@@ -1,0 +1,22 @@
+{
+  "id": 166,
+  "time": "2026-10-09T00:54:07Z",
+  "channel": "BETA",
+  "commits": [
+    {
+      "sha": "cc7b98af634be07c9b3581306c7b6af33caa3ff2",
+      "time": "2026-10-09T00:53:51Z",
+      "message": "Support Batch Recipe (Un)Registration Methods and Improvements (#13945)\n\nCo-authored-by: Doc <git@mrdoc.dev>"
+    }
+  ],
+  "downloads": {
+    "server:default": {
+      "name": "paper-26.3-166.jar",
+      "checksums": {
+        "sha256": "dbaae37e10e30e44ad1ff65cf00992240c3e79d33e150f9c4e833ed0338e8ccd"
+      },
+      "size": 54212025,
+      "url": "https://fill-data.papermc.io/v1/objects/dbaae37e10e30e44ad1ff65cf00992240c3e79d33e150f9c4e833ed0338e8ccd/paper-26.3-166.jar"
+    }
+  }
+}
