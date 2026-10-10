@@ -1,0 +1,6 @@
+bundle-files=234
+world-files-verified-before-startup=104
+db-tables=20
+db-before-sha256=c2d0d80cf0fda7b44b33022b7ef1fe905a59d597b7874a30c1c1e2ef8f5a7f90
+db-after-sha256=c2d0d80cf0fda7b44b33022b7ef1fe905a59d597b7874a30c1c1e2ef8f5a7f90
+jar-sha256=6f5f91087146b4df86beee27c8b86c07fe05051b21fc4b886053016593f2a2bb

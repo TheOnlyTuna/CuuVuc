@@ -702,6 +702,52 @@ final class GameDatabaseIT {
         catch (IllegalArgumentException expected) { assertTrue(expected.getMessage().contains("Kho đã thay đổi")); return false; }
     }
 
+    @Test void craftSellAndTransferRaceConsumesOneStockWithoutPartialTransactions() throws Exception {
+        UUID sender = UUID.randomUUID(); UUID recipient = UUID.randomUUID(); stockFixture(sender, 5); database.register(recipient, "Recipient");
+        long revision = database.view(sender, "").revision();
+        try (ExecutorService executor = Executors.newFixedThreadPool(3)) {
+            List<Callable<String>> actions = List.of(
+                    () -> competingMaterialAction(() -> database.craft(UUID.randomUUID(), sender, "Cultivator", "ket_tinh", 1), "craft"),
+                    () -> competingMaterialAction(() -> database.sell(UUID.randomUUID(), sender, "Cultivator", "linh_thach_tho", 5), "sell"),
+                    () -> competingMaterialAction(() -> database.transferMaterials(UUID.randomUUID(), sender, recipient, "linh_thach_tho", 5, revision), "transfer"));
+            List<Future<String>> results = executor.invokeAll(actions);
+            int successes = 0;
+            for (Future<String> result : results) if (!result.get(10, TimeUnit.SECONDS).equals("rejected")) successes++;
+            assertEquals(1, successes);
+        }
+        assertEquals(0, scalar("SELECT quantity FROM inventory WHERE player_id=? AND resource_id='linh_thach_tho'", sender));
+        long crafted = scalar("SELECT coalesce(sum(quantity),0) FROM inventory WHERE player_id=? AND resource_id='linh_thach'", sender);
+        long sold = balance(sender) / 2;
+        assertEquals(5, crafted * 5 + sold + stock(recipient));
+        assertEquals(1, number("SELECT count(*) FROM operations"));
+        assertEquals(stock(recipient) == 5 ? 2 : 0, number("SELECT count(*) FROM resource_ledger"));
+        assertEquals(sold == 5 ? 1 : 0, number("SELECT count(*) FROM ledger"));
+        assertEquals(balance(sender), number("SELECT coalesce(sum(minted),0) FROM economy_daily"));
+    }
+
+    private static String competingMaterialAction(PlayerTasks.DatabaseAction action, String result) throws SQLException {
+        try { action.execute(); return result; }
+        catch (IllegalArgumentException expected) {
+            assertTrue(expected.getMessage().contains("Không đủ nguyên liệu") || expected.getMessage().contains("Kho đã thay đổi"));
+            return "rejected";
+        }
+    }
+
+    @Test void materialConstraintRoundTripPreservesFingerprintButWrongBoundFailsClosed() throws SQLException, IOException {
+        String definition;
+        try (Connection connection = DriverManager.getConnection(url, user, password); Statement statement = connection.createStatement()) {
+            connection.setSchema(schema);
+            try (ResultSet result = statement.executeQuery("SELECT pg_get_constraintdef(oid) FROM pg_constraint WHERE conrelid='resource_ledger'::regclass AND conname='resource_ledger_delta_check'")) {
+                assertTrue(result.next()); definition = result.getString(1);
+            }
+            statement.execute("ALTER TABLE resource_ledger DROP CONSTRAINT resource_ledger_delta_check");
+            statement.execute("ALTER TABLE resource_ledger ADD CONSTRAINT resource_ledger_delta_check " + definition);
+        }
+        database.initialize();
+        execute("ALTER TABLE resource_ledger DROP CONSTRAINT resource_ledger_delta_check; ALTER TABLE resource_ledger ADD CONSTRAINT resource_ledger_delta_check CHECK (delta>=-1000 AND delta<=1001 AND delta<>0)");
+        assertEquals("55000", assertThrows(SQLException.class, database::initialize).getSQLState());
+    }
+
     @Test void materialValidationAndChangedStockLeaveNoPartialTransfer() throws SQLException {
         UUID sender = UUID.randomUUID(); UUID recipient = UUID.randomUUID(); stockFixture(sender, 5); database.register(recipient, "Recipient");
         long revision = database.view(sender, "").revision();

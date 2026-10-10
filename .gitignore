@@ -8,6 +8,7 @@
 /run-v07/
 /run-v07-restored/
 /run-v08-smoke/
+/run-v08-restored/
 /backups/
 /release/
 /.env
@@ -15,3 +16,4 @@
 !/validation/*.log
 !/validation/v07/*.log
 !/validation/v08/*.log
+/run-v08-restored-final/

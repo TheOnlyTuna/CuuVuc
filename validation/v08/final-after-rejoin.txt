@@ -1,0 +1,3 @@
+CuuVucNPC1|14|14
+CuuVucNPC2|6|6
+14|0

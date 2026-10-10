@@ -1,0 +1,6 @@
+with_two_stale_copies|20
+0
+after_sync_and_transfer|CuuVucNPC1|12
+after_sync_and_transfer|CuuVucNPC2|8
+12|0
+0

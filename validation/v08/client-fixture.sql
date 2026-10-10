@@ -1,0 +1,1 @@
+BEGIN; INSERT INTO inventory(player_id,resource_id,quantity) VALUES ('f3d83b55-4452-39bc-85f4-29f8cebdcc4f','linh_thach_tho',20); UPDATE profiles SET inventory_revision=inventory_revision+1 WHERE player_id='f3d83b55-4452-39bc-85f4-29f8cebdcc4f'; COMMIT;

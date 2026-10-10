@@ -8,7 +8,12 @@ WITH tables AS (
     FROM tables t JOIN pg_attribute a ON a.attrelid=t.oid AND a.attnum>0 AND NOT a.attisdropped
     LEFT JOIN pg_attrdef d ON d.adrelid=t.oid AND d.adnum=a.attnum
     UNION ALL
-    SELECT 'constraint|' || t.relname || '|' || c.conname || '|' || pg_get_constraintdef(c.oid) || '|' || c.convalidated
+    -- pg_dump đọc lại CHECK làm phẳng AND của BETWEEN; giữ dạng chuẩn cũ cho đúng một biểu thức tương đương.
+    SELECT 'constraint|' || t.relname || '|' || c.conname || '|' ||
+           CASE WHEN t.relname='resource_ledger' AND c.conname='resource_ledger_delta_check'
+                     AND pg_get_constraintdef(c.oid)='CHECK (((delta >= ''-1000''::integer) AND (delta <= 1000) AND (delta <> 0)))'
+                THEN 'CHECK ((((delta >= ''-1000''::integer) AND (delta <= 1000)) AND (delta <> 0)))'
+                ELSE pg_get_constraintdef(c.oid) END || '|' || c.convalidated
     FROM tables t JOIN pg_constraint c ON c.conrelid=t.oid
     UNION ALL
     SELECT 'index|' || t.relname || '|' || pg_get_indexdef(i.indexrelid) || '|' || i.indisvalid || '|' || i.indisready

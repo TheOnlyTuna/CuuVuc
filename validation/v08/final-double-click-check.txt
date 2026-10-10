@@ -1,0 +1,3 @@
+CuuVucNPC1|11
+CuuVucNPC2|9
+10|0
