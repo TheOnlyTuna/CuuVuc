@@ -7,9 +7,11 @@
 /run-v06-restored/
 /run-v07/
 /run-v07-restored/
+/run-v08-smoke/
 /backups/
 /release/
 /.env
 *.log
 !/validation/*.log
 !/validation/v07/*.log
+!/validation/v08/*.log

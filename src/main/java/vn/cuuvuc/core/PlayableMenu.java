@@ -53,6 +53,7 @@ public final class PlayableMenu implements Listener {
         inventory.setItem(14, icon(Material.CRAFTING_TABLE, "Kết tinh linh thạch", List.of("5 linh thạch thô → 1 linh thạch", "Bấm để chế tạo một lần")));
         inventory.setItem(16, icon(Material.CHEST, "Kho & nhận nguyên liệu", List.of("Bấm để làm mới và nhận khi inventory còn chỗ")));
         inventory.setItem(18, icon(Material.WRITABLE_BOOK, "Hợp đồng kiến thiết", List.of("Thuê xây dựng, ký quỹ và nghiệm thu bằng Linh Tệ")));
+        inventory.setItem(19, icon(Material.HOPPER, "Giao nhận nguyên liệu", List.of("/cv transfer <UUID> <resource> <số lượng>", "Mở cửa sổ xác nhận trước khi chuyển", "/cv materials để xem lịch sử")));
         int slot = 20;
         for (Domain.Resource resource : catalog.resources().values().stream().sorted(java.util.Comparator.comparing(Domain.Resource::id)).toList()) {
             inventory.setItem(slot++, icon(Material.valueOf(resource.block()), resource.name(), List.of("Sở hữu: " + view.stock().getOrDefault(resource.id(), 0L), "Chuột trái: bán 1, nhận " + resource.sell(), "Chuột phải: mua 1, trả " + resource.buy())));
@@ -77,6 +78,7 @@ public final class PlayableMenu implements Listener {
         if (slot == 12) { world.enterHomeFromMenu(player); return; }
         if (slot == 16) { request(player); return; }
         if (slot == 18) { contracts.enter(player); return; }
+        if (slot == 19) { player.sendPlainMessage("/cv transfer <UUID-người-nhận> <resource> <1..1000> mở xác nhận; /cv catalog xem resource và UUID; /cv materials xem lịch sử."); return; }
         UUID id = player.getUniqueId(); String name = player.getName(); UUID request = UUID.randomUUID();
         if (slot == 14) {
             tasks.submitView(player, request, () -> database.view(id, database.craft(request, id, name, "ket_tinh", 1)), view -> {

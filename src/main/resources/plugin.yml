@@ -1,8 +1,8 @@
 name: CuuVucCore
-version: '0.7.0'
+version: '0.8.0-SNAPSHOT'
 main: vn.cuuvuc.core.CuuVucPlugin
 api-version: '26.3'
-description: Cửu Vực Tu Tiên — Hợp Đồng Kiến Thiết V0.7
+description: Cửu Vực Tu Tiên — Giao Nhận Nguyên Liệu V0.8
 commands:
   cv:
     description: Hồ sơ, kho, tu luyện và giao dịch

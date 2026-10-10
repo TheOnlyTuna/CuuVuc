@@ -36,6 +36,7 @@ public final class CuuVucPlugin extends JavaPlugin implements Listener {
     private PlayableMenu menu;
     private ContractWorld contracts;
     private ContractMenu contractMenu;
+    private MaterialTransfers transfers;
     private boolean contractAuditSaved;
     private Duration shutdownTimeout;
 
@@ -65,6 +66,8 @@ public final class CuuVucPlugin extends JavaPlugin implements Listener {
         world = new PlayableWorld(this, database, mine, this::isReady, contracts);
         contractMenu = new ContractMenu(this, database, tasks, contracts, world);
         menu = new PlayableMenu(database, tasks, items, catalog, world, contractMenu);
+        transfers = new MaterialTransfers(this, database, tasks, items, catalog);
+        getServer().getPluginManager().registerEvents(transfers, this);
         getServer().getPluginManager().registerEvents(items, this);
         getServer().getPluginManager().registerEvents(world, this);
         getServer().getPluginManager().registerEvents(menu, this);
@@ -113,12 +116,12 @@ public final class CuuVucPlugin extends JavaPlugin implements Listener {
     }
 
     @Override public boolean onCommand(CommandSender sender, Command command, String label, String[] arguments) {
-        if (!(sender instanceof Player player)) { sender.sendMessage("CuuVucCore V0.7.0 | database-ready=" + isReady()); return true; }
+        if (!(sender instanceof Player player)) { sender.sendMessage("CuuVucCore " + getPluginMeta().getVersion() + " | database-ready=" + isReady()); return true; }
         if (!player.hasPermission("cuuvuc.play")) { player.sendPlainMessage("Bạn không có quyền cuuvuc.play."); return true; }
         if (!isReady()) { player.sendPlainMessage("Cơ sở dữ liệu chưa sẵn sàng."); return true; }
         if (arguments.length == 0) { menu.request(player); return true; }
         if (arguments[0].equals("help")) {
-            player.sendPlainMessage("/cv menu | prison | home | visit/invite/revoke <UUID> | start | profile | kho | catalog | craft <recipe> <1..1000> | buy/sell <resource> <1..1000> | pay <UUID> <1..1000> | ledger | receipt <UUID> | economy (OP)");
+            player.sendPlainMessage("/cv menu | prison | home | visit/invite/revoke <UUID> | start | profile | kho | catalog | craft <recipe> <1..1000> | buy/sell <resource> <1..1000> | pay <UUID> <1..1000> | transfer <UUID> <resource> <1..1000> | materials | ledger | receipt <UUID> | economy (OP)");
             return true;
         }
         UUID id = player.getUniqueId();
@@ -148,6 +151,11 @@ public final class CuuVucPlugin extends JavaPlugin implements Listener {
                     player.sendPlainMessage("UUID của bạn: " + id);
                 }
                 case "ledger" -> tasks.submit(player, request, () -> database.history(id));
+                case "materials" -> tasks.submit(player, request, () -> database.materialHistory(id));
+                case "transfer" -> {
+                    if (arguments.length != 4) throw new IllegalArgumentException("Dùng /cv transfer <UUID-người-nhận> <resource> <1..1000>.");
+                    transfers.request(player, UUID.fromString(arguments[1]), arguments[2], Domain.quantity(arguments[3]));
+                }
                 case "receipt" -> {
                     if (arguments.length != 2) throw new IllegalArgumentException("Dùng /cv receipt <request UUID>.");
                     UUID receipt = UUID.fromString(arguments[1]);

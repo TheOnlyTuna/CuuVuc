@@ -178,6 +178,55 @@ public final class GameDatabase implements AutoCloseable {
         });
     }
 
+    /** Chuyển kho DB trước, thu hồi PDC hai phía và ghi hai bút toán cùng receipt trong một commit. */
+    public String transferMaterials(UUID request, UUID player, UUID target, String resource, long count, long revision) throws SQLException {
+        validateCount(count);
+        Domain.resource(catalog, resource);
+        if (revision < 0) throw new IllegalArgumentException("Revision kho phải không âm.");
+        if (player.equals(target)) throw new IllegalArgumentException("Không thể chuyển nguyên liệu cho chính mình.");
+        return operation(request, player, "materials:" + player + ":" + target + ":" + resource + ":" + count + ":" + revision, connection -> {
+            UUID first = player.toString().compareTo(target.toString()) < 0 ? player : target;
+            UUID second = first.equals(player) ? target : player;
+            lockPlayer(connection, first); lockPlayer(connection, second);
+            try (PreparedStatement statement = connection.prepareStatement("SELECT inventory_revision FROM profiles WHERE player_id=?")) {
+                statement.setObject(1, player);
+                try (ResultSet result = statement.executeQuery()) {
+                    result.next();
+                    if (result.getLong(1) != revision) throw new IllegalArgumentException("Kho đã thay đổi. Mở lại giao nhận để xác nhận số lượng mới.");
+                }
+            }
+            changeInventory(connection, player, resource, -count);
+            changeInventory(connection, target, resource, count);
+            revokeTokens(connection, target, resource);
+            materialEntry(connection, request, player, target, resource, -count);
+            materialEntry(connection, request, target, player, resource, count);
+            return "Đã chuyển " + count + " " + resource + " tới " + target + ". Nguyên liệu thuộc kho DB của người nhận.";
+        });
+    }
+
+    private static void materialEntry(Connection connection, UUID request, UUID player, UUID counterparty, String resource, long delta) throws SQLException {
+        try (PreparedStatement statement = connection.prepareStatement("INSERT INTO resource_ledger(request_id,player_id,counterparty_id,resource_id,delta,balance_after) SELECT ?,?,?,?, ?,quantity FROM inventory WHERE player_id=? AND resource_id=?")) {
+            statement.setObject(1, request); statement.setObject(2, player); statement.setObject(3, counterparty);
+            statement.setString(4, resource); statement.setLong(5, delta); statement.setObject(6, player); statement.setString(7, resource);
+            if (statement.executeUpdate() != 1) throw new SQLException("Thiếu kho khi ghi ledger nguyên liệu: player=" + player + ", resource=" + resource, "55000");
+        }
+    }
+
+    public String materialHistory(UUID player) throws SQLException {
+        return query("resource-ledger:" + player, connection -> {
+            StringBuilder history = new StringBuilder("10 giao nhận nguyên liệu gần nhất:");
+            try (PreparedStatement statement = connection.prepareStatement("SELECT request_id,resource_id,delta,balance_after,counterparty_id,created_at FROM resource_ledger WHERE player_id=? ORDER BY entry_id DESC LIMIT 10")) {
+                statement.setObject(1, player);
+                try (ResultSet result = statement.executeQuery()) {
+                    while (result.next()) history.append('\n').append(result.getString(2)).append(' ').append(result.getLong(3))
+                            .append(" → ").append(result.getLong(4)).append(" | đối tác=").append(result.getString(5))
+                            .append(" | ").append(result.getString(6)).append(" | request=").append(result.getString(1));
+                }
+            }
+            return history.toString();
+        });
+    }
+
     public String history(UUID player) throws SQLException {
         return query("ledger:" + player, connection -> {
             StringBuilder history = new StringBuilder("10 giao dịch gần nhất:");
@@ -308,13 +357,15 @@ public final class GameDatabase implements AutoCloseable {
                 if (statement.executeUpdate() != 1) throw new IllegalArgumentException("Không đủ nguyên liệu: " + resource);
             }
         }
-        if (delta < 0) {
-            try (PreparedStatement statement = connection.prepareStatement("DELETE FROM item_tokens WHERE player_id=? AND resource_id=?")) {
-                statement.setObject(1, player); statement.setString(2, resource); statement.executeUpdate();
-            }
-        }
+        if (delta < 0) revokeTokens(connection, player, resource);
         try (PreparedStatement statement = connection.prepareStatement("UPDATE profiles SET inventory_revision=inventory_revision+1 WHERE player_id=?")) {
             statement.setObject(1, player); statement.executeUpdate();
+        }
+    }
+
+    private static void revokeTokens(Connection connection, UUID player, String resource) throws SQLException {
+        try (PreparedStatement statement = connection.prepareStatement("DELETE FROM item_tokens WHERE player_id=? AND resource_id=?")) {
+            statement.setObject(1, player); statement.setString(2, resource); statement.executeUpdate();
         }
     }
 

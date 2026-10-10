@@ -1,8 +1,16 @@
-# Cửu Vực Tu Tiên — V0.7 The Living World
+# Cửu Vực Tu Tiên — V0.8 Khai Sơn Lập Phái (đang phát triển)
 
 > Người chơi đến vì tu tiên, nhưng ở lại vì thế giới mà họ cùng nhau xây dựng.
 
-V0.5.1 là baseline tại [tag v0.5.1](https://github.com/TheOnlyTuna/CuuVuc/tree/v0.5.1), commit `4097ac93729670a0f81d24e3869155725d08dff6`. Người dùng đã chấp nhận V0.6 là Playable Prototype và V0.7 là nền tảng phát triển tiếp ngày 11/10/2026. V0.7 nằm trên `v0.7-living-world`; không tự động merge `main` và chưa chứng nhận production. [Backlog](BACKLOG.md) giữ các giới hạn đã chấp nhận; [kế hoạch V0.8 — Khai Sơn Lập Phái](V0.8-PLAN.md) là thiết kế milestone tiếp theo, chưa phải chức năng đã triển khai.
+V0.5.1 là baseline tại [tag v0.5.1](https://github.com/TheOnlyTuna/CuuVuc/tree/v0.5.1), commit `4097ac93729670a0f81d24e3869155725d08dff6`. Người dùng đã chấp nhận V0.6 là Playable Prototype và V0.7 là nền tảng phát triển tiếp ngày 11/10/2026. V0.7 giữ trên `v0.7-living-world`; V0.8 phát triển ở `v0.8-khai-son-lap-phai`. Không tự động merge `main` và chưa chứng nhận production. [Backlog](BACKLOG.md) giữ các giới hạn đã chấp nhận; [kế hoạch V0.8](V0.8-PLAN.md) mô tả milestone đầy đủ, hiện mới triển khai giao nhận giữa người chơi.
+
+## Giao nhận nguyên liệu — bước đầu V0.8
+
+Dùng `/cv transfer <UUID-người-nhận> <resource> <1..1000>` để mở GUI xác nhận. `/cv catalog` cho biết resource và UUID của mỗi người. Kiểm tra UUID, số lượng rồi bấm **Xác nhận chuyển**; đóng cửa sổ trước khi xác nhận không chuyển tài sản. Người nhận cần hồ sơ, có thể offline. `/cv materials` xem mười giao nhận gần nhất; `/cv receipt <request>` đối soát kết quả khi chưa rõ commit. Không mở giao dịch mới thay thế một giao dịch chưa rõ kết quả; bấm lại cùng cửa sổ dùng cùng request ID.
+
+DB khóa hai hồ sơ theo thứ tự, kiểm tra revision nguồn và số lượng, trừ/cộng kho, thu hồi token resource của cả hai bên, tăng revision và ghi hai bút toán `resource_ledger` cùng receipt trong một transaction. Bút toán bất biến; replay không chuyển lần hai. Giao nhận không thay đổi tiền, XP hoặc quota. Nếu kho nguồn đổi sau khi mở cửa sổ, mở lại để xác nhận mới. GUI chuyển theo số lượng kho DB, không nhận ItemStack hay PDC tùy ý làm tài sản.
+
+Sau commit, Inventory nguồn được đồng bộ; người nhận online được yêu cầu đồng bộ trên entity scheduler. Nếu người nhận đang có thao tác khác hoặc máy chủ đang dừng, số lượng vẫn nằm trong DB: mở `/cv kho` hoặc đăng nhập lại để nhận bản thể hiện. Inventory đầy không hoàn trả hay làm mất nguyên liệu. PDC cũ không cấp thêm giá trị. Chưa mở thả item, chuyển qua rương, kho dự án, tông môn hoặc ngân khố. [Kết quả bước đầu](validation/v08/RESULTS.md) phân biệt kiểm thử DB/server và phần client chưa thử.
 
 ## Hợp đồng kiến thiết — Vertical Slice 001
 
@@ -24,7 +32,7 @@ Chủ chỉ hủy trước khi có Builder nhận. Builder được bỏ việc 
 
 Nguyên liệu kinh tế là vật phẩm thật có PDC `cuuvuccore:token`, `owner`, `resource`, mỗi vật phẩm một đơn vị, không xếp chồng. Chúng gắn với chủ và dùng trong hệ thống chế tạo/giao dịch Cửu Vực, không dùng để đặt khối, craft vanilla, thả hoặc chuyển vào rương. Khối xây dựng vanilla vẫn di chuyển và sử dụng bình thường. GUI chỉ hiển thị thông tin; không thể kéo icon ra làm vật phẩm.
 
-Inventory đầy thì nguyên liệu vẫn thuộc người chơi trong DB. Bấm **Kho & nhận nguyên liệu** khi có chỗ. Đây là bản đầu: nguyên liệu PDC chưa trao trực tiếp giữa người chơi, chưa có chợ, kho rương PDC, GUI mời bạn hoặc custom model/resource pack. Vật phẩm kinh tế không được kéo đổi vị trí trong inventory ở bản này; mục đích là giữ đường giao nhận được kiểm soát.
+Inventory đầy thì nguyên liệu vẫn thuộc người chơi trong DB. Bấm **Kho & nhận nguyên liệu** khi có chỗ. Nguyên liệu chỉ giao nhận bằng luồng xác nhận V0.8 ở trên; chưa có chợ, kho rương PDC, GUI mời bạn hoặc custom model/resource pack. Vật phẩm kinh tế không được kéo đổi vị trí trong inventory ở bản này; mục đích là giữ đường giao nhận được kiểm soát.
 
 ## An toàn dữ liệu
 
@@ -51,7 +59,7 @@ docker compose up -d --wait db
 
 Đọc [Minecraft EULA](https://aka.ms/MinecraftEULA), đặt `run/eula.txt` thành `eula=true` khi đồng ý. Kiểm tra config rồi chạy `./scripts/start-server.ps1 -JavaHome $env:JAVA_HOME`. Chờ `cuuvuc_database_ready`, kết nối **127.0.0.1:25579**. Server mặc định online-mode, chỉ nghe loopback. PostgreSQL native cũng dùng được: tạo DB/user/schema riêng và đổi URL/user/schema trong config. Không đặt DB vào schema chứa dữ liệu khác.
 
-JAR: `target/CuuVucCore-0.7.0.jar`. Linux/macOS dùng `JAVA_HOME=/path/to/jdk25 sh ./mvnw -B -ntp clean package`, cùng config và JAR Paper rồi `java -Xms512M -Xmx1536M -jar paper.jar --nogui`. Script Windows chuyển JAR CuuVucCore cũ sang `run/plugin-backups`, giữ config/EULA; không dùng `/reload`.
+JAR: `target/CuuVucCore-0.8.0-SNAPSHOT.jar`. Linux/macOS dùng `JAVA_HOME=/path/to/jdk25 sh ./mvnw -B -ntp clean package`, cùng config và JAR Paper rồi `java -Xms512M -Xmx1536M -jar paper.jar --nogui`. Script Windows chuyển JAR CuuVucCore cũ sang `run/plugin-backups`, giữ config/EULA; không dùng `/reload`.
 
 ## Nâng cấp từ baseline
 
@@ -64,6 +72,8 @@ Migration V003 thêm revision, token và động phủ; không thay catalog, ví
 V0.7 thêm migration V004: trạng thái hợp đồng, tài khoản/ledger ký quỹ, lịch sử công trình và revision quyền hợp đồng. Giữ nguyên V001–V003 và dữ liệu V0.6. Quay lại V0.6 cần restore backup trước V004 vào đích mới; JAR V0.6 không được dùng trên schema v4. Khi khởi động, worker hoàn tiền hợp đồng hết hạn trước ready và dựng lại quyền từ DB. Quyền thi công có lease 5 giây, kiểm tra thời hạn theo đồng hồ DB; lỗi đồng bộ kéo dài sẽ từ chối quyền hợp đồng. Shutdown mềm lưu hàng đợi audit chưa commit và replay bằng request ID; chưa phải journal chống mất điện/crash.
 
 ## Kiểm thử và CI
+
+V0.8 bổ sung V005 cho ledger giao nhận nguyên liệu, giữ nguyên V001–V004. Trước nâng cấp, dừng writer và backup DB/world như bên dưới. JAR V0.7 không chạy trên schema v5; quay lại V0.7 cần restore backup trước V005 vào đích mới. Runtime/DB V0.7 đã nghiệm thu không được dùng làm DB test.
 
 ```powershell
 docker compose --profile test up -d --wait db-test

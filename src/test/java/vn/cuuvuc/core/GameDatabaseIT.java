@@ -308,7 +308,7 @@ final class GameDatabaseIT {
     @Test void futureSchemaAndCatalogMismatchFailClosed() throws SQLException {
         execute("UPDATE schema_version SET version=99");
         assertEquals("55000", assertThrows(SQLException.class, database::initialize).getSQLState());
-        execute("UPDATE schema_version SET version=4");
+        execute("UPDATE schema_version SET version=5");
         execute("UPDATE economy_policy SET catalog_sha256='different-catalog'");
         assertEquals("55000", assertThrows(SQLException.class, database::initialize).getSQLState());
     }
@@ -333,8 +333,8 @@ final class GameDatabaseIT {
         execute("INSERT INTO ledger(request_id,player_id,delta,balance_after,reason) VALUES ('" + request + "','" + player + "',600,600,'NPC_SELL:linh_thach_tho')");
         database.initialize(); database.initialize();
         assertEquals(600, balance(player)); assertEquals(3, stock(player));
-        assertEquals(4, number("SELECT version FROM schema_version"));
-        assertEquals(4, number("SELECT count(*) FROM migration_history"));
+        assertEquals(5, number("SELECT version FROM schema_version"));
+        assertEquals(5, number("SELECT count(*) FROM migration_history"));
         assertEquals(600, number("SELECT sum(minted) FROM player_mint_daily"));
         assertTrue(database.receipt(player, request).contains("legacy_success"));
         assertThrows(IllegalArgumentException.class, () -> database.sell(UUID.randomUUID(), player, "Legacy", "linh_thach_tho", 1));
@@ -419,7 +419,7 @@ final class GameDatabaseIT {
         execute("INSERT INTO profiles(player_id,player_name,balance,cultivation_xp) VALUES ('" + player + "','Legacy',18,50)");
         execute("INSERT INTO inventory VALUES ('" + player + "','linh_thach',1)");
         database.initialize();
-        assertEquals(4, number("SELECT version FROM schema_version"));
+        assertEquals(5, number("SELECT version FROM schema_version"));
         Domain.PlayerView view = database.view(player, "upgraded");
         assertEquals(18, view.balance()); assertEquals(50, view.xp()); assertEquals(1, view.items().size());
         assertEquals(0, number("SELECT count(*) FROM operations"));
@@ -581,7 +581,7 @@ final class GameDatabaseIT {
         database.islandReady(owner); Domain.Claims claims = database.inviteBuilder(owner, builder);
         mine(owner, 1); Domain.PlayerView before = database.view(owner, "before");
         database.initialize(); database.initialize();
-        assertEquals(4, number("SELECT version FROM schema_version")); assertEquals(4, number("SELECT count(*) FROM migration_history"));
+        assertEquals(5, number("SELECT version FROM schema_version")); assertEquals(5, number("SELECT count(*) FROM migration_history"));
         assertEquals(claims, database.islands()); assertEquals(before.items(), database.view(owner, "after").items());
         assertEquals(8, balance(owner)); assertEquals(0, number("SELECT count(*) FROM building_contracts"));
     }
@@ -641,6 +641,118 @@ final class GameDatabaseIT {
         assertEquals(2, balance(player)); assertEquals(0, stock(player));
         assertEquals(1, number("SELECT count(*) FROM ledger")); assertEquals(2, number("SELECT last_value FROM fault_attempt"));
         assertEquals(2, number("SELECT sum(minted) FROM economy_daily"));
+    }
+
+    @Test void materialTransferRevokesBothProjectionsAndPreservesEconomy() throws SQLException {
+        UUID sender = UUID.randomUUID(); UUID recipient = UUID.randomUUID();
+        stockFixture(sender, 5); stockFixture(recipient, 2);
+        Domain.PlayerView before = database.view(sender, ""); Domain.PlayerView targetBefore = database.view(recipient, "");
+        UUID request = UUID.randomUUID();
+        String receipt = database.transferMaterials(request, sender, recipient, "linh_thach_tho", 3, before.revision());
+        assertEquals(receipt, database.transferMaterials(request, sender, recipient, "linh_thach_tho", 3, before.revision()));
+        assertEquals(2, stock(sender)); assertEquals(5, stock(recipient));
+        for (Domain.ItemToken token : before.items()) assertEquals(0, scalar("SELECT count(*) FROM item_tokens WHERE token_id=?", token.id()));
+        for (Domain.ItemToken token : targetBefore.items()) assertEquals(0, scalar("SELECT count(*) FROM item_tokens WHERE token_id=?", token.id()));
+        Domain.PlayerView after = database.view(sender, ""); Domain.PlayerView targetAfter = database.view(recipient, "");
+        assertEquals(before.revision() + 1, after.revision()); assertEquals(targetBefore.revision() + 1, targetAfter.revision());
+        assertEquals(2, after.items().size()); assertEquals(5, targetAfter.items().size());
+        assertEquals(2, number("SELECT count(*) FROM resource_ledger")); assertEquals(0, number("SELECT sum(delta) FROM resource_ledger"));
+        assertEquals(7, number("SELECT sum(balance_after) FROM resource_ledger"));
+        assertEquals(0, number("SELECT count(*) FROM ledger")); assertEquals(0, number("SELECT count(*) FROM economy_daily"));
+        assertTrue(database.materialHistory(recipient).contains(request.toString()));
+        assertThrows(SQLException.class, () -> execute("UPDATE resource_ledger SET delta=1"));
+        assertThrows(SQLException.class, () -> execute("DELETE FROM resource_ledger"));
+        assertThrows(SQLException.class, () -> execute("TRUNCATE resource_ledger"));
+    }
+
+    @Test void materialReplayConcurrentAndReopenCreditsOnce() throws Exception {
+        UUID sender = UUID.randomUUID(); UUID recipient = UUID.randomUUID(); stockFixture(sender, 8); database.register(recipient, "Recipient");
+        long revision = database.view(sender, "").revision(); UUID request = UUID.randomUUID();
+        try (ExecutorService executor = Executors.newFixedThreadPool(8)) {
+            List<Callable<String>> actions = IntStream.range(0, 8).mapToObj(index -> (Callable<String>) () -> database.transferMaterials(request, sender, recipient, "linh_thach_tho", 4, revision)).toList();
+            List<Future<String>> results = executor.invokeAll(actions);
+            for (Future<String> result : results) assertTrue(result.get(10, TimeUnit.SECONDS).contains(request.toString()));
+        }
+        assertEquals(4, stock(sender)); assertEquals(4, stock(recipient)); assertEquals(2, number("SELECT count(*) FROM resource_ledger"));
+        assertThrows(IllegalArgumentException.class, () -> database.transferMaterials(request, sender, recipient, "linh_thach_tho", 3, revision));
+        assertThrows(IllegalArgumentException.class, () -> database.transferMaterials(request, recipient, sender, "linh_thach_tho", 4, revision));
+        database.close(); database = new GameDatabase(url, user, password, schema, catalog, new Domain.EconomyPolicy(10000, 500)); database.initialize();
+        assertTrue(database.transferMaterials(request, sender, recipient, "linh_thach_tho", 4, revision).contains(request.toString()));
+        assertEquals(4, stock(recipient)); assertEquals(2, number("SELECT count(*) FROM resource_ledger"));
+    }
+
+    @Test void distinctMaterialTransfersCannotSpendSameSnapshotTwice() throws Exception {
+        UUID sender = UUID.randomUUID(); UUID first = UUID.randomUUID(); UUID second = UUID.randomUUID();
+        stockFixture(sender, 5); database.register(first, "First"); database.register(second, "Second");
+        long revision = database.view(sender, "").revision();
+        try (ExecutorService executor = Executors.newFixedThreadPool(2)) {
+            List<Callable<Boolean>> actions = List.of(
+                    () -> materialAttempt(sender, first, revision), () -> materialAttempt(sender, second, revision));
+            List<Future<Boolean>> results = executor.invokeAll(actions);
+            int successes = 0;
+            for (Future<Boolean> result : results) if (result.get(10, TimeUnit.SECONDS)) successes++;
+            assertEquals(1, successes);
+        }
+        assertEquals(2, stock(sender)); assertEquals(3, stock(first) + stock(second));
+        assertEquals(2, number("SELECT count(*) FROM resource_ledger"));
+    }
+
+    private boolean materialAttempt(UUID sender, UUID recipient, long revision) throws SQLException {
+        try { database.transferMaterials(UUID.randomUUID(), sender, recipient, "linh_thach_tho", 3, revision); return true; }
+        catch (IllegalArgumentException expected) { assertTrue(expected.getMessage().contains("Kho đã thay đổi")); return false; }
+    }
+
+    @Test void materialValidationAndChangedStockLeaveNoPartialTransfer() throws SQLException {
+        UUID sender = UUID.randomUUID(); UUID recipient = UUID.randomUUID(); stockFixture(sender, 5); database.register(recipient, "Recipient");
+        long revision = database.view(sender, "").revision();
+        assertThrows(IllegalArgumentException.class, () -> database.transferMaterials(UUID.randomUUID(), sender, sender, "linh_thach_tho", 1, revision));
+        assertThrows(IllegalArgumentException.class, () -> database.transferMaterials(UUID.randomUUID(), sender, UUID.randomUUID(), "linh_thach_tho", 1, revision));
+        assertThrows(IllegalArgumentException.class, () -> database.transferMaterials(UUID.randomUUID(), sender, recipient, "unknown", 1, revision));
+        assertThrows(IllegalArgumentException.class, () -> database.transferMaterials(UUID.randomUUID(), sender, recipient, "linh_thach_tho", 0, revision));
+        assertThrows(IllegalArgumentException.class, () -> database.transferMaterials(UUID.randomUUID(), sender, recipient, "linh_thach_tho", 6, revision));
+        database.craft(UUID.randomUUID(), sender, "Cultivator", "ket_tinh", 1);
+        UUID stale = UUID.randomUUID();
+        assertThrows(IllegalArgumentException.class, () -> database.transferMaterials(stale, sender, recipient, "linh_thach_tho", 1, revision));
+        assertEquals(0, scalar("SELECT count(*) FROM operations WHERE request_id=?", stale));
+        assertEquals(0, stock(recipient)); assertEquals(0, number("SELECT count(*) FROM resource_ledger"));
+    }
+
+    @Test void materialLedgerFailureRollsBackCreditDebitTokensAndReceipt() throws SQLException {
+        UUID sender = UUID.randomUUID(); UUID recipient = UUID.randomUUID(); stockFixture(sender, 5); stockFixture(recipient, 2);
+        Domain.PlayerView before = database.view(sender, ""); Domain.PlayerView targetBefore = database.view(recipient, "");
+        execute("CREATE FUNCTION fail_material_credit() RETURNS trigger LANGUAGE plpgsql AS $$ BEGIN IF NEW.delta>0 THEN RAISE EXCEPTION 'forced material ledger failure' USING ERRCODE='23514'; END IF; RETURN NEW; END $$; CREATE TRIGGER fail_material_credit BEFORE INSERT ON resource_ledger FOR EACH ROW EXECUTE FUNCTION fail_material_credit()");
+        UUID request = UUID.randomUUID();
+        assertEquals("23514", assertThrows(SQLException.class, () -> database.transferMaterials(request, sender, recipient, "linh_thach_tho", 3, before.revision())).getSQLState());
+        assertEquals(5, stock(sender)); assertEquals(2, stock(recipient));
+        assertEquals(before, database.view(sender, "")); assertEquals(targetBefore, database.view(recipient, ""));
+        assertEquals(0, number("SELECT count(*) FROM resource_ledger")); assertEquals(0, scalar("SELECT count(*) FROM operations WHERE request_id=?", request));
+    }
+
+    @Test void materialTransferIntoLargeOfflineStockKeepsProjectionBounded() throws SQLException {
+        UUID sender = UUID.randomUUID(); UUID recipient = UUID.randomUUID(); stockFixture(sender, 5); stockFixture(recipient, 100);
+        long revision = database.view(sender, "").revision();
+        database.transferMaterials(UUID.randomUUID(), sender, recipient, "linh_thach_tho", 5, revision);
+        assertEquals(105, stock(recipient)); assertEquals(0, stock(sender));
+        assertEquals(0, scalar("SELECT count(*) FROM item_tokens WHERE player_id=?", recipient));
+        Domain.PlayerView recipientView = database.view(recipient, "");
+        assertEquals(105L, recipientView.stock().get("linh_thach_tho")); assertEquals(36, recipientView.items().size());
+        assertEquals(105, stock(recipient));
+    }
+
+    @Test void v07MigrationPreservesExistingStockTokensAndReceipts() throws SQLException, IOException {
+        database.close();
+        try (Connection connection = DriverManager.getConnection(url, user, password); Statement statement = connection.createStatement()) {
+            statement.execute("DROP SCHEMA " + schema + " CASCADE"); statement.execute("CREATE SCHEMA " + schema);
+            connection.setSchema(schema); connection.setAutoCommit(false);
+            Migrations.apply(connection, Migrations.load().subList(0, 4), Migrations.resource("/db/schema-fingerprint.sql")); connection.commit();
+        }
+        UUID sender = UUID.randomUUID(); UUID token = UUID.randomUUID(); UUID request = UUID.randomUUID();
+        execute("INSERT INTO profiles(player_id,player_name,balance) VALUES ('" + sender + "','Legacy',10); INSERT INTO inventory VALUES ('" + sender + "','linh_thach_tho',5); INSERT INTO item_tokens(token_id,player_id,resource_id,ordinal) VALUES ('" + token + "','" + sender + "','linh_thach_tho',1); INSERT INTO operations(request_id,fingerprint,result,actor_id) VALUES ('" + request + "','legacy','preserved','" + sender + "')");
+        database = new GameDatabase(url, user, password, schema, catalog, new Domain.EconomyPolicy(10000, 500)); database.initialize();
+        assertEquals(5, number("SELECT version FROM schema_version")); assertEquals(5, stock(sender)); assertEquals(10, balance(sender));
+        assertEquals(1, scalar("SELECT count(*) FROM item_tokens WHERE token_id=?", token)); assertTrue(database.receipt(sender, request).contains("preserved"));
+        assertEquals(0, number("SELECT count(*) FROM resource_ledger"));
+        database.initialize();
     }
 
     @Test void retriesExhaustWithoutPartialInventoryOrMint() throws SQLException {
