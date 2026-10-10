@@ -2,7 +2,7 @@
 
 > Người chơi đến vì tu tiên, nhưng ở lại vì thế giới mà họ cùng nhau xây dựng.
 
-V0.5.1 là baseline tại [tag v0.5.1](https://github.com/TheOnlyTuna/CuuVuc/tree/v0.5.1), commit `4097ac93729670a0f81d24e3869155725d08dff6`. Người dùng đã chấp nhận V0.6 là Playable Prototype. V0.7 phát triển trên `v0.7-living-world`; không merge `main` và chưa chứng nhận production.
+V0.5.1 là baseline tại [tag v0.5.1](https://github.com/TheOnlyTuna/CuuVuc/tree/v0.5.1), commit `4097ac93729670a0f81d24e3869155725d08dff6`. Người dùng đã chấp nhận V0.6 là Playable Prototype và V0.7 là nền tảng phát triển tiếp ngày 11/10/2026. V0.7 nằm trên `v0.7-living-world`; không tự động merge `main` và chưa chứng nhận production. [Backlog](BACKLOG.md) giữ các giới hạn đã chấp nhận; [kế hoạch V0.8 — Khai Sơn Lập Phái](V0.8-PLAN.md) là thiết kế milestone tiếp theo, chưa phải chức năng đã triển khai.
 
 ## Hợp đồng kiến thiết — Vertical Slice 001
 
