@@ -2,7 +2,7 @@
 
 Ngày **11/10/2026**, Asia/Bangkok. Nhánh `v0.8-khai-son-lap-phai`.
 
-**Trạng thái:** người dùng đã chấp nhận mã nguồn, migration, integration cục bộ và Paper smoke tại checkpoint `8b52816` (51/51). Phiên này bổ sung bằng chứng client và phục hồi để đánh giá Phase 1; chưa có quyết định nghiệm thu gameplay của người dùng, chưa chốt toàn bộ V0.8 hoặc production. Phase 2–5 chưa triển khai. Không merge `main`, không bật GitHub CI.
+**Trạng thái: Phase 1 ACCEPTED — Gameplay Prototype**, theo quyết định người dùng tại `12fdc25`: 53/53 local tests, 20/20 bảng DB khớp. Giới hạn crash, cạnh tranh backend và tải/PDC chưa thử hết vẫn được giữ; không chứng nhận production hoặc toàn bộ V0.8. Phase 2 được triển khai và báo cáo riêng tại [Tông Môn](phase2/RESULTS.md). Không merge `main`, không bật GitHub CI.
 
 ## Binary và môi trường
 
@@ -40,4 +40,4 @@ Server cuối báo `cuuvuc_database_ready`, shutdown exit 0, drain và world I/O
 
 Phạm vi còn mở: recipient đang bận, mọi biến thể PDC giả/Creative, tải nhiều người, hard-kill online giữa commit và projection, backup nóng. Không tuyên bố transaction nguyên tử xuyên DB/world/Inventory. Ca race kiểm chứng backend, không chứng nhận thao tác craft/sell đồng thời qua client. Giới hạn block audit, world.save và template công trình giữ tại [BACKLOG](../../BACKLOG.md). Các ca này không dùng để tuyên bố toàn bộ V0.8 đã đạt.
 
-Bước tiếp theo sau người dùng đánh giá Phase 1: Phase 2 tông môn; Phase 3 ngân khố SECT/Linh Tệ trên Economy hiện tại; Phase 4 kho dự án và dự trữ hạng mục; Phase 5 nghiệm thu ba người. Chưa triển khai các bước đó trong báo cáo này.
+Thứ tự phát triển đã được người dùng chấp thuận sau nghiệm thu Phase 1: Phase 2 tông môn; Phase 3 ngân khố SECT/Linh Tệ trên Economy hiện tại; Phase 4 kho dự án và dự trữ hạng mục; Phase 5 nghiệm thu ba người. Báo cáo này giữ bằng chứng Phase 1; trạng thái Phase 2 nằm trong báo cáo riêng.

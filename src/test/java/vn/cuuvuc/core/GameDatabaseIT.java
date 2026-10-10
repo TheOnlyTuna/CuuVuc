@@ -81,6 +81,159 @@ final class GameDatabaseIT {
         mine(player, times); database.sell(UUID.randomUUID(), player, "Cultivator", "linh_thach_tho", times);
     }
 
+    @Test void sectLifecyclePersistsRolesHistoryAndLeavesEconomyUntouched() throws SQLException, IOException {
+        UUID leader = UUID.randomUUID(); UUID member = UUID.randomUUID(); UUID next = UUID.randomUUID(); UUID sect = UUID.randomUUID();
+        database.register(leader, "Leader"); database.register(member, "Member"); database.register(next, "Next");
+        String created = database.createSect(sect, leader, "Thanh Vân");
+        assertEquals(created, database.createSect(sect, leader, "Thanh Vân"));
+        UUID invitation = UUID.randomUUID(); database.inviteSect(invitation, leader, sect, member);
+        database.acceptSect(UUID.randomUUID(), member, invitation);
+        database.changeSectRole(UUID.randomUUID(), leader, sect, member, Sects.Role.ELDER);
+        UUID second = UUID.randomUUID(); database.inviteSect(second, member, sect, next);
+        database.cancelSectInvitation(UUID.randomUUID(), member, second);
+        database.changeSectRole(UUID.randomUUID(), leader, sect, member, Sects.Role.MEMBER);
+        assertThrows(IllegalArgumentException.class, () -> database.inviteSect(UUID.randomUUID(), member, sect, next));
+        assertThrows(IllegalArgumentException.class, () -> database.changeSectRole(UUID.randomUUID(), member, sect, member, Sects.Role.ELDER));
+        assertThrows(IllegalArgumentException.class, () -> database.leaveSect(UUID.randomUUID(), leader, sect));
+        assertThrows(IllegalArgumentException.class, () -> database.kickSectMember(UUID.randomUUID(), leader, sect, leader));
+        assertThrows(IllegalArgumentException.class, () -> database.changeSectRole(UUID.randomUUID(), leader, sect, member, Sects.Role.LEADER));
+        database.leaveSect(UUID.randomUUID(), member, sect);
+        UUID rejoin = UUID.randomUUID(); database.inviteSect(rejoin, leader, sect, member); database.acceptSect(UUID.randomUUID(), member, rejoin);
+        database.kickSectMember(UUID.randomUUID(), leader, sect, member);
+        assertEquals(1, number("SELECT count(*) FROM sect_members"));
+        assertEquals(11, number("SELECT count(*) FROM sect_history"));
+        assertEquals(11, number("SELECT count(*) FROM operations"));
+        assertEquals(11, number("SELECT revision FROM sects"));
+        assertEquals(0, number("SELECT count(*) FROM ledger")); assertEquals(0, number("SELECT count(*) FROM resource_ledger"));
+        assertEquals(0, number("SELECT count(*) FROM economy_daily"));
+        assertThrows(SQLException.class, () -> execute("UPDATE sect_history SET detail='tampered'"));
+        assertThrows(SQLException.class, () -> execute("DELETE FROM sect_history"));
+        assertThrows(SQLException.class, () -> execute("TRUNCATE sect_history"));
+        try (GameDatabase reopened = new GameDatabase(url, user, password, schema, catalog, new Domain.EconomyPolicy(10000, 500))) {
+            reopened.initialize(); assertEquals(sect, reopened.sectView(leader).organization().orElseThrow().id());
+            assertEquals(10, reopened.sectView(leader).history().size()); assertTrue(reopened.sectView(member).organization().isEmpty());
+        }
+    }
+
+    @Test void concurrentAcceptsForDifferentSectsGiveExactlyOneMembership() throws Exception {
+        UUID first = UUID.randomUUID(); UUID second = UUID.randomUUID(); UUID target = UUID.randomUUID();
+        database.register(first, "First"); database.register(second, "Second"); database.register(target, "Target");
+        UUID sectA = UUID.randomUUID(); UUID sectB = UUID.randomUUID(); database.createSect(sectA, first, "Sect Alpha"); database.createSect(sectB, second, "Sect Beta");
+        UUID inviteA = UUID.randomUUID(); UUID inviteB = UUID.randomUUID(); database.inviteSect(inviteA, first, sectA, target); database.inviteSect(inviteB, second, sectB, target);
+        try (ExecutorService executor = Executors.newFixedThreadPool(2)) {
+            List<Future<Boolean>> results = executor.invokeAll(List.of(
+                    () -> competingSectJoin(() -> database.acceptSect(UUID.randomUUID(), target, inviteA)),
+                    () -> competingSectJoin(() -> database.acceptSect(UUID.randomUUID(), target, inviteB))));
+            int successes = 0; for (Future<Boolean> result : results) if (result.get(10, TimeUnit.SECONDS)) successes++;
+            assertEquals(1, successes);
+        }
+        assertEquals(1, scalar("SELECT count(*) FROM sect_members WHERE player_id=?", target));
+        assertEquals(1, number("SELECT count(*) FROM sect_invitations WHERE status='ACCEPTED'"));
+        assertEquals(5, number("SELECT count(*) FROM operations")); assertEquals(5, number("SELECT count(*) FROM sect_history"));
+        assertThrows(SQLException.class, () -> execute("INSERT INTO sect_members(player_id,sect_id,role) VALUES ('" + target + "','" + sectA + "','MEMBER')"));
+    }
+
+    @Test void creatingSectAndAcceptingInvitationRaceCannotCreateTwoMemberships() throws Exception {
+        UUID leader = UUID.randomUUID(); UUID target = UUID.randomUUID(); database.register(leader, "Leader"); database.register(target, "Target");
+        UUID sect = UUID.randomUUID(); database.createSect(sect, leader, "Existing Sect");
+        UUID invitation = UUID.randomUUID(); database.inviteSect(invitation, leader, sect, target);
+        try (ExecutorService executor = Executors.newFixedThreadPool(2)) {
+            List<Future<Boolean>> results = executor.invokeAll(List.of(
+                    () -> competingSectJoin(() -> database.acceptSect(UUID.randomUUID(), target, invitation)),
+                    () -> competingSectJoin(() -> database.createSect(UUID.randomUUID(), target, "New Sect"))));
+            int successes = 0; for (Future<Boolean> result : results) if (result.get(10, TimeUnit.SECONDS)) successes++;
+            assertEquals(1, successes);
+        }
+        assertEquals(1, scalar("SELECT count(*) FROM sect_members WHERE player_id=?", target));
+        assertEquals(3, number("SELECT count(*) FROM operations")); assertEquals(3, number("SELECT count(*) FROM sect_history"));
+    }
+
+    private static boolean competingSectJoin(PlayerTasks.DatabaseAction action) throws SQLException {
+        try { action.execute(); return true; }
+        catch (IllegalArgumentException expected) { assertTrue(expected.getMessage().contains("đã thuộc một tông môn")); return false; }
+    }
+
+    @Test void revokedAuthorityRejectsCapturedIntentAfterWaitingForSectLock() throws Exception {
+        UUID leader = UUID.randomUUID(); UUID elder = UUID.randomUUID(); UUID target = UUID.randomUUID();
+        database.register(leader, "Leader"); database.register(elder, "Elder"); database.register(target, "Target");
+        UUID sect = UUID.randomUUID(); database.createSect(sect, leader, "Authority Sect");
+        UUID invitation = UUID.randomUUID(); database.inviteSect(invitation, leader, sect, elder); database.acceptSect(UUID.randomUUID(), elder, invitation);
+        database.changeSectRole(UUID.randomUUID(), leader, sect, elder, Sects.Role.ELDER);
+        Sects.View oldSnapshot = database.sectView(elder); assertEquals(Sects.Role.ELDER, oldSnapshot.organization().orElseThrow().role());
+        UUID capturedRequest = UUID.randomUUID();
+        try (Connection blocker = DriverManager.getConnection(url, user, password); ExecutorService executor = Executors.newSingleThreadExecutor()) {
+            blocker.setSchema(schema); blocker.setAutoCommit(false);
+            try (Statement statement = blocker.createStatement()) {
+                statement.execute("SELECT sect_id FROM sects FOR UPDATE");
+                statement.execute("UPDATE sect_members SET role='MEMBER' WHERE player_id='" + elder + "'");
+            }
+            Future<String> result = executor.submit(() -> database.inviteSect(capturedRequest, elder, oldSnapshot.organization().orElseThrow().id(), target));
+            awaitBlockedQuery();
+            blocker.commit();
+            java.util.concurrent.ExecutionException failure = assertThrows(java.util.concurrent.ExecutionException.class, () -> result.get(10, TimeUnit.SECONDS));
+            assertTrue(failure.getCause() instanceof IllegalArgumentException); assertTrue(failure.getCause().getMessage().contains("quyền quản sự"));
+        }
+        assertEquals(0, scalar("SELECT count(*) FROM operations WHERE request_id=?", capturedRequest));
+        assertEquals(1, number("SELECT count(*) FROM sect_invitations")); assertEquals(4, number("SELECT count(*) FROM sect_history"));
+        database.kickSectMember(UUID.randomUUID(), leader, sect, elder);
+        assertThrows(IllegalArgumentException.class, () -> database.cancelSectInvitation(UUID.randomUUID(), elder, invitation));
+    }
+
+    @Test void sectInvitationExpiryRecipientCancellationAndReplayAreEnforced() throws SQLException {
+        UUID leader = UUID.randomUUID(); UUID target = UUID.randomUUID(); UUID stranger = UUID.randomUUID();
+        database.register(leader, "Leader"); database.register(target, "Target"); database.register(stranger, "Stranger");
+        UUID sect = UUID.randomUUID(); database.createSect(sect, leader, "Invite Sect"); UUID invitation = UUID.randomUUID();
+        String invited = database.inviteSect(invitation, leader, sect, target); assertEquals(invited, database.inviteSect(invitation, leader, sect, target));
+        assertThrows(IllegalArgumentException.class, () -> database.inviteSect(invitation, leader, sect, stranger));
+        assertThrows(IllegalArgumentException.class, () -> database.acceptSect(UUID.randomUUID(), stranger, invitation));
+        assertThrows(IllegalArgumentException.class, () -> database.inviteSect(UUID.randomUUID(), leader, sect, target));
+        execute("UPDATE sect_invitations SET expires_at=clock_timestamp()-interval '1 second'");
+        assertTrue(database.sectView(target).incoming().isEmpty()); assertThrows(IllegalArgumentException.class, () -> database.acceptSect(UUID.randomUUID(), target, invitation));
+        UUID fresh = UUID.randomUUID(); database.inviteSect(fresh, leader, sect, target); database.cancelSectInvitation(UUID.randomUUID(), leader, fresh);
+        assertThrows(IllegalArgumentException.class, () -> database.acceptSect(UUID.randomUUID(), target, fresh));
+        UUID valid = UUID.randomUUID(); database.inviteSect(valid, leader, sect, target); UUID accept = UUID.randomUUID();
+        String joined = database.acceptSect(accept, target, valid); assertEquals(joined, database.acceptSect(accept, target, valid));
+        assertThrows(IllegalArgumentException.class, () -> database.acceptSect(UUID.randomUUID(), target, valid));
+        assertEquals(6, number("SELECT count(*) FROM operations")); assertEquals(6, number("SELECT count(*) FROM sect_history"));
+    }
+
+    @Test void sectHistoryFailureRollsBackInvitationReceiptAndRevision() throws SQLException {
+        UUID leader = UUID.randomUUID(); UUID target = UUID.randomUUID(); database.register(leader, "Leader"); database.register(target, "Target");
+        UUID sect = UUID.randomUUID(); database.createSect(sect, leader, "Rollback Sect");
+        execute("CREATE FUNCTION fail_sect_event() RETURNS trigger LANGUAGE plpgsql AS $$ BEGIN RAISE EXCEPTION 'fixture event failure'; END $$; CREATE TRIGGER fail_sect_event BEFORE INSERT ON sect_history FOR EACH ROW EXECUTE FUNCTION fail_sect_event()");
+        UUID request = UUID.randomUUID(); assertThrows(SQLException.class, () -> database.inviteSect(request, leader, sect, target));
+        assertEquals(0, number("SELECT count(*) FROM sect_invitations")); assertEquals(1, number("SELECT revision FROM sects"));
+        assertEquals(0, scalar("SELECT count(*) FROM operations WHERE request_id=?", request)); assertEquals(1, number("SELECT count(*) FROM sect_history"));
+    }
+
+    @Test void v08PhaseOneMigrationPreservesMaterialsTokensReceiptsAndWallet() throws SQLException, IOException {
+        legacySchema();
+        try (Connection connection = DriverManager.getConnection(url, user, password)) {
+            connection.setSchema(schema); connection.setAutoCommit(false);
+            Migrations.apply(connection, Migrations.load().subList(0, 5), Migrations.resource("/db/schema-fingerprint.sql")); connection.commit();
+        }
+        execute("INSERT INTO economy_policy VALUES (true,'linh_te',10000,500,'" + CatalogFile.signature(catalog) + "')");
+        UUID sender = UUID.randomUUID(); UUID recipient = UUID.randomUUID(); fund(sender, 4); database.register(recipient, "Recipient");
+        mine(sender, 2); long revision = database.view(sender, "before").revision(); UUID transfer = UUID.randomUUID();
+        String receipt = database.transferMaterials(transfer, sender, recipient, "linh_thach_tho", 2, revision);
+        Domain.PlayerView before = database.view(recipient, "before");
+        database.initialize(); database.initialize();
+        assertEquals(6, number("SELECT version FROM schema_version")); assertEquals(6, number("SELECT count(*) FROM migration_history"));
+        assertEquals(before.items(), database.view(recipient, "after").items()); assertEquals(8, balance(sender));
+        assertEquals(receipt, database.transferMaterials(transfer, sender, recipient, "linh_thach_tho", 2, revision));
+        assertEquals(2, number("SELECT count(*) FROM resource_ledger")); assertEquals(0, number("SELECT count(*) FROM sects"));
+    }
+
+    @Test void sectNamesAndLeaderConstraintFailClosed() throws SQLException {
+        UUID leader = UUID.randomUUID(); UUID second = UUID.randomUUID(); database.register(leader, "Leader"); database.register(second, "Second");
+        UUID sect = UUID.randomUUID(); database.createSect(sect, leader, "  Thanh   Vân  ");
+        assertThrows(IllegalArgumentException.class, () -> database.createSect(UUID.randomUUID(), second, "thanh vân"));
+        assertThrows(IllegalArgumentException.class, () -> database.createSect(UUID.randomUUID(), second, "x"));
+        assertThrows(SQLException.class, () -> execute("UPDATE sect_members SET role='MEMBER' WHERE player_id='" + leader + "'"));
+        assertEquals(Sects.Role.LEADER, database.sectView(leader).organization().orElseThrow().role());
+        assertEquals(1, number("SELECT count(*) FROM sects")); assertEquals(1, number("SELECT count(*) FROM operations"));
+    }
+
     @Test void fullGameplayLoopAndLedgerReconcile() throws SQLException {
         UUID player = UUID.randomUUID(); UUID target = UUID.randomUUID();
         database.register(target, "Friend");
@@ -333,8 +486,8 @@ final class GameDatabaseIT {
         execute("INSERT INTO ledger(request_id,player_id,delta,balance_after,reason) VALUES ('" + request + "','" + player + "',600,600,'NPC_SELL:linh_thach_tho')");
         database.initialize(); database.initialize();
         assertEquals(600, balance(player)); assertEquals(3, stock(player));
-        assertEquals(5, number("SELECT version FROM schema_version"));
-        assertEquals(5, number("SELECT count(*) FROM migration_history"));
+        assertEquals(6, number("SELECT version FROM schema_version"));
+        assertEquals(6, number("SELECT count(*) FROM migration_history"));
         assertEquals(600, number("SELECT sum(minted) FROM player_mint_daily"));
         assertTrue(database.receipt(player, request).contains("legacy_success"));
         assertThrows(IllegalArgumentException.class, () -> database.sell(UUID.randomUUID(), player, "Legacy", "linh_thach_tho", 1));
@@ -419,7 +572,7 @@ final class GameDatabaseIT {
         execute("INSERT INTO profiles(player_id,player_name,balance,cultivation_xp) VALUES ('" + player + "','Legacy',18,50)");
         execute("INSERT INTO inventory VALUES ('" + player + "','linh_thach',1)");
         database.initialize();
-        assertEquals(5, number("SELECT version FROM schema_version"));
+        assertEquals(6, number("SELECT version FROM schema_version"));
         Domain.PlayerView view = database.view(player, "upgraded");
         assertEquals(18, view.balance()); assertEquals(50, view.xp()); assertEquals(1, view.items().size());
         assertEquals(0, number("SELECT count(*) FROM operations"));
@@ -581,7 +734,7 @@ final class GameDatabaseIT {
         database.islandReady(owner); Domain.Claims claims = database.inviteBuilder(owner, builder);
         mine(owner, 1); Domain.PlayerView before = database.view(owner, "before");
         database.initialize(); database.initialize();
-        assertEquals(5, number("SELECT version FROM schema_version")); assertEquals(5, number("SELECT count(*) FROM migration_history"));
+        assertEquals(6, number("SELECT version FROM schema_version")); assertEquals(6, number("SELECT count(*) FROM migration_history"));
         assertEquals(claims, database.islands()); assertEquals(before.items(), database.view(owner, "after").items());
         assertEquals(8, balance(owner)); assertEquals(0, number("SELECT count(*) FROM building_contracts"));
     }
@@ -795,7 +948,7 @@ final class GameDatabaseIT {
         UUID sender = UUID.randomUUID(); UUID token = UUID.randomUUID(); UUID request = UUID.randomUUID();
         execute("INSERT INTO profiles(player_id,player_name,balance) VALUES ('" + sender + "','Legacy',10); INSERT INTO inventory VALUES ('" + sender + "','linh_thach_tho',5); INSERT INTO item_tokens(token_id,player_id,resource_id,ordinal) VALUES ('" + token + "','" + sender + "','linh_thach_tho',1); INSERT INTO operations(request_id,fingerprint,result,actor_id) VALUES ('" + request + "','legacy','preserved','" + sender + "')");
         database = new GameDatabase(url, user, password, schema, catalog, new Domain.EconomyPolicy(10000, 500)); database.initialize();
-        assertEquals(5, number("SELECT version FROM schema_version")); assertEquals(5, stock(sender)); assertEquals(10, balance(sender));
+        assertEquals(6, number("SELECT version FROM schema_version")); assertEquals(5, stock(sender)); assertEquals(10, balance(sender));
         assertEquals(1, scalar("SELECT count(*) FROM item_tokens WHERE token_id=?", token)); assertTrue(database.receipt(sender, request).contains("preserved"));
         assertEquals(0, number("SELECT count(*) FROM resource_ledger"));
         database.initialize();

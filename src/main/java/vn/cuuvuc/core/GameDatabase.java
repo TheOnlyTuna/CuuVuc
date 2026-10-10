@@ -327,6 +327,39 @@ public final class GameDatabase implements AutoCloseable {
         throw new IllegalStateException("Vòng thử lại kết thúc ngoài dự kiến.");
     }
 
+    public Sects.View sectView(UUID player) throws SQLException {
+        return query("sect:view:" + player, connection -> Sects.view(connection, player));
+    }
+
+    public String createSect(UUID request, UUID actor, String input) throws SQLException {
+        Sects.Name name = Sects.name(input);
+        return operation(request, actor, "sect:create:" + actor + ":" + name.display(), connection -> Sects.create(connection, request, actor, name));
+    }
+
+    public String inviteSect(UUID request, UUID actor, UUID sect, UUID recipient) throws SQLException {
+        return operation(request, actor, "sect:invite:" + actor + ":" + sect + ":" + recipient, connection -> Sects.invite(connection, request, actor, sect, recipient));
+    }
+
+    public String acceptSect(UUID request, UUID actor, UUID invitation) throws SQLException {
+        return operation(request, actor, "sect:accept:" + actor + ":" + invitation, connection -> Sects.accept(connection, request, actor, invitation));
+    }
+
+    public String changeSectRole(UUID request, UUID actor, UUID sect, UUID target, Sects.Role role) throws SQLException {
+        return operation(request, actor, "sect:role:" + actor + ":" + sect + ":" + target + ":" + role, connection -> Sects.changeRole(connection, request, actor, sect, target, role));
+    }
+
+    public String kickSectMember(UUID request, UUID actor, UUID sect, UUID target) throws SQLException {
+        return operation(request, actor, "sect:kick:" + actor + ":" + sect + ":" + target, connection -> Sects.kick(connection, request, actor, sect, target));
+    }
+
+    public String leaveSect(UUID request, UUID actor, UUID sect) throws SQLException {
+        return operation(request, actor, "sect:leave:" + actor + ":" + sect, connection -> Sects.leave(connection, request, actor, sect));
+    }
+
+    public String cancelSectInvitation(UUID request, UUID actor, UUID invitation) throws SQLException {
+        return operation(request, actor, "sect:cancel:" + actor + ":" + invitation, connection -> Sects.cancelInvitation(connection, request, actor, invitation));
+    }
+
     private static void validateCount(long count) {
         if (count < 1 || count > 1000) throw new IllegalArgumentException("Số lượng phải từ 1 đến 1000.");
     }
@@ -337,7 +370,7 @@ public final class GameDatabase implements AutoCloseable {
         }
     }
 
-    private static void lockPlayer(Connection connection, UUID player) throws SQLException {
+    static void lockPlayer(Connection connection, UUID player) throws SQLException {
         try (PreparedStatement statement = connection.prepareStatement("SELECT player_id FROM profiles WHERE player_id=? FOR UPDATE")) {
             statement.setObject(1, player);
             try (ResultSet result = statement.executeQuery()) {

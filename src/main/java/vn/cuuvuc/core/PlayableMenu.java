@@ -54,6 +54,7 @@ public final class PlayableMenu implements Listener {
         inventory.setItem(16, icon(Material.CHEST, "Kho & nhận nguyên liệu", List.of("Bấm để làm mới và nhận khi inventory còn chỗ")));
         inventory.setItem(18, icon(Material.WRITABLE_BOOK, "Hợp đồng kiến thiết", List.of("Thuê xây dựng, ký quỹ và nghiệm thu bằng Linh Tệ")));
         inventory.setItem(19, icon(Material.HOPPER, "Giao nhận nguyên liệu", List.of("/cv transfer <UUID> <resource> <số lượng>", "Mở cửa sổ xác nhận trước khi chuyển", "/cv materials để xem lịch sử")));
+        inventory.setItem(8, icon(Material.BEACON, "Tông môn • Khai Sơn Lập Phái", List.of("/cv sect để quản lý thành viên và lời mời", "/cv sect create <tên> để thành lập", "Ngân khố thuộc Phase 3, chưa triển khai")));
         int slot = 20;
         for (Domain.Resource resource : catalog.resources().values().stream().sorted(java.util.Comparator.comparing(Domain.Resource::id)).toList()) {
             inventory.setItem(slot++, icon(Material.valueOf(resource.block()), resource.name(), List.of("Sở hữu: " + view.stock().getOrDefault(resource.id(), 0L), "Chuột trái: bán 1, nhận " + resource.sell(), "Chuột phải: mua 1, trả " + resource.buy())));

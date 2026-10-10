@@ -37,6 +37,7 @@ public final class CuuVucPlugin extends JavaPlugin implements Listener {
     private ContractWorld contracts;
     private ContractMenu contractMenu;
     private MaterialTransfers transfers;
+    private SectMenu sects;
     private boolean contractAuditSaved;
     private Duration shutdownTimeout;
 
@@ -67,6 +68,8 @@ public final class CuuVucPlugin extends JavaPlugin implements Listener {
         contractMenu = new ContractMenu(this, database, tasks, contracts, world);
         menu = new PlayableMenu(database, tasks, items, catalog, world, contractMenu);
         transfers = new MaterialTransfers(this, database, tasks, items, catalog);
+        sects = new SectMenu(this, database, tasks);
+        getServer().getPluginManager().registerEvents(sects, this);
         getServer().getPluginManager().registerEvents(transfers, this);
         getServer().getPluginManager().registerEvents(items, this);
         getServer().getPluginManager().registerEvents(world, this);
@@ -121,6 +124,7 @@ public final class CuuVucPlugin extends JavaPlugin implements Listener {
         if (!isReady()) { player.sendPlainMessage("Cơ sở dữ liệu chưa sẵn sàng."); return true; }
         if (arguments.length == 0) { menu.request(player); return true; }
         if (arguments[0].equals("help")) {
+            player.sendPlainMessage("/cv sect | sect create <tên> | invite/kick <UUID> | accept/cancel <UUID-lời-mời> | role <UUID> <ELDER/MEMBER> | leave (các thao tác dùng /cv sect)");
             player.sendPlainMessage("/cv menu | prison | home | visit/invite/revoke <UUID> | start | profile | kho | catalog | craft <recipe> <1..1000> | buy/sell <resource> <1..1000> | pay <UUID> <1..1000> | transfer <UUID> <resource> <1..1000> | materials | ledger | receipt <UUID> | economy (OP)");
             return true;
         }
@@ -129,6 +133,7 @@ public final class CuuVucPlugin extends JavaPlugin implements Listener {
         UUID request = UUID.randomUUID();
         try {
             switch (arguments[0]) {
+                case "sect" -> sects.command(player, arguments);
                 case "start" -> register(player);
                 case "profile" -> showProfile(player);
                 case "menu", "kho" -> menu.request(player);

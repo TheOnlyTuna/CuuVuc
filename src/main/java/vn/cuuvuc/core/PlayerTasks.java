@@ -11,6 +11,7 @@ import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.Semaphore;
 import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.function.Function;
 
 /**
  * Cổng scheduler: giới hạn một thao tác đang xử lý mỗi UUID và giới hạn toàn máy chủ.
@@ -25,13 +26,16 @@ public final class PlayerTasks {
     public interface ViewAction { Domain.PlayerView execute() throws SQLException; }
     @FunctionalInterface
     public interface ViewReply { void apply(Domain.PlayerView view); }
+    @FunctionalInterface
+    public interface SnapshotAction<T> { T execute() throws SQLException; }
+    @FunctionalInterface
+    public interface SnapshotReply<T> { void apply(T snapshot); }
 
     private final JavaPlugin plugin;
     private final Semaphore capacity;
     private final Map<UUID, UUID> pending = new ConcurrentHashMap<>();
     private final AtomicBoolean accepting = new AtomicBoolean(true);
-    private final Map<UUID, Domain.PlayerView> views = new ConcurrentHashMap<>();
-    private final Map<UUID, ViewReply> callbacks = new ConcurrentHashMap<>();
+    private final Map<UUID, Runnable> callbacks = new ConcurrentHashMap<>();
 
     public PlayerTasks(JavaPlugin plugin, int maximum) {
         if (maximum < 1 || maximum > 128) throw new IllegalArgumentException("max-pending phải từ 1 đến 128.");
@@ -41,14 +45,19 @@ public final class PlayerTasks {
 
     /** Giữ dữ liệu I/O riêng; chỉ callback trên scheduler entity mới đọc hoặc sửa inventory. */
     public synchronized void submitView(Player player, UUID request, ViewAction action, ViewReply callback) {
+        submitSnapshot(player, request, action::execute, callback::apply, Domain.PlayerView::message);
+    }
+
+    /** Snapshot bất biến được truyền về entity; không giữ Player trong thao tác I/O. */
+    public synchronized <T> void submitSnapshot(Player player, UUID request, SnapshotAction<T> action, SnapshotReply<T> callback, Function<T, String> message) {
         if (pending.containsKey(player.getUniqueId()) || !accepting.get()) {
             player.sendPlainMessage("Thao tác trước đang xử lý hoặc máy chủ đang dừng."); return;
         }
-        callbacks.put(request, callback);
         boolean accepted = submit(player, request, () -> {
-            Domain.PlayerView view = action.execute();
-            views.put(request, view);
-            return view.message();
+            T snapshot = action.execute();
+            String description = message.apply(snapshot);
+            callbacks.put(request, () -> callback.apply(snapshot));
+            return description;
         });
         if (!accepted) callbacks.remove(request);
     }
@@ -77,7 +86,7 @@ public final class PlayerTasks {
             } finally {
                 pending.remove(playerId);
                 capacity.release();
-                if (!accepting.get()) { views.remove(request); callbacks.remove(request); }
+                if (!accepting.get()) callbacks.remove(request);
             }
           });
         } catch (IllegalPluginAccessException failure) {
@@ -93,24 +102,23 @@ public final class PlayerTasks {
         if (!accepting.get()) return;
         try {
           player.getScheduler().run(plugin, task -> {
-                Domain.PlayerView view = views.remove(request);
-                ViewReply callback = callbacks.remove(request);
+                Runnable callback = callbacks.remove(request);
                 player.sendPlainMessage(message);
-                if (view != null && callback != null) callback.apply(view);
+                if (callback != null) callback.run();
             }, () -> {
-                views.remove(request); callbacks.remove(request);
+                callbacks.remove(request);
                 plugin.getSLF4JLogger().atInfo().addKeyValue("player", playerId)
                         .addKeyValue("request", request).log("player_retired_before_reply");
             });
         } catch (IllegalPluginAccessException failure) {
-            views.remove(request); callbacks.remove(request);
+            callbacks.remove(request);
             plugin.getSLF4JLogger().atWarn().addKeyValue("request", request).setCause(failure).log("reply_not_scheduled_plugin_stopping");
         }
     }
 
     public synchronized Map<UUID, UUID> stop() {
         accepting.set(false);
-        views.clear(); callbacks.clear();
+        callbacks.clear();
         pending.forEach((player, request) -> plugin.getSLF4JLogger().atWarn()
                 .addKeyValue("player", player).addKeyValue("request", request).log("request_pending_at_shutdown"));
         return Map.copyOf(pending);

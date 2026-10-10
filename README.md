@@ -2,7 +2,7 @@
 
 > Người chơi đến vì tu tiên, nhưng ở lại vì thế giới mà họ cùng nhau xây dựng.
 
-V0.5.1 là baseline tại [tag v0.5.1](https://github.com/TheOnlyTuna/CuuVuc/tree/v0.5.1), commit `4097ac93729670a0f81d24e3869155725d08dff6`. Người dùng đã chấp nhận V0.6 là Playable Prototype và V0.7 là nền tảng phát triển tiếp ngày 11/10/2026. V0.7 giữ trên `v0.7-living-world`; V0.8 phát triển ở `v0.8-khai-son-lap-phai`. Không tự động merge `main` và chưa chứng nhận production. [Backlog](BACKLOG.md) giữ các giới hạn đã chấp nhận; [kế hoạch V0.8](V0.8-PLAN.md) mô tả milestone đầy đủ, hiện mới triển khai giao nhận giữa người chơi.
+V0.5.1 là baseline tại [tag v0.5.1](https://github.com/TheOnlyTuna/CuuVuc/tree/v0.5.1), commit `4097ac93729670a0f81d24e3869155725d08dff6`. Người dùng đã chấp nhận V0.6 là Playable Prototype và V0.7 là nền tảng phát triển tiếp ngày 11/10/2026. V0.7 giữ trên `v0.7-living-world`; V0.8 phát triển ở `v0.8-khai-son-lap-phai`. Không tự động merge `main` và chưa chứng nhận production. [Backlog](BACKLOG.md) giữ các giới hạn đã chấp nhận; [kế hoạch V0.8](V0.8-PLAN.md) mô tả milestone đầy đủ, Phase 1 đã được nghiệm thu Gameplay Prototype tại `12fdc25`; Phase 2 Tông Môn đã triển khai và chờ đánh giá.
 
 ## Giao nhận nguyên liệu — bước đầu V0.8
 
@@ -10,7 +10,17 @@ Dùng `/cv transfer <UUID-người-nhận> <resource> <1..1000>` để mở GUI 
 
 DB khóa hai hồ sơ theo thứ tự, kiểm tra revision nguồn và số lượng, trừ/cộng kho, thu hồi token resource của cả hai bên, tăng revision và ghi hai bút toán `resource_ledger` cùng receipt trong một transaction. Bút toán bất biến; replay không chuyển lần hai. Giao nhận không thay đổi tiền, XP hoặc quota. Nếu kho nguồn đổi sau khi mở cửa sổ, mở lại để xác nhận mới. GUI chuyển theo số lượng kho DB, không nhận ItemStack hay PDC tùy ý làm tài sản.
 
-Sau commit, Inventory nguồn được đồng bộ; người nhận online được yêu cầu đồng bộ trên entity scheduler. Nếu người nhận đang có thao tác khác hoặc máy chủ đang dừng, số lượng vẫn nằm trong DB: mở `/cv kho` hoặc đăng nhập lại để nhận bản thể hiện. Inventory đầy không hoàn trả hay làm mất nguyên liệu. PDC cũ không cấp thêm giá trị. Chưa mở thả item, chuyển qua rương, kho dự án, tông môn hoặc ngân khố. [Báo cáo Phase 1](validation/v08/RESULTS.md) ghi 53/53 test, hai client trên JAR cuối và phục hồi DB/world; các giới hạn được phân biệt rõ. Người dùng đã chấp nhận cấp mã nguồn tại `8b52816`, chưa chốt nghiệm thu gameplay hoặc toàn bộ V0.8.
+Sau commit, Inventory nguồn được đồng bộ; người nhận online được yêu cầu đồng bộ trên entity scheduler. Nếu người nhận đang có thao tác khác hoặc máy chủ đang dừng, số lượng vẫn nằm trong DB: mở `/cv kho` hoặc đăng nhập lại để nhận bản thể hiện. Inventory đầy không hoàn trả hay làm mất nguyên liệu. PDC cũ không cấp thêm giá trị. Chưa mở thả item, chuyển qua rương, kho dự án, tông môn hoặc ngân khố. [Báo cáo Phase 1](validation/v08/RESULTS.md) ghi 53/53 test, hai client trên JAR cuối và phục hồi DB/world; các giới hạn được phân biệt rõ. Người dùng đã nghiệm thu Phase 1 Gameplay Prototype tại `12fdc25`; chưa chốt toàn bộ V0.8.
+
+## Tông Môn — V0.8 Phase 2
+
+`/cv sect` mở danh sách thành viên, lời mời và mười sự kiện gần nhất. Thành viên phân trang; lời mời hiển thị tối đa chín gần nhất mỗi nhóm. `/cv sect create <tên>` mở xác nhận thành lập (3–32 chữ/số/khoảng trắng/_/-). `/cv sect invite <UUID>` gửi lời mời có hiệu lực một giờ theo giờ DB; người nhận dùng GUI hoặc `/cv sect accept <UUID-lời-mời>`. Tên tông môn được chuẩn hóa Unicode và không trùng khi khác hoa/thường.
+
+Chưởng môn (LEADER) được mời/hủy lời mời, đổi MEMBER/ELDER và loại thành viên. Quản sự (ELDER) chỉ mời/hủy lời mời; thành viên (MEMBER) xem lịch sử và rời tông môn. Chưởng môn chưa thể rời, chuyển chức hoặc giải tán. Dùng `/cv sect role <UUID> <ELDER/MEMBER>`, `/cv sect kick <UUID>`, `/cv sect cancel <UUID-lời-mời>`, `/cv sect leave`; mọi thay đổi đều mở GUI xác nhận. Chưởng môn có thể bấm trái vào thành viên để đổi quyền, bấm phải để loại.
+
+Một người chỉ thuộc một tông môn: khóa hồ sơ và PK `sect_members.player_id` bảo vệ cả tranh nhận lời mời từ hai tổ chức lẫn thành lập/nhận lời mời đồng thời. Mọi quản trị khóa bản ghi tông môn rồi đọc lại quyền tại DB, cùng khóa với thu hồi quyền; GUI cũ không cấp quyền. Receipt và lịch sử bất biến được commit cùng thay đổi. Replay cùng request chỉ trả kết quả đã commit, không ghi thêm sự kiện. Mời trước khi thu hồi quyền vẫn là lời mời đã cấp hợp lệ cho đến khi hết hạn/hủy; thu hồi quyền chặn thao tác mới, không tự hủy lịch sử đã commit.
+
+Phase 2 không cấp quyền xây dựng, không thêm ngân khố, tiền hoặc kho dự án. Linh Tệ/ngân khố thuộc Phase 3. Trước V006 phải backup DB/world và chỉ nâng một runtime; quay về JAR Phase 1 cần restore backup trước V006 vào đích mới. [Bằng chứng Phase 2](validation/v08/phase2/RESULTS.md) ghi test, các binary client và phần chưa thử.
 
 ## Hợp đồng kiến thiết — Vertical Slice 001
 
@@ -73,7 +83,7 @@ V0.7 thêm migration V004: trạng thái hợp đồng, tài khoản/ledger ký 
 
 ## Kiểm thử và CI
 
-V0.8 bổ sung V005 cho ledger giao nhận nguyên liệu, giữ nguyên V001–V004. Trước nâng cấp, dừng writer và backup DB/world như bên dưới. JAR V0.7 không chạy trên schema v5; quay lại V0.7 cần restore backup trước V005 vào đích mới. Runtime/DB V0.7 đã nghiệm thu không được dùng làm DB test.
+V0.8 có V005 cho ledger tài nguyên và V006 cho tông môn; giữ nguyên V001–V005 đã phát hành. Trước nâng cấp, dừng writer và backup DB/world như bên dưới. JAR V0.7 không chạy trên schema v5/v6; quay lại V0.7 cần restore backup trước V005 vào đích mới. Runtime/DB V0.7 đã nghiệm thu không được dùng làm DB test.
 
 ```powershell
 docker compose --profile test up -d --wait db-test

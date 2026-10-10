@@ -1,0 +1,1 @@
+INSERT INTO profiles(player_id,player_name) VALUES ('33333333-3333-3333-3333-333333333333','SectNPC3');

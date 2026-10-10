@@ -1,0 +1,10 @@
+database_tables=24
+database_snapshots_equal=true
+snapshot_sha256=7fc2577b73e367789c3d8c8b0e94402b73642916212141c9b384297fe4097746
+world_files_in_verified_bundle=104
+bundle_files_checksum_verified=239
+jar_sha256=68154ef0de7a4ce293f4abb210b06319c7637bd78b61b27dfbfb2e5398bd5587
+restored_database=cv_v08_sects_final_restored
+cold_backup=true
+restored_startup_ready=true
+server_exit_code=0
