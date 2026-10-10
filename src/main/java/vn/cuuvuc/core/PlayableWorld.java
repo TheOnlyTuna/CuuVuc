@@ -57,14 +57,15 @@ public final class PlayableWorld implements Listener {
     private final GameDatabase database;
     private final MineNodes mine;
     private final BooleanSupplier ready;
+    private final ContractWorld contracts;
     private final AtomicReference<Domain.Claims> claims = new AtomicReference<>(new Domain.Claims(-1, java.util.List.of()));
     private final Map<UUID, Boolean> building = new ConcurrentHashMap<>();
     private World prison;
     private World sky;
     private volatile boolean prisonReady;
 
-    public PlayableWorld(JavaPlugin plugin, GameDatabase database, MineNodes mine, BooleanSupplier ready) {
-        this.plugin = plugin; this.database = database; this.mine = mine; this.ready = ready;
+    public PlayableWorld(JavaPlugin plugin, GameDatabase database, MineNodes mine, BooleanSupplier ready, ContractWorld contracts) {
+        this.plugin = plugin; this.database = database; this.mine = mine; this.ready = ready; this.contracts = contracts;
     }
 
     public void create() {
@@ -93,6 +94,10 @@ public final class PlayableWorld implements Listener {
 
     public void publish(Domain.Claims next) {
         claims.updateAndGet(previous -> next.revision() >= previous.revision() ? next : previous);
+    }
+
+    public java.util.Optional<Domain.Island> ownerIsland(UUID owner) {
+        return claims.get().islands().stream().filter(island -> island.owner().equals(owner)).findFirst();
     }
 
     private static boolean managed(World world) { return world.getName().equals(PRISON) || world.getName().equals(SKY); }
@@ -203,8 +208,10 @@ public final class PlayableWorld implements Listener {
     }
 
     private boolean allowed(Player player, Block block) {
-        return ready.getAsBoolean() && block.getWorld().getName().equals(SKY)
-                && Domain.islandAt(claims.get().islands(), block.getX(), block.getZ()).map(island -> Domain.canBuild(island, player.getUniqueId())).orElse(false);
+        if (!ready.getAsBoolean() || !block.getWorld().getName().equals(SKY)) return false;
+        boolean islandPermission = Domain.islandAt(claims.get().islands(), block.getX(), block.getZ())
+                .map(island -> Domain.canBuild(island, player.getUniqueId())).orElse(false);
+        return contracts.permission(player.getUniqueId(), block, islandPermission);
     }
 
     @EventHandler(priority = EventPriority.LOW, ignoreCancelled = true) public void breakBlock(BlockBreakEvent event) {
@@ -218,7 +225,9 @@ public final class PlayableWorld implements Listener {
     @EventHandler(priority = EventPriority.LOW, ignoreCancelled = true) public void interact(PlayerInteractEvent event) {
         if (event.getClickedBlock() == null) return;
         Block block = event.getClickedBlock();
-        if (block.getWorld().getName().equals(SKY) && !allowed(event.getPlayer(), block)) event.setCancelled(true);
+        if (block.getWorld().getName().equals(SKY) && !allowed(event.getPlayer(), block)
+                && !(ready.getAsBoolean() && event.getAction().isRightClick()
+                && contracts.placementSupport(event.getPlayer().getUniqueId(), block, block.getRelative(event.getBlockFace())))) event.setCancelled(true);
     }
     @EventHandler(ignoreCancelled = true) public void entityInteract(PlayerInteractEntityEvent event) {
         Block block = event.getRightClicked().getLocation().getBlock();
@@ -232,17 +241,17 @@ public final class PlayableWorld implements Listener {
         if (managed(block.getWorld()) && (!(event.getDamager() instanceof Player player) || !allowed(player, block))) event.setCancelled(true);
     }
     @EventHandler(ignoreCancelled = true) public void hangingPlace(HangingPlaceEvent event) {
-        if (managed(event.getBlock().getWorld()) && (event.getPlayer() == null || !allowed(event.getPlayer(), event.getBlock()))) event.setCancelled(true);
+        if (managed(event.getBlock().getWorld()) && (contracts.at(event.getBlock()).isPresent() || event.getPlayer() == null || !allowed(event.getPlayer(), event.getBlock()))) event.setCancelled(true);
     }
     @EventHandler(ignoreCancelled = true) public void hangingBreak(HangingBreakEvent event) {
         if (managed(event.getEntity().getWorld())) event.setCancelled(true);
     }
     @EventHandler(ignoreCancelled = true) public void emptyBucket(PlayerBucketEmptyEvent event) {
         Block target = event.getBlockClicked().getRelative(event.getBlockFace());
-        if (managed(target.getWorld()) && !allowed(event.getPlayer(), target)) event.setCancelled(true);
+        if (managed(target.getWorld()) && (contracts.at(target).isPresent() || !allowed(event.getPlayer(), target))) event.setCancelled(true);
     }
     @EventHandler(ignoreCancelled = true) public void fillBucket(PlayerBucketFillEvent event) {
-        if (managed(event.getBlock().getWorld()) && !allowed(event.getPlayer(), event.getBlock())) event.setCancelled(true);
+        if (managed(event.getBlock().getWorld()) && (contracts.at(event.getBlock()).isPresent() || !allowed(event.getPlayer(), event.getBlock()))) event.setCancelled(true);
     }
     @EventHandler(ignoreCancelled = true) public void piston(BlockPistonExtendEvent event) { if (managed(event.getBlock().getWorld())) event.setCancelled(true); }
     @EventHandler(ignoreCancelled = true) public void retract(BlockPistonRetractEvent event) { if (managed(event.getBlock().getWorld())) event.setCancelled(true); }
@@ -255,12 +264,12 @@ public final class PlayableWorld implements Listener {
         if (!managed(event.getBlock().getWorld())) return;
         java.util.Optional<Domain.Island> from = Domain.islandAt(claims.get().islands(), event.getBlock().getX(), event.getBlock().getZ());
         java.util.Optional<Domain.Island> to = Domain.islandAt(claims.get().islands(), event.getToBlock().getX(), event.getToBlock().getZ());
-        if (event.getBlock().getWorld().getName().equals(PRISON) || from.isEmpty() || to.isEmpty() || !from.get().ready() || !from.get().owner().equals(to.get().owner())) event.setCancelled(true);
+        if (contracts.at(event.getToBlock()).isPresent() || event.getBlock().getWorld().getName().equals(PRISON) || from.isEmpty() || to.isEmpty() || !from.get().ready() || !from.get().owner().equals(to.get().owner())) event.setCancelled(true);
     }
     @EventHandler(ignoreCancelled = true) public void grow(StructureGrowEvent event) {
         if (!managed(event.getWorld())) return;
         java.util.Optional<Domain.Island> island = Domain.islandAt(claims.get().islands(), event.getLocation().getBlockX(), event.getLocation().getBlockZ());
-        if (!event.getWorld().getName().equals(SKY) || island.isEmpty() || !island.get().ready() || event.getBlocks().stream().anyMatch(block -> Domain.islandAt(claims.get().islands(), block.getX(), block.getZ()).map(candidate -> !candidate.owner().equals(island.get().owner())).orElse(true))) event.setCancelled(true);
+        if (!event.getWorld().getName().equals(SKY) || island.isEmpty() || !island.get().ready() || event.getBlocks().stream().anyMatch(block -> contracts.at(block.getBlock()).isPresent() || Domain.islandAt(claims.get().islands(), block.getX(), block.getZ()).map(candidate -> !candidate.owner().equals(island.get().owner())).orElse(true))) event.setCancelled(true);
     }
     @EventHandler(ignoreCancelled = true) public void portal(PlayerPortalEvent event) { if (managed(event.getFrom().getWorld())) event.setCancelled(true); }
     @EventHandler(ignoreCancelled = true) public void voidFall(PlayerMoveEvent event) {

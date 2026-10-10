@@ -1,0 +1,7 @@
+item_tokens=UNCHANGED
+inventory=UNCHANGED
+islands=UNCHANGED
+island_builders=UNCHANGED
+economy_daily=UNCHANGED
+player_mint_daily=UNCHANGED
+economy_policy=UNCHANGED

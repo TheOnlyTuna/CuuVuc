@@ -1,8 +1,18 @@
-# Cửu Vực Tu Tiên — V0.6 Playable World
+# Cửu Vực Tu Tiên — V0.7 The Living World
 
 > Người chơi đến vì tu tiên, nhưng ở lại vì thế giới mà họ cùng nhau xây dựng.
 
-V0.5.1 là baseline tại [tag v0.5.1](https://github.com/TheOnlyTuna/CuuVuc/tree/v0.5.1), commit `4097ac93729670a0f81d24e3869155725d08dff6`. V0.6 được phát triển riêng trên nhánh `v0.6-playable-world`; chưa thay thế baseline hoặc chứng nhận production.
+V0.5.1 là baseline tại [tag v0.5.1](https://github.com/TheOnlyTuna/CuuVuc/tree/v0.5.1), commit `4097ac93729670a0f81d24e3869155725d08dff6`. Người dùng đã chấp nhận V0.6 là Playable Prototype. V0.7 phát triển trên `v0.7-living-world`; không merge `main` và chưa chứng nhận production.
+
+## Hợp đồng kiến thiết — Vertical Slice 001
+
+Mở `/cv`, bấm **Hợp đồng kiến thiết**, hoặc dùng `/cv contracts`. Chủ động phủ dọn trống sàn tại tâm đảo: `x=[slot*64+7,slot*64+9]`, `y=100`, `z=[7,9]`. GUI cho thuê xây sàn 3×3 cobblestone với tiền công 2/10/100 **Linh Tệ**, thời hạn một giờ. Mỗi động phủ có tối đa một hợp đồng chưa kết thúc.
+
+Một người khác nhận việc, đến công trình và đặt chín block bằng Minecraft Inventory. Builder chỉ được đặt/phá cobblestone tại sàn hợp đồng; không được sửa nền, mở rương hay xây ngoài vùng nhờ quyền này. Builder gửi nghiệm thu, chủ duyệt: server kiểm tra sàn, lưu world rồi chuyển tiền ký quỹ sang ví Builder. Gửi nghiệm thu kết thúc quyền thi công; hoàn thành, hủy hoặc hết hạn không thêm Builder vào danh sách mời của đảo. Quyền mời riêng của V0.6 vẫn là cơ chế độc lập.
+
+**Linh Tệ (`linh_te`) là tiền tệ; Linh Thạch (`linh_thach`) là tài nguyên tu tiên.** Ký quỹ có tài khoản PostgreSQL và ledger riêng trong cùng transaction/receipt với ledger ví hiện tại. Nạp, giải ngân, hoàn tiền không mint/burn; phí MVP 0%. Vật liệu vanilla do hai bên thỏa thuận, chưa ký quỹ tài nguyên PDC và không tự quy đổi Linh Thạch thành Linh Tệ.
+
+Chủ chỉ hủy trước khi có Builder nhận. Builder được bỏ việc khi đang thi công hoặc chờ nghiệm thu. Hết hạn cũng hoàn ký quỹ cho bên thuê; công trình và vật liệu không tự tháo dỡ/hoàn trả. Cả hai phải nghiệm thu trước thời hạn; chưa có gia hạn, tranh chấp hoặc bồi thường vật liệu. Xem [đánh giá V0.7](V0.7-EVALUATION.md) để biết bằng chứng và giới hạn.
 
 ## Vòng chơi đầu tiên
 
@@ -41,7 +51,7 @@ docker compose up -d --wait db
 
 Đọc [Minecraft EULA](https://aka.ms/MinecraftEULA), đặt `run/eula.txt` thành `eula=true` khi đồng ý. Kiểm tra config rồi chạy `./scripts/start-server.ps1 -JavaHome $env:JAVA_HOME`. Chờ `cuuvuc_database_ready`, kết nối **127.0.0.1:25579**. Server mặc định online-mode, chỉ nghe loopback. PostgreSQL native cũng dùng được: tạo DB/user/schema riêng và đổi URL/user/schema trong config. Không đặt DB vào schema chứa dữ liệu khác.
 
-JAR: `target/CuuVucCore-0.6.0.jar`. Linux/macOS dùng `JAVA_HOME=/path/to/jdk25 sh ./mvnw -B -ntp clean package`, cùng config và JAR Paper rồi `java -Xms512M -Xmx1536M -jar paper.jar --nogui`. Script Windows chuyển JAR CuuVucCore cũ sang `run/plugin-backups`, giữ config/EULA; không dùng `/reload`.
+JAR: `target/CuuVucCore-0.7.0.jar`. Linux/macOS dùng `JAVA_HOME=/path/to/jdk25 sh ./mvnw -B -ntp clean package`, cùng config và JAR Paper rồi `java -Xms512M -Xmx1536M -jar paper.jar --nogui`. Script Windows chuyển JAR CuuVucCore cũ sang `run/plugin-backups`, giữ config/EULA; không dùng `/reload`.
 
 ## Nâng cấp từ baseline
 
@@ -50,6 +60,8 @@ Dừng mọi server dùng chung DB. Tạo backup đồng bộ theo mục bên d�
 Giữ database URL/user/schema, hạn mức và catalog baseline. Cập nhật phần `mine` theo `src/main/resources/config.yml`: **world=cv_prison**, 32 node trong chunk `(0,0)`, `y=100`. Config cũ có `world: world` sẽ bị từ chối, không tự đổi world. Không xóa hoặc đổi các resource ID/cảnh giới/giá để né kiểm tra policy.
 
 Migration V003 thêm revision, token và động phủ; không thay catalog, ví, kho hay lịch sử V0.5.1. Migration cũ giữ nguyên; checksum/cấu trúc DB sai hoặc DB mới hơn plugin đều chặn ready. Quay lại V0.5.1 phải phục hồi **backup trước V003** vào DB trống và dùng JAR/config baseline, không hạ JAR trực tiếp lên schema v3. Phục hồi bằng `pg_restore --exit-on-error`; đối soát dữ liệu trước khi mở lại. Rollback bằng backup mất các giao dịch sau thời điểm chụp.
+
+V0.7 thêm migration V004: trạng thái hợp đồng, tài khoản/ledger ký quỹ, lịch sử công trình và revision quyền hợp đồng. Giữ nguyên V001–V003 và dữ liệu V0.6. Quay lại V0.6 cần restore backup trước V004 vào đích mới; JAR V0.6 không được dùng trên schema v4. Khi khởi động, worker hoàn tiền hợp đồng hết hạn trước ready và dựng lại quyền từ DB. Quyền thi công có lease 5 giây, kiểm tra thời hạn theo đồng hồ DB; lỗi đồng bộ kéo dài sẽ từ chối quyền hợp đồng. Shutdown mềm lưu hàng đợi audit chưa commit và replay bằng request ID; chưa phải journal chống mất điện/crash.
 
 ## Kiểm thử và CI
 

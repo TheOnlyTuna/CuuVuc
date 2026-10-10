@@ -30,9 +30,10 @@ public final class PlayableMenu implements Listener {
     private final PhysicalItems items;
     private final Domain.Catalog catalog;
     private final PlayableWorld world;
+    private final ContractMenu contracts;
 
-    public PlayableMenu(GameDatabase database, PlayerTasks tasks, PhysicalItems items, Domain.Catalog catalog, PlayableWorld world) {
-        this.database = database; this.tasks = tasks; this.items = items; this.catalog = catalog; this.world = world;
+    public PlayableMenu(GameDatabase database, PlayerTasks tasks, PhysicalItems items, Domain.Catalog catalog, PlayableWorld world, ContractMenu contracts) {
+        this.database = database; this.tasks = tasks; this.items = items; this.catalog = catalog; this.world = world; this.contracts = contracts;
     }
 
     public void request(Player player) {
@@ -51,6 +52,7 @@ public final class PlayableMenu implements Listener {
         inventory.setItem(12, icon(Material.OAK_SAPLING, "Động phủ của bạn", List.of("Đảo đầu tiên, nơi bắt đầu xây dựng")));
         inventory.setItem(14, icon(Material.CRAFTING_TABLE, "Kết tinh linh thạch", List.of("5 linh thạch thô → 1 linh thạch", "Bấm để chế tạo một lần")));
         inventory.setItem(16, icon(Material.CHEST, "Kho & nhận nguyên liệu", List.of("Bấm để làm mới và nhận khi inventory còn chỗ")));
+        inventory.setItem(18, icon(Material.WRITABLE_BOOK, "Hợp đồng kiến thiết", List.of("Thuê xây dựng, ký quỹ và nghiệm thu bằng Linh Tệ")));
         int slot = 20;
         for (Domain.Resource resource : catalog.resources().values().stream().sorted(java.util.Comparator.comparing(Domain.Resource::id)).toList()) {
             inventory.setItem(slot++, icon(Material.valueOf(resource.block()), resource.name(), List.of("Sở hữu: " + view.stock().getOrDefault(resource.id(), 0L), "Chuột trái: bán 1, nhận " + resource.sell(), "Chuột phải: mua 1, trả " + resource.buy())));
@@ -74,6 +76,7 @@ public final class PlayableMenu implements Listener {
         if (slot == 10) { world.enterPrisonFromMenu(player); return; }
         if (slot == 12) { world.enterHomeFromMenu(player); return; }
         if (slot == 16) { request(player); return; }
+        if (slot == 18) { contracts.enter(player); return; }
         UUID id = player.getUniqueId(); String name = player.getName(); UUID request = UUID.randomUUID();
         if (slot == 14) {
             tasks.submitView(player, request, () -> database.view(id, database.craft(request, id, name, "ket_tinh", 1)), view -> {

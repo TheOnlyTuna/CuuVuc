@@ -5,8 +5,11 @@
 /run-v06/
 /run-v06-multi/
 /run-v06-restored/
+/run-v07/
+/run-v07-restored/
 /backups/
 /release/
 /.env
 *.log
 !/validation/*.log
+!/validation/v07/*.log

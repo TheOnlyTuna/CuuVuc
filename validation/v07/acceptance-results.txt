@@ -1,0 +1,7 @@
+SET
+completed_once|t
+escrow_settled_once|t
+wallets|t
+currency_conserved|t
+ownership_and_no_permanent_grant|t
+builder_placed_all_nine|t

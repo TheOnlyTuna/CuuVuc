@@ -1,0 +1,1 @@
+{"name":"Verify CuuVucCore","state":"disabled_manually"}

@@ -12,6 +12,8 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.time.Duration;
+import java.time.Instant;
+import java.util.Optional;
 import java.util.List;
 import java.util.Map;
 import java.util.ArrayList;
@@ -415,6 +417,245 @@ public final class GameDatabase implements AutoCloseable {
             }
             return readClaims(connection);
         });
+    }
+
+    /** Ký quỹ dùng cùng transaction, receipt và ledger ví; không đi qua mint/burn. */
+    public String createContract(UUID contract, UUID owner, long reward, Duration lifetime) throws SQLException {
+        validateCount(reward);
+        if (lifetime.compareTo(Duration.ofMinutes(5)) < 0 || lifetime.compareTo(Duration.ofDays(1)) > 0)
+            throw new IllegalArgumentException("Thời hạn hợp đồng phải từ 5 phút đến 24 giờ.");
+        UUID request = Contracts.request(contract, "CREATE");
+        return operation(request, owner, "contract:create:" + contract + ":" + owner + ":" + reward + ":" + lifetime, connection -> {
+            lockPlayer(connection, owner);
+            int slot;
+            try (PreparedStatement statement = connection.prepareStatement("SELECT slot FROM islands WHERE player_id=? AND ready")) {
+                statement.setObject(1, owner);
+                try (ResultSet result = statement.executeQuery()) {
+                    if (!result.next()) throw new IllegalArgumentException("Cần động phủ sẵn sàng trước khi tạo hợp đồng.");
+                    slot = result.getInt(1);
+                }
+            }
+            try (PreparedStatement statement = connection.prepareStatement("SELECT 1 FROM building_contracts WHERE island_slot=? AND status IN ('OPEN','ACTIVE','SUBMITTED')")) {
+                statement.setInt(1, slot);
+                try (ResultSet result = statement.executeQuery()) {
+                    if (result.next()) throw new IllegalArgumentException("Động phủ đã có hợp đồng chưa kết thúc.");
+                }
+            }
+            try (PreparedStatement statement = connection.prepareStatement("INSERT INTO building_contracts(contract_id,owner_id,island_slot,reward,status,expires_at) VALUES (?,?,?,?,'OPEN',clock_timestamp()+(? * interval '1 millisecond'))")) {
+                statement.setObject(1, contract); statement.setObject(2, owner); statement.setInt(3, slot);
+                statement.setLong(4, reward); statement.setLong(5, lifetime.toMillis()); statement.executeUpdate();
+            }
+            try (PreparedStatement statement = connection.prepareStatement("INSERT INTO contract_escrow_accounts VALUES (?,'linh_te',0)")) {
+                statement.setObject(1, contract); statement.executeUpdate();
+            }
+            changeMoney(connection, request, owner, -reward, "CONTRACT_DEPOSIT:" + contract);
+            escrowEntry(connection, contract, request, "DEPOSIT", reward);
+            contractEvent(connection, contract, owner, "CREATE", "Ký quỹ " + reward + " Linh Tệ; phí 0%; vật liệu ngoài ký quỹ.");
+            return "Đã ký quỹ " + reward + " Linh Tệ. Hợp đồng: " + contract;
+        });
+    }
+
+    public String acceptContract(UUID contract, UUID builder) throws SQLException {
+        return operation(Contracts.request(contract, "ACCEPT"), builder, "contract:accept:" + contract + ":" + builder, connection -> {
+            Contracts.Job job = lockContract(connection, contract);
+            requireContractStatus(connection, job, Contracts.Status.OPEN);
+            if (job.owner().equals(builder)) throw new IllegalArgumentException("Chủ hợp đồng không thể tự nhận việc.");
+            lockPlayer(connection, builder);
+            try (PreparedStatement statement = connection.prepareStatement("UPDATE building_contracts SET builder_id=? WHERE contract_id=?")) {
+                statement.setObject(1, builder); statement.setObject(2, contract); statement.executeUpdate();
+            }
+            contractStatus(connection, contract, Contracts.Status.ACTIVE);
+            contractEvent(connection, contract, builder, "ACCEPT", "Chưa chuyển tiền công; quyền thi công theo hợp đồng.");
+            return "Đã nhận hợp đồng " + contract + ". Tiền công vẫn ở ký quỹ.";
+        });
+    }
+
+    /** Connector thế giới phải kiểm tra công trình và lưu world trước khi gửi nghiệm thu. */
+    public String submitContract(UUID contract, UUID builder) throws SQLException {
+        return operation(Contracts.request(contract, "SUBMIT"), builder, "contract:submit:" + contract + ":" + builder, connection -> {
+            Contracts.Job job = lockContract(connection, contract);
+            requireContractStatus(connection, job, Contracts.Status.ACTIVE);
+            requireBuilder(job, builder);
+            contractStatus(connection, contract, Contracts.Status.SUBMITTED);
+            contractEvent(connection, contract, builder, "SUBMIT", "Gửi chủ hợp đồng nghiệm thu; quyền thi công đã kết thúc.");
+            return "Đã gửi nghiệm thu. Chờ chủ hợp đồng duyệt trước thời hạn.";
+        });
+    }
+
+    /** Chỉ chủ hợp đồng duyệt; connector thế giới kiểm tra lại và lưu world trước khi thanh toán. */
+    public String completeContract(UUID contract, UUID owner) throws SQLException {
+        UUID request = Contracts.request(contract, "COMPLETE");
+        return operation(request, owner, "contract:complete:" + contract + ":" + owner, connection -> {
+            Contracts.Job job = lockContract(connection, contract);
+            requireOwner(job, owner);
+            requireContractStatus(connection, job, Contracts.Status.SUBMITTED);
+            UUID builder = job.builder().orElseThrow();
+            lockPlayer(connection, builder);
+            settleEscrow(connection, job, request, "RELEASE");
+            changeMoney(connection, request, builder, job.reward(), "CONTRACT_PAYMENT:" + contract);
+            contractStatus(connection, contract, Contracts.Status.COMPLETED);
+            contractEvent(connection, contract, owner, "COMPLETE", "Nghiệm thu; trả " + job.reward() + " Linh Tệ cho " + builder);
+            return "Đã nghiệm thu và thanh toán " + job.reward() + " Linh Tệ; phí 0%.";
+        });
+    }
+
+    public String cancelContract(UUID contract, UUID owner) throws SQLException {
+        UUID request = Contracts.request(contract, "CANCEL");
+        return operation(request, owner, "contract:cancel:" + contract + ":" + owner, connection -> {
+            Contracts.Job job = lockContract(connection, contract);
+            requireOwner(job, owner);
+            requireContractStatus(connection, job, Contracts.Status.OPEN);
+            refundContract(connection, job, request, owner, Contracts.Status.CANCELLED, "CANCEL");
+            return "Đã hủy hợp đồng chưa nhận; hoàn " + job.reward() + " Linh Tệ.";
+        });
+    }
+
+    public String abandonContract(UUID contract, UUID builder) throws SQLException {
+        UUID request = Contracts.request(contract, "ABANDON");
+        return operation(request, builder, "contract:abandon:" + contract + ":" + builder, connection -> {
+            Contracts.Job job = lockContract(connection, contract);
+            requireBuilder(job, builder);
+            if (job.status() != Contracts.Status.ACTIVE && job.status() != Contracts.Status.SUBMITTED)
+                throw new IllegalArgumentException("Chỉ bỏ việc đang thi công hoặc chờ nghiệm thu.");
+            refundContract(connection, job, request, builder, Contracts.Status.CANCELLED, "CANCEL");
+            return "Đã bỏ việc; hoàn Linh Tệ cho bên thuê. Công trình và vật liệu không tự hoàn trả.";
+        });
+    }
+
+    /** Worker chỉ chọn một lô nhỏ; khóa hợp đồng quyết định duy nhất hoàn tiền hay thanh toán. */
+    public void expireContracts() throws SQLException {
+        Contracts.Board board = contractBoard();
+        List<Contracts.Job> candidates = board.jobs().stream().filter(Contracts::unresolved)
+                .filter(job -> !job.expiresAt().isAfter(board.databaseTime())).limit(32).toList();
+        for (Contracts.Job candidate : candidates) {
+            UUID contract = candidate.id(); UUID owner = candidate.owner(); UUID request = Contracts.request(contract, "EXPIRE");
+            operation(request, owner, "contract:expire:" + contract, connection -> {
+                Contracts.Job job = lockContract(connection, contract);
+                if (!Contracts.unresolved(job)) return "Hợp đồng đã kết thúc; không hoàn thêm.";
+                if (databaseTime(connection).isBefore(job.expiresAt())) throw new SQLException("Đồng hồ DB đổi trước khi hết hạn: " + contract, "40001");
+                refundContract(connection, job, request, owner, Contracts.Status.EXPIRED, "EXPIRE");
+                return "Hợp đồng hết hạn; hoàn " + job.reward() + " Linh Tệ.";
+            });
+        }
+    }
+
+    public Contracts.Board contractBoard() throws SQLException {
+        return query("contract_board", connection -> {
+            long revision;
+            try (Statement statement = connection.createStatement(); ResultSet result = statement.executeQuery("SELECT revision FROM contract_state WHERE singleton")) {
+                if (!result.next()) throw new SQLException("Thiếu contract_state.", "55000");
+                revision = result.getLong(1);
+            }
+            List<Contracts.Job> jobs = new ArrayList<>();
+            try (Statement statement = connection.createStatement(); ResultSet result = statement.executeQuery(contractSelect() + " ORDER BY c.created_at,c.contract_id")) {
+                while (result.next()) jobs.add(readContract(result));
+            }
+            return new Contracts.Board(revision, databaseTime(connection), jobs);
+        });
+    }
+
+    public String contractHistory(UUID contract) throws SQLException {
+        return query("contract_history:" + contract, connection -> {
+            StringBuilder text = new StringBuilder("Hợp đồng " + contract);
+            try (PreparedStatement statement = connection.prepareStatement("SELECT created_at,event_type,actor_id,detail FROM building_history WHERE contract_id=? ORDER BY event_id DESC LIMIT 20")) {
+                statement.setObject(1, contract);
+                try (ResultSet result = statement.executeQuery()) {
+                    while (result.next()) text.append('\n').append(result.getString(1)).append(" | ").append(result.getString(2))
+                            .append(" | ").append(result.getString(3)).append(" | ").append(result.getString(4));
+                }
+            }
+            return text.toString();
+        });
+    }
+
+    /** Ghi đúng thứ tự sự kiện Paper đã được phép; không suy diễn từ thao tác bị hủy. */
+    public String contractBlockChanged(UUID request, UUID contract, UUID actor, String event, String position) throws SQLException {
+        if (!event.equals("PLACE") && !event.equals("BREAK")) throw new IllegalArgumentException("Sự kiện block không hợp lệ: " + event);
+        return operation(request, actor, "contract:block:" + contract + ":" + actor + ":" + event + ":" + position, connection -> {
+            Contracts.Job job = lockContract(connection, contract);
+            if (job.builder().filter(actor::equals).isEmpty()) throw new IllegalArgumentException("Sự kiện không thuộc Builder: " + contract);
+            contractEvent(connection, contract, actor, event, position);
+            return "Đã ghi lịch sử xây dựng.";
+        });
+    }
+
+    private static String contractSelect() {
+        return "SELECT c.contract_id,c.owner_id,c.builder_id,c.island_slot,c.reward,e.balance,c.status,c.expires_at,c.revision FROM building_contracts c JOIN contract_escrow_accounts e USING(contract_id)";
+    }
+
+    private static Contracts.Job readContract(ResultSet result) throws SQLException {
+        return new Contracts.Job(result.getObject(1, UUID.class), result.getObject(2, UUID.class), Optional.ofNullable(result.getObject(3, UUID.class)),
+                result.getInt(4), result.getLong(5), result.getLong(6), Contracts.Status.valueOf(result.getString(7)), result.getTimestamp(8).toInstant(), result.getLong(9));
+    }
+
+    private static Contracts.Job lockContract(Connection connection, UUID contract) throws SQLException {
+        try (PreparedStatement statement = connection.prepareStatement(contractSelect() + " WHERE c.contract_id=? FOR UPDATE OF c,e")) {
+            statement.setObject(1, contract);
+            try (ResultSet result = statement.executeQuery()) {
+                if (!result.next()) throw new IllegalArgumentException("Không có hợp đồng: " + contract);
+                return readContract(result);
+            }
+        }
+    }
+
+    private static Instant databaseTime(Connection connection) throws SQLException {
+        try (Statement statement = connection.createStatement(); ResultSet result = statement.executeQuery("SELECT clock_timestamp()")) {
+            result.next(); return result.getTimestamp(1).toInstant();
+        }
+    }
+
+    private static void requireContractStatus(Connection connection, Contracts.Job job, Contracts.Status status) throws SQLException {
+        if (job.status() != status) throw new IllegalArgumentException("Hợp đồng cần trạng thái " + status + "; hiện tại " + job.status());
+        if (!databaseTime(connection).isBefore(job.expiresAt())) throw new IllegalArgumentException("Hợp đồng đã hết hạn; chờ hoàn ký quỹ.");
+    }
+
+    private static void requireOwner(Contracts.Job job, UUID player) {
+        if (!job.owner().equals(player)) throw new IllegalArgumentException("Chỉ chủ hợp đồng được thực hiện thao tác này.");
+    }
+
+    private static void requireBuilder(Contracts.Job job, UUID player) {
+        if (job.builder().filter(player::equals).isEmpty()) throw new IllegalArgumentException("Chỉ Builder của hợp đồng được thực hiện thao tác này.");
+    }
+
+    private static void escrowEntry(Connection connection, UUID contract, UUID request, String kind, long delta) throws SQLException {
+        long balance;
+        try (PreparedStatement statement = connection.prepareStatement("UPDATE contract_escrow_accounts SET balance=balance+? WHERE contract_id=? AND balance+? BETWEEN 0 AND 1000 RETURNING balance")) {
+            statement.setLong(1, delta); statement.setObject(2, contract); statement.setLong(3, delta);
+            try (ResultSet result = statement.executeQuery()) {
+                if (!result.next()) throw new SQLException("Ký quỹ không đủ hoặc không hợp lệ: " + contract, "55000");
+                balance = result.getLong(1);
+            }
+        }
+        try (PreparedStatement statement = connection.prepareStatement("INSERT INTO contract_escrow_ledger(contract_id,request_id,kind,delta,balance_after) VALUES (?,?,?,?,?)")) {
+            statement.setObject(1, contract); statement.setObject(2, request); statement.setString(3, kind);
+            statement.setLong(4, delta); statement.setLong(5, balance); statement.executeUpdate();
+        }
+    }
+
+    private static void settleEscrow(Connection connection, Contracts.Job job, UUID request, String kind) throws SQLException {
+        if (job.escrow() != job.reward()) throw new SQLException("Ký quỹ lệch tiền công: " + job.id(), "55000");
+        escrowEntry(connection, job.id(), request, kind, -job.reward());
+    }
+
+    private static void refundContract(Connection connection, Contracts.Job job, UUID request, UUID actor, Contracts.Status status, String event) throws SQLException {
+        lockPlayer(connection, job.owner());
+        settleEscrow(connection, job, request, "REFUND");
+        changeMoney(connection, request, job.owner(), job.reward(), "CONTRACT_REFUND:" + job.id());
+        contractStatus(connection, job.id(), status);
+        contractEvent(connection, job.id(), actor, event, "Hoàn " + job.reward() + " Linh Tệ; phí 0%; công trình không tự tháo dỡ.");
+    }
+
+    private static void contractStatus(Connection connection, UUID contract, Contracts.Status status) throws SQLException {
+        try (PreparedStatement statement = connection.prepareStatement("UPDATE building_contracts SET status=?,revision=revision+1 WHERE contract_id=?")) {
+            statement.setString(1, status.name()); statement.setObject(2, contract); statement.executeUpdate();
+        }
+    }
+
+    private static void contractEvent(Connection connection, UUID contract, UUID actor, String event, String detail) throws SQLException {
+        try (PreparedStatement statement = connection.prepareStatement("INSERT INTO building_history(contract_id,actor_id,event_type,detail) VALUES (?,?,?,?)")) {
+            statement.setObject(1, contract); statement.setObject(2, actor); statement.setString(3, event); statement.setString(4, detail); statement.executeUpdate();
+        }
+        try (Statement statement = connection.createStatement()) { statement.executeUpdate("UPDATE contract_state SET revision=revision+1 WHERE singleton"); }
     }
 
     private static void changeMoney(Connection connection, UUID request, UUID player, long delta, String reason) throws SQLException {

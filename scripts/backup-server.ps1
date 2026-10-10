@@ -18,6 +18,8 @@ if ($destination.StartsWith($server + [IO.Path]::DirectorySeparatorChar, [String
 [string]$jdbcUrl = "jdbc:postgresql://${HostName}:${Port}/$DatabaseName"
 [string]$config = Get-Content -LiteralPath (Join-Path $server 'plugins/CuuVucCore/config.yml') -Raw
 if (-not $config.Contains($jdbcUrl)) { throw 'URL DB trong config không khớp DB cần backup.' }
+[string]$shutdownReport = Get-Content -LiteralPath (Join-Path $server 'plugins/CuuVucCore/shutdown-pending.properties') -Raw
+if ($shutdownReport -match '(?m)^contract-audit-persisted=false\r?$') { throw 'Shutdown chưa lưu được lịch sử hợp đồng; không tạo backup có thể thiếu audit.' }
 if ($log -notmatch 'database_drain_complete' -or $log -notmatch '(?m)^\[[^\r\n]+\]: All RegionFile I/O tasks to complete\r?$') { throw 'Thiếu bằng chứng stop/drain/world I/O trong latest.log. Gõ stop và chờ process kết thúc.' }
 [string[]]$locks = @(Get-ChildItem -LiteralPath $server -Filter session.lock -File -Recurse | Select-Object -ExpandProperty FullName)
 if ($locks.Count -eq 0) { throw 'Không tìm thấy session.lock của world; kiểm tra đường dẫn server.' }

@@ -34,6 +34,9 @@ public final class CuuVucPlugin extends JavaPlugin implements Listener {
     private PhysicalItems items;
     private PlayableWorld world;
     private PlayableMenu menu;
+    private ContractWorld contracts;
+    private ContractMenu contractMenu;
+    private boolean contractAuditSaved;
     private Duration shutdownTimeout;
 
     @Override public void onEnable() {
@@ -58,17 +61,25 @@ public final class CuuVucPlugin extends JavaPlugin implements Listener {
                 getConfig().getInt("mine.cooldown-seconds"));
         getServer().getPluginManager().registerEvents(this, this);
         getServer().getPluginManager().registerEvents(mine, this);
-        world = new PlayableWorld(this, database, mine, this::isReady);
-        menu = new PlayableMenu(database, tasks, items, catalog, world);
+        contracts = new ContractWorld(this, database, tasks);
+        world = new PlayableWorld(this, database, mine, this::isReady, contracts);
+        contractMenu = new ContractMenu(this, database, tasks, contracts, world);
+        menu = new PlayableMenu(database, tasks, items, catalog, world, contractMenu);
         getServer().getPluginManager().registerEvents(items, this);
         getServer().getPluginManager().registerEvents(world, this);
         getServer().getPluginManager().registerEvents(menu, this);
+        getServer().getPluginManager().registerEvents(contracts, this);
+        getServer().getPluginManager().registerEvents(contractMenu, this);
         world.create();
         Objects.requireNonNull(getCommand("cv")).setExecutor(this);
         Bukkit.getAsyncScheduler().runNow(this, task -> {
             try {
                 database.initialize();
+                contracts.recoverAudit();
                 world.publish(database.islands());
+                database.expireContracts();
+                contracts.publish(database.contractBoard());
+                contracts.start();
                 if (state.compareAndSet(State.STARTING, State.READY)) getSLF4JLogger().info("cuuvuc_database_ready");
             } catch (SQLException | IOException failure) {
                 getSLF4JLogger().atError().setCause(failure).log("cuuvuc_startup_failed");
@@ -102,7 +113,7 @@ public final class CuuVucPlugin extends JavaPlugin implements Listener {
     }
 
     @Override public boolean onCommand(CommandSender sender, Command command, String label, String[] arguments) {
-        if (!(sender instanceof Player player)) { sender.sendMessage("CuuVucCore V0.6.0 | database-ready=" + isReady()); return true; }
+        if (!(sender instanceof Player player)) { sender.sendMessage("CuuVucCore V0.7.0 | database-ready=" + isReady()); return true; }
         if (!player.hasPermission("cuuvuc.play")) { player.sendPlainMessage("Bạn không có quyền cuuvuc.play."); return true; }
         if (!isReady()) { player.sendPlainMessage("Cơ sở dữ liệu chưa sẵn sàng."); return true; }
         if (arguments.length == 0) { menu.request(player); return true; }
@@ -118,6 +129,7 @@ public final class CuuVucPlugin extends JavaPlugin implements Listener {
                 case "start" -> register(player);
                 case "profile" -> showProfile(player);
                 case "menu", "kho" -> menu.request(player);
+                case "contracts" -> contractMenu.open(player, 0);
                 case "prison" -> world.prison(player);
                 case "home" -> world.home(player);
                 case "visit" -> {
@@ -185,16 +197,23 @@ public final class CuuVucPlugin extends JavaPlugin implements Listener {
         Map<UUID, UUID> pending = tasks == null ? Map.of() : tasks.stop();
         Bukkit.getAsyncScheduler().cancelTasks(this);
         Bukkit.getGlobalRegionScheduler().cancelTasks(this);
+        IOException auditFailure = null;
+        if (contracts != null) {
+            try { contracts.savePendingAudit(); contractAuditSaved = true; }
+            catch (IOException failure) { auditFailure = failure; }
+        }
         if (database != null) {
             GameDatabase.DrainResult result = database.drainAndClose(shutdownTimeout);
             saveShutdownReport(pending, result);
         }
+        if (auditFailure != null) throw new IllegalStateException("Không lưu được hàng đợi lịch sử hợp đồng; không backup phiên shutdown này.", auditFailure);
     }
 
     /** Lưu request chưa phản hồi để tra receipt; không khẳng định request đã commit hay tự phát lại. */
     private void saveShutdownReport(Map<UUID, UUID> pending, GameDatabase.DrainResult result) {
         Properties report = new Properties();
         report.setProperty("drained", Boolean.toString(result.drained()));
+        report.setProperty("contract-audit-persisted", Boolean.toString(contracts == null || contractAuditSaved));
         pending.forEach((player, request) -> report.setProperty("request." + request, player.toString()));
         for (int index = 0; index < result.pending().size(); index++) report.setProperty("database." + index, result.pending().get(index));
         Path target = getDataFolder().toPath().resolve("shutdown-pending.properties");
