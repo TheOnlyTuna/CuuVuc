@@ -45,11 +45,7 @@ JAR: `target/CuuVucCore-0.6.0.jar`. Linux/macOS dùng `JAVA_HOME=/path/to/jdk25 
 
 ## Nâng cấp từ baseline
 
-Dừng mọi server dùng chung DB. Backup DB bằng `scripts/backup-database.ps1`, giữ JAR/config cũ; sao lưu world cùng thời điểm, đặc biệt sau khi đã có công trình V0.6. Script backup chỉ dump PostgreSQL, không sao lưu world.
-
-```powershell
-./scripts/backup-database.ps1 -PostgresBin 'C:/Program Files/PostgreSQL/18/bin' -HostName '127.0.0.1' -Port 55432 -DatabaseName 'cuuvuc' -UserName 'cuuvuc'
-```
+Dừng mọi server dùng chung DB. Tạo backup đồng bộ theo mục bên dưới trước migration, giữ cả JAR/config và world baseline. Backup chỉ PostgreSQL không chứa công trình Minecraft.
 
 Giữ database URL/user/schema, hạn mức và catalog baseline. Cập nhật phần `mine` theo `src/main/resources/config.yml`: **world=cv_prison**, 32 node trong chunk `(0,0)`, `y=100`. Config cũ có `world: world` sẽ bị từ chối, không tự đổi world. Không xóa hoặc đổi các resource ID/cảnh giới/giá để né kiểm tra policy.
 
@@ -67,6 +63,19 @@ $env:CUUVUC_TEST_PASSWORD = 'replace-with-your-test-password'
 
 DB test phải riêng; mỗi ca tạo/xóa duy nhất schema `cv_test_<uuid>`. Thiếu DB test là lỗi, không bỏ qua integration tests. [Kết quả V0.6](validation/V0.6-RESULTS.md) ghi tests, client và phần chưa xác minh; [RESULTS V0.5.1](validation/RESULTS.md) là lịch sử baseline.
 
-`.github/workflows/verify.yml` chạy khi push, pull request hoặc gọi thủ công: Java 25 + PostgreSQL 18.4 thật, `clean verify`, lưu JAR/checksum/JUnit 14 ngày. Actions khóa theo commit SHA đã xác minh. Workflow đã kiểm tra cú pháp cục bộ; [lần chạy đầu trên GitHub](https://github.com/TheOnlyTuna/CuuVuc/actions/runs/37992513554) bị chặn trước khi bắt đầu do tài khoản bị khóa vì billing. CI chưa được xác minh thành công; cần xử lý billing rồi chạy lại.
+Theo quyết định của người dùng, CI GitHub đã tắt và không phải điều kiện chốt V0.6. Kiểm chứng bằng `clean verify` cục bộ với PostgreSQL thật, hai Minecraft Client và backup/restore đồng bộ. Không cần thanh toán GitHub. Workflow được giữ để tham khảo, chỉ có trigger thủ công và đang disabled trên GitHub; không tự chạy khi push/PR. [Run cũ](https://github.com/TheOnlyTuna/CuuVuc/actions/runs/37992513554) bị chặn do billing, không có kết quả test CI.
+
+## Backup đồng bộ DB và world
+
+Lên lịch maintenance, tắt auto-restart và mọi writer DB khác, gõ `stop` ở console Paper, chờ process thoát và world I/O hoàn tất. Chỉ `save-all` rồi dump DB khi người chơi tiếp tục giao dịch không tạo snapshot đồng bộ. `backup-database.ps1` chỉ lưu DB; dùng hai script dưới đây cho cả server/world và DB. Bundle chứa cấu hình và dữ liệu riêng, cần giữ ngoài Git và trong nơi lưu trữ có quyền truy cập phù hợp.
+
+```powershell
+./scripts/backup-server.ps1 -ServerDirectory ./run -PostgresBin 'C:/Program Files/PostgreSQL/18/bin' -HostName 127.0.0.1 -Port 5432 -DatabaseName cuuvuc -UserName cuuvuc -OutputDirectory ./backups/paired-001
+./scripts/restore-server.ps1 -BundleDirectory ./backups/paired-001 -ServerDirectory ./backups/restored-server-001 -PostgresBin 'C:/Program Files/PostgreSQL/18/bin' -HostName 127.0.0.1 -Port 5432 -DatabaseName cuuvuc_restored_001 -UserName cuuvuc
+```
+
+Thay tham số bằng cấu hình thực tế; cung cấp mật khẩu qua PGPASSWORD/pgpass. Output backup, đích server và DB restore phải mới; restore kiểm tra toàn bộ checksum trước khi tạo DB và cập nhật URL DB ở config bản sao. Không tự khởi động, xóa DB hoặc ghi đè server gốc. Giữ bản gốc dừng khi chạy bản restore trên cùng port; sau khi bật server, kiểm tra ready, ví/ledger, kho/token, claims, công trình và đăng nhập lại. Nếu lỗi, giữ nguyên output để điều tra rồi chọn tên đích mới sau khi xử lý nguyên nhân.
+
+[Kiểm thử hai client và backup/restore](validation/V0.6-MULTICLIENT-RESTORE.md) ghi phạm vi đã đạt và bằng chứng. Offline mode chỉ bật trong bản sao thử loopback theo yêu cầu người dùng; UUID offline khác online, không tự chuyển hồ sơ. Chưa thử backup nóng hoặc crash recovery.
 
 Tham chiếu: [Paper PDC](https://docs.papermc.io/paper/dev/pdc/), [custom InventoryHolder](https://docs.papermc.io/paper/dev/custom-inventory-holder/), [teleportAsync](https://docs.papermc.io/paper/dev/entity-teleport/), [hướng dẫn scheduler được cung cấp](docs/references/Folia-scheduler-guide.md), [audit baseline](docs/references/CuuVucCore-V0.5-Technical-Audit.md). [V3-POC.md](V3-POC.md) là kế hoạch riêng; **không có heightmap V3 được cung cấp hoặc nhập**.

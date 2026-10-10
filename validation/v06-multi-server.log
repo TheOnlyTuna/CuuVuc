@@ -1,0 +1,230 @@
+[17:23:14] [ServerMain/INFO]: [bootstrap] Running Java 25 (OpenJDK 64-Bit Server VM 25.0.4.1+10-LTS; Amazon.com Inc. Corretto-25.0.4.10.1) on Windows 11 10.0 (amd64)
+[17:23:14] [ServerMain/INFO]: [bootstrap] Loading Paper 26.3-166-main@cc7b98a (2026-10-09T00:54:07Z) for Minecraft 26.3
+[17:23:14] [ServerMain/INFO]: [PluginInitializerManager] Initializing plugins...
+[17:23:14] [ServerMain/INFO]: [PluginInitializerManager] Initialized 1 plugin
+[17:23:14] [ServerMain/INFO]: [PluginInitializerManager] Bukkit plugins (1):
+ - CuuVucCore (0.6.0)
+[17:23:14] [CrashReport preload thread/ERROR]: [oshi.driver.windows.registry.HkeyPerformanceDataUtil] Unable to locate English counter names in registry Perflib 009. Counters may need to be rebuilt: 
+com.sun.jna.platform.win32.Win32Exception: The parameter is incorrect.
+	at com.sun.jna.platform.win32.Advapi32Util.registryGetStringArray(Advapi32Util.java:921) ~[jna-platform-5.17.0.jar:5.17.0 (b0)]
+	at com.sun.jna.platform.win32.Advapi32Util.registryGetStringArray(Advapi32Util.java:898) ~[jna-platform-5.17.0.jar:5.17.0 (b0)]
+	at oshi.driver.windows.registry.HkeyPerformanceDataUtil.mapCounterIndicesFromRegistry(HkeyPerformanceDataUtil.java:274) ~[oshi-core-6.9.0.jar:6.9.0]
+	at oshi.driver.windows.registry.HkeyPerformanceDataUtil.<clinit>(HkeyPerformanceDataUtil.java:51) ~[oshi-core-6.9.0.jar:6.9.0]
+	at oshi.driver.windows.registry.ProcessPerformanceData.buildProcessMapFromRegistry(ProcessPerformanceData.java:45) ~[oshi-core-6.9.0.jar:6.9.0]
+	at oshi.software.os.windows.WindowsOperatingSystem.queryProcessMapFromRegistry(WindowsOperatingSystem.java:328) ~[oshi-core-6.9.0.jar:6.9.0]
+	at oshi.util.Memoizer$1.get(Memoizer.java:65) ~[oshi-core-6.9.0.jar:6.9.0]
+	at oshi.software.os.windows.WindowsOperatingSystem.processMapToList(WindowsOperatingSystem.java:298) ~[oshi-core-6.9.0.jar:6.9.0]
+	at oshi.software.os.windows.WindowsOperatingSystem.getProcess(WindowsOperatingSystem.java:292) ~[oshi-core-6.9.0.jar:6.9.0]
+	at oshi.software.os.OperatingSystem.getCurrentProcess(OperatingSystem.java:246) ~[oshi-core-6.9.0.jar:6.9.0]
+	at net.minecraft.SystemReport.lambda$putSoftware$0(SystemReport.java:115) ~[paper-26.3.jar:26.3-166-cc7b98a]
+	at net.minecraft.SystemReport.ignoreErrors(SystemReport.java:120) ~[paper-26.3.jar:26.3-166-cc7b98a]
+	at net.minecraft.SystemReport.putSoftware(SystemReport.java:115) ~[paper-26.3.jar:26.3-166-cc7b98a]
+	at net.minecraft.SystemReport.lambda$new$7(SystemReport.java:68) ~[paper-26.3.jar:26.3-166-cc7b98a]
+	at net.minecraft.SystemReport.ignoreErrors(SystemReport.java:120) ~[paper-26.3.jar:26.3-166-cc7b98a]
+	at net.minecraft.SystemReport.<init>(SystemReport.java:68) ~[paper-26.3.jar:26.3-166-cc7b98a]
+	at net.minecraft.CrashReport.<init>(CrashReport.java:32) ~[paper-26.3.jar:26.3-166-cc7b98a]
+	at net.minecraft.CrashReport.preload(CrashReport.java:240) ~[paper-26.3.jar:26.3-166-cc7b98a]
+	at java.base/java.lang.Thread.run(Thread.java:1474) ~[?:?]
+[17:23:14] [CrashReport preload thread/WARN]: [oshi.util.platform.windows.PerfCounterQuery] Unable to locate English counter names in registry Perflib 009. Assuming English counters. Error 0x80070057. See https://support.microsoft.com/en-us/help/300956/how-to-manually-rebuild-performance-counter-library-values
+[17:23:16] [DataConverter MCTypeRegistry init thread/INFO]: [ca.spottedleaf.dataconverter.minecraft.datatypes.MCTypeRegistry] Initialising converters for DataConverter...
+[17:23:16] [ServerMain/INFO]: [com.destroystokyo.paper.profile.PaperServicesDiscoveryService] Environment: Environment[discoveryUrl=https://discovery.minecraftservices.com/minecraft/client, name=PROD]
+[17:23:16] [DataConverter MCTypeRegistry init thread/INFO]: [ca.spottedleaf.dataconverter.minecraft.datatypes.MCTypeRegistry] Finished initialising converters for DataConverter in 184.2ms
+[17:23:17] [Worker-Main-2/INFO]: Loaded 1866 advancements
+[17:23:17] [Server thread/INFO]: Starting minecraft server version 26.3
+[17:23:17] [Server thread/INFO]: Loading properties
+[17:23:17] [Server thread/INFO]: This server is running Paper version 26.3-166-main@cc7b98a (2026-10-09T00:54:07Z) (Implementing API version 26.3.build.166-beta)
+[17:23:17] [Server thread/INFO]: [spark] This server bundles the spark profiler. For more information please visit https://docs.papermc.io/paper/profiling
+[17:23:17] [Server thread/INFO]: Server Ping Player Sample Count: 12
+[17:23:17] [Server thread/INFO]: Using 4 threads for Netty based IO
+[17:23:17] [Server thread/INFO]: [MoonriseCommon] Paper is using 6 worker threads, 1 I/O threads
+[17:23:17] [Server thread/INFO]: Default game type: SURVIVAL
+[17:23:17] [Server thread/INFO]: Generating keypair
+[17:23:17] [Server thread/INFO]: Starting Minecraft server on 127.0.0.1:25579
+[17:23:17] [Server thread/INFO]: Paper: Using Java compression from Velocity.
+[17:23:17] [Server thread/INFO]: Paper: Using Java cipher from Velocity.
+[17:23:17] [Server thread/INFO]: [CuuVucCore] Loading server plugin CuuVucCore v0.6.0
+[17:23:17] [Server thread/WARN]: **** SERVER IS RUNNING IN OFFLINE/INSECURE MODE!
+[17:23:17] [Server thread/WARN]: The server will make no attempt to authenticate usernames. Beware.
+[17:23:17] [Server thread/WARN]: While this makes the game possible to play without internet access, it also opens up the ability for hackers to connect with any username they choose.
+[17:23:17] [Server thread/WARN]: To change this, set "online-mode" to "true" in the server.properties file.
+[17:23:17] [Server thread/INFO]: Preparing level "world"
+[17:23:17] [Server thread/INFO]: Loading 0 persistent chunks for level 'minecraft:overworld'...
+[17:23:17] [Server thread/INFO]: Preparing spawn area: 100%
+[17:23:17] [Server thread/INFO]: Prepared spawn area in 3 ms
+[17:23:17] [Server thread/INFO]: Loading 0 persistent chunks for level 'minecraft:the_nether'...
+[17:23:17] [Server thread/INFO]: Prepared spawn area in 2 ms
+[17:23:17] [Server thread/INFO]: Loading 0 persistent chunks for level 'minecraft:the_end'...
+[17:23:17] [Server thread/INFO]: Prepared spawn area in 2 ms
+[17:23:17] [Server thread/INFO]: Done preparing level "world" (0.219s)
+[17:23:17] [Server thread/INFO]: [CuuVucCore] Enabling CuuVucCore v0.6.0
+[17:23:17] [Server thread/INFO]: [vn.cuuvuc.internal.hikari.HikariDataSource] HikariPool-1 - Starting...
+[17:23:17] [Server thread/INFO]: [vn.cuuvuc.internal.hikari.HikariDataSource] HikariPool-1 - Start completed.
+[17:23:18] [Server thread/INFO]: Loading 0 persistent chunks for level 'minecraft:cv_prison'...
+[17:23:18] [Server thread/INFO]: Prepared spawn area in 2 ms
+[17:23:18] [Server thread/INFO]: Loading 0 persistent chunks for level 'minecraft:cv_sky'...
+[17:23:18] [Server thread/INFO]: Prepared spawn area in 2 ms
+[17:23:18] [Server thread/INFO]: [spark] Starting background profiler...
+[17:23:18] [Server thread/INFO]: [spark] The async-profiler engine is not supported for your os/arch (windows11/amd64), so the built-in Java engine will be used instead.
+[17:23:18] [Server thread/INFO]: Saving chunks for level 'ServerLevel[world]'/minecraft:overworld
+[17:23:18] [Server thread/INFO]: Saving chunks for level 'ServerLevel[world]'/minecraft:the_nether
+[17:23:18] [Server thread/INFO]: Saving chunks for level 'ServerLevel[world]'/minecraft:the_end
+[17:23:18] [Server thread/INFO]: Saving chunks for level 'ServerLevel[world]'/minecraft:cv_prison
+[17:23:18] [Server thread/INFO]: Saving chunks for level 'ServerLevel[world]'/minecraft:cv_sky
+[17:23:18] [Server thread/INFO]: Running delayed init tasks
+[17:23:18] [Server thread/INFO]: Done (4.532s)! For help, type "help"
+[17:23:18] [Folia Async Scheduler Thread #0/INFO]: [CuuVucCore] cuuvuc_database_ready
+[17:23:18] [Paper Async Task Handler Thread - 1/INFO]: *** Currently you are 3 builds behind ***
+[17:23:18] [Paper Async Task Handler Thread - 1/INFO]: *** It is highly recommended to download the latest build from https://papermc.io/downloads/paper ***
+[17:23:31] [User Authenticator #0/INFO]: UUID of player CuuVucNPC1 is 1194cfbc-1195-338c-9eb1-0c49dd118ae3
+[17:23:32] [Server thread/INFO]: [CuuVucCore] player_request_accepted
+[17:23:32] [Server thread/INFO]: System chat: CuuVucNPC1 joined the game
+[17:23:32] [Server thread/INFO]: CuuVucNPC1[/127.0.0.1:52601] logged in with entity id 80 at ([minecraft:overworld]3.5, -60.0, 0.5)
+[17:23:38] [Server thread/INFO]: System chat: There are 1 of a max of 4 players online: CuuVucNPC1
+[17:23:59] [Server thread/INFO]: System chat: CuuVucNPC1 was slain by Zombie
+[17:24:03] [Server thread/INFO]: System chat: There are 1 of a max of 4 players online: CuuVucNPC1
+[17:24:03] [User Authenticator #1/INFO]: UUID of player TyninWorld is 3bb5ddbc-5b75-377f-8647-6f25c51f252a
+[17:24:03] [Server thread/INFO]: [CuuVucCore] player_request_accepted
+[17:24:03] [Server thread/INFO]: System chat: TyninWorld joined the game
+[17:24:03] [Server thread/INFO]: TyninWorld[/127.0.0.1:55254] logged in with entity id 86 at ([minecraft:overworld]0.5, -60.0, -8.5)
+[17:24:10] [Server thread/INFO]: System chat: The difficulty has been set to Peaceful
+[17:24:10] [Server thread/INFO]: System chat: There are 2 of a max of 4 players online: CuuVucNPC1, TyninWorld
+[17:24:18] [Server thread/INFO]: [CuuVucCore] player_request_accepted
+[17:24:47] [Server thread/INFO]: CuuVucNPC1 issued server command: /cv home
+[17:24:47] [Server thread/WARN]: A manual (plugin-induced) save has been detected while server is configured to auto-save. This may affect performance.
+[17:24:54] [Server thread/INFO]: System chat: Set minecraft:overworld to time marker minecraft:day
+[17:25:16] [Server thread/INFO]: TyninWorld issued server command: /cv
+[17:25:16] [Server thread/INFO]: [CuuVucCore] player_request_accepted
+[17:25:58] [Server thread/INFO]: System chat: Changed the block at 200, 100, 7
+[17:25:58] [Server thread/INFO]: System chat: Changed the block at 201, 100, 7
+[17:25:58] [Server thread/INFO]: System chat: Changed the block at 202, 100, 7
+[17:25:58] [Server thread/INFO]: System chat: Set CuuVucNPC1's game mode to Creative Mode
+[17:26:26] [Server thread/INFO]: CuuVucNPC1 issued server command: /cv visit 3bb5ddbc-5b75-377f-8647-6f25c51f252a
+[17:26:27] [Server thread/INFO]: System chat: Teleported CuuVucNPC1 to 200.500000, 100.000000, 5.500000
+[17:26:40] [Server thread/INFO]: [Not Secure] [Server] TEST_GUEST_BREAK_DENIED
+[17:26:48] [Server thread/INFO]: System chat: CuuVucNPC1 has made the advancement [Stone Age]
+[17:26:48] [Server thread/INFO]: System chat: Replaced 1 slot(s) on CuuVucNPC1 with [Cobblestone]
+[17:26:56] [Server thread/INFO]: [Not Secure] [Server] TEST_GUEST_PLACE_DENIED
+[17:27:23] [Server thread/INFO]: TyninWorld issued server command: /cv invite 1194cfbc-1195-338c-9eb1-0c49dd118ae3
+[17:27:42] [Server thread/INFO]: [Not Secure] [Server] TEST_BUILDER_PLACE_ALLOWED
+[17:27:51] [Server thread/INFO]: [Not Secure] [Server] TEST_BUILDER_BREAK_ALLOWED
+[17:28:47] [Server thread/INFO]: TyninWorld issued server command: /cv revoke 1194cfbc-1195-338c-9eb1-0c49dd118ae3
+[17:29:06] [Server thread/INFO]: [Not Secure] [Server] TEST_REVOKED_BREAK_DENIED
+[17:29:16] [Server thread/INFO]: System chat: Set CuuVucNPC1's game mode to Survival Mode
+[17:29:16] [Server thread/INFO]: System chat: Replaced 1 slot(s) on CuuVucNPC1 with [Diamond Pickaxe]
+[17:29:16] [Server thread/INFO]: System chat: Applied effect Haste to CuuVucNPC1
+[17:29:16] [Server thread/INFO]: System chat: Replaced 1 slot(s) on TyninWorld with [Diamond Pickaxe]
+[17:29:16] [Server thread/INFO]: System chat: Applied effect Haste to TyninWorld
+[17:29:16] [Server thread/INFO]: System chat: Teleported CuuVucNPC1 to 4.500000, 100.000000, 6.500000
+[17:29:16] [Server thread/INFO]: System chat: Teleported TyninWorld to 5.500000, 100.000000, 6.500000
+[17:29:35] [Server thread/INFO]: System chat: Applied effect Haste to CuuVucNPC1
+[17:29:35] [Server thread/INFO]: System chat: Applied effect Haste to TyninWorld
+[17:29:43] [Server thread/INFO]: [CuuVucCore] player_request_accepted
+[17:29:57] [Server thread/INFO]: System chat: CuuVucNPC1 has the following entity data: [{Slot: 0b, id: "minecraft:diamond_pickaxe", count: 1}, {Slot: 1b, id: "minecraft:stone", count: 1, components: {"minecraft:max_stack_size": 1, "minecraft:lore": ["Nguyên liệu Cửu Vực • Gắn với chủ sở hữu", "Dùng tại bàn chế tạo hoặc thương nhân Cửu Vực"], "minecraft:custom_name": "Linh thạch thô", "minecraft:custom_data": {PublicBukkitValues: {"cuuvuccore:token": "c630f59b-d5c1-4471-bb72-f39dd45c0327", "cuuvuccore:resource": "linh_thach_tho", "cuuvuccore:owner": "1194cfbc-1195-338c-9eb1-0c49dd118ae3"}}}}]
+[17:30:21] [Server thread/INFO]: [CuuVucCore] player_request_accepted
+[17:30:21] [Server thread/INFO]: System chat: TyninWorld has the following entity data: [{Slot: 0b, id: "minecraft:diamond_pickaxe", count: 1}, {Slot: 1b, id: "minecraft:stone", count: 1, components: {"minecraft:max_stack_size": 1, "minecraft:lore": ["Nguyên liệu Cửu Vực • Gắn với chủ sở hữu", "Dùng tại bàn chế tạo hoặc thương nhân Cửu Vực"], "minecraft:custom_name": "Linh thạch thô", "minecraft:custom_data": {PublicBukkitValues: {"cuuvuccore:token": "d96f0346-80b1-49fe-b692-8546be2e46b6", "cuuvuccore:resource": "linh_thach_tho", "cuuvuccore:owner": "3bb5ddbc-5b75-377f-8647-6f25c51f252a"}}}}]
+[17:30:33] [Server thread/INFO]: System chat: Teleported TyninWorld to 202.500000, 100.000000, 6.500000
+[17:31:15] [Server thread/INFO]: System chat: 202, 100, 8 has the following block data: [{Slot: 0b, id: "minecraft:oak_log", count: 16}, {Slot: 1b, id: "minecraft:dirt", count: 32}, {Slot: 2b, id: "minecraft:water_bucket", count: 1}, {Slot: 3b, id: "minecraft:lava_bucket", count: 1}, {Slot: 4b, id: "minecraft:wooden_pickaxe", count: 1}]
+[17:31:15] [Server thread/INFO]: System chat: TyninWorld has the following entity data: [{Slot: 0b, id: "minecraft:diamond_pickaxe", count: 1}, {Slot: 1b, id: "minecraft:stone", count: 1, components: {"minecraft:max_stack_size": 1, "minecraft:lore": ["Nguyên liệu Cửu Vực • Gắn với chủ sở hữu", "Dùng tại bàn chế tạo hoặc thương nhân Cửu Vực"], "minecraft:custom_name": "Linh thạch thô", "minecraft:custom_data": {PublicBukkitValues: {"cuuvuccore:token": "d96f0346-80b1-49fe-b692-8546be2e46b6", "cuuvuccore:resource": "linh_thach_tho", "cuuvuccore:owner": "3bb5ddbc-5b75-377f-8647-6f25c51f252a"}}}}]
+[17:31:34] [Server thread/INFO]: System chat: TyninWorld has made the advancement [Stone Age]
+[17:31:34] [Server thread/INFO]: System chat: Replaced 1 slot(s) on TyninWorld with [Cobblestone]
+[17:31:34] [Server thread/INFO]: System chat: Replaced 1 slot(s) on TyninWorld with [Cobblestone]
+[17:31:34] [Server thread/INFO]: System chat: Replaced 1 slot(s) on TyninWorld with [Cobblestone]
+[17:31:34] [Server thread/INFO]: System chat: Replaced 1 slot(s) on TyninWorld with [Cobblestone]
+[17:31:34] [Server thread/INFO]: System chat: Replaced 1 slot(s) on TyninWorld with [Cobblestone]
+[17:31:34] [Server thread/INFO]: System chat: Replaced 1 slot(s) on TyninWorld with [Cobblestone]
+[17:31:34] [Server thread/INFO]: System chat: Replaced 1 slot(s) on TyninWorld with [Cobblestone]
+[17:31:34] [Server thread/INFO]: System chat: Replaced 1 slot(s) on TyninWorld with [Cobblestone]
+[17:31:34] [Server thread/INFO]: System chat: Replaced 1 slot(s) on TyninWorld with [Cobblestone]
+[17:31:34] [Server thread/INFO]: System chat: Replaced 1 slot(s) on TyninWorld with [Cobblestone]
+[17:31:34] [Server thread/INFO]: System chat: Replaced 1 slot(s) on TyninWorld with [Cobblestone]
+[17:31:34] [Server thread/INFO]: System chat: Replaced 1 slot(s) on TyninWorld with [Cobblestone]
+[17:31:34] [Server thread/INFO]: System chat: Replaced 1 slot(s) on TyninWorld with [Cobblestone]
+[17:31:34] [Server thread/INFO]: System chat: Replaced 1 slot(s) on TyninWorld with [Cobblestone]
+[17:31:34] [Server thread/INFO]: System chat: Replaced 1 slot(s) on TyninWorld with [Cobblestone]
+[17:31:34] [Server thread/INFO]: System chat: Replaced 1 slot(s) on TyninWorld with [Cobblestone]
+[17:31:34] [Server thread/INFO]: System chat: Replaced 1 slot(s) on TyninWorld with [Cobblestone]
+[17:31:34] [Server thread/INFO]: System chat: Replaced 1 slot(s) on TyninWorld with [Cobblestone]
+[17:31:34] [Server thread/INFO]: System chat: Replaced 1 slot(s) on TyninWorld with [Cobblestone]
+[17:31:34] [Server thread/INFO]: System chat: Replaced 1 slot(s) on TyninWorld with [Cobblestone]
+[17:31:34] [Server thread/INFO]: System chat: Replaced 1 slot(s) on TyninWorld with [Cobblestone]
+[17:31:34] [Server thread/INFO]: System chat: Replaced 1 slot(s) on TyninWorld with [Cobblestone]
+[17:31:34] [Server thread/INFO]: System chat: Replaced 1 slot(s) on TyninWorld with [Cobblestone]
+[17:31:34] [Server thread/INFO]: System chat: Replaced 1 slot(s) on TyninWorld with [Cobblestone]
+[17:31:34] [Server thread/INFO]: System chat: Replaced 1 slot(s) on TyninWorld with [Cobblestone]
+[17:31:34] [Server thread/INFO]: System chat: Replaced 1 slot(s) on TyninWorld with [Cobblestone]
+[17:31:34] [Server thread/INFO]: System chat: Replaced 1 slot(s) on TyninWorld with [Cobblestone]
+[17:31:34] [Server thread/INFO]: System chat: Replaced 1 slot(s) on TyninWorld with [Cobblestone]
+[17:31:34] [Server thread/INFO]: System chat: Replaced 1 slot(s) on TyninWorld with [Cobblestone]
+[17:31:34] [Server thread/INFO]: System chat: Replaced 1 slot(s) on TyninWorld with [Cobblestone]
+[17:31:34] [Server thread/INFO]: System chat: Replaced 1 slot(s) on TyninWorld with [Cobblestone]
+[17:31:34] [Server thread/INFO]: System chat: Replaced 1 slot(s) on TyninWorld with [Cobblestone]
+[17:31:34] [Server thread/INFO]: System chat: Replaced 1 slot(s) on TyninWorld with [Cobblestone]
+[17:31:34] [Server thread/INFO]: System chat: Replaced 1 slot(s) on TyninWorld with [Cobblestone]
+[17:31:34] [Server thread/INFO]: System chat: Teleported TyninWorld to 5.500000, 100.000000, 6.500000
+[17:31:50] [Server thread/INFO]: [CuuVucCore] player_request_accepted
+[17:32:06] [Server thread/INFO]: System chat: Replaced 1 slot(s) on TyninWorld
+[17:32:06] [Server thread/INFO]: System chat: Replaced 1 slot(s) on TyninWorld
+[17:32:06] [Server thread/INFO]: System chat: TyninWorld has the following entity data: [{Slot: 0b, id: "minecraft:diamond_pickaxe", count: 1}, {Slot: 1b, id: "minecraft:stone", count: 1, components: {"minecraft:max_stack_size": 1, "minecraft:lore": ["Nguyên liệu Cửu Vực • Gắn với chủ sở hữu", "Dùng tại bàn chế tạo hoặc thương nhân Cửu Vực"], "minecraft:custom_name": "Linh thạch thô", "minecraft:custom_data": {PublicBukkitValues: {"cuuvuccore:token": "d96f0346-80b1-49fe-b692-8546be2e46b6", "cuuvuccore:resource": "linh_thach_tho", "cuuvuccore:owner": "3bb5ddbc-5b75-377f-8647-6f25c51f252a"}}}}, {Slot: 2b, id: "minecraft:stone", count: 1, components: {"minecraft:max_stack_size": 1, "minecraft:lore": ["Nguyên liệu Cửu Vực • Gắn với chủ sở hữu", "Dùng tại bàn chế tạo hoặc thương nhân Cửu Vực"], "minecraft:custom_name": "Linh thạch thô", "minecraft:custom_data": {PublicBukkitValues: {"cuuvuccore:token": "c630f59b-d5c1-4471-bb72-f39dd45c0327", "cuuvuccore:resource": "linh_thach_tho", "cuuvuccore:owner": "1194cfbc-1195-338c-9eb1-0c49dd118ae3"}}}}, {Slot: 3b, id: "minecraft:stone", count: 1, components: {"minecraft:max_stack_size": 1, "minecraft:lore": ["Nguyên liệu Cửu Vực • Gắn với chủ sở hữu", "Dùng tại bàn chế tạo hoặc thương nhân Cửu Vực"], "minecraft:custom_name": "Linh thạch thô", "minecraft:custom_data": {PublicBukkitValues: {"cuuvuccore:token": "d96f0346-80b1-49fe-b692-8546be2e46b6", "cuuvuccore:resource": "linh_thach_tho", "cuuvuccore:owner": "3bb5ddbc-5b75-377f-8647-6f25c51f252a"}}}}, {Slot: 4b, id: "minecraft:cobblestone", count: 64}, {Slot: 5b, id: "minecraft:cobblestone", count: 64}, {Slot: 6b, id: "minecraft:cobblestone", count: 64}, {Slot: 7b, id: "minecraft:cobblestone", count: 64}, {Slot: 8b, id: "minecraft:cobblestone", count: 64}, {Slot: 9b, id: "minecraft:cobblestone", count: 64}, {Slot: 10b, id: "minecraft:cobblestone", count: 64}, {Slot: 11b, id: "minecraft:cobblestone", count: 64}, {Slot: 12b, id: "minecraft:cobblestone", count: 64}, {Slot: 13b, id: "minecraft:cobblestone", count: 64}, {Slot: 14b, id: "minecraft:cobblestone", count: 64}, {Slot: 15b, id: "minecraft:cobblestone", count: 64}, {Slot: 16b, id: "minecraft:cobblestone", count: 64}, {Slot: 17b, id: "minecraft:cobblestone", count: 64}, {Slot: 18b, id: "minecraft:cobblestone", count: 64}, {Slot: 19b, id: "minecraft:cobblestone", count: 64}, {Slot: 20b, id: "minecraft:cobblestone", count: 64}, {Slot: 21b, id: "minecraft:cobblestone", count: 64}, {Slot: 22b, id: "minecraft:cobblestone", count: 64}, {Slot: 23b, id: "minecraft:cobblestone", count: 64}, {Slot: 24b, id: "minecraft:cobblestone", count: 64}, {Slot: 25b, id: "minecraft:cobblestone", count: 64}, {Slot: 26b, id: "minecraft:cobblestone", count: 64}, {Slot: 27b, id: "minecraft:cobblestone", count: 64}, {Slot: 28b, id: "minecraft:cobblestone", count: 64}, {Slot: 29b, id: "minecraft:cobblestone", count: 64}, {Slot: 30b, id: "minecraft:cobblestone", count: 64}, {Slot: 31b, id: "minecraft:cobblestone", count: 64}, {Slot: 32b, id: "minecraft:cobblestone", count: 64}, {Slot: 33b, id: "minecraft:cobblestone", count: 64}, {Slot: 34b, id: "minecraft:cobblestone", count: 64}, {Slot: 35b, id: "minecraft:cobblestone", count: 64}]
+[17:32:25] [Server thread/INFO]: TyninWorld issued server command: /cv kho
+[17:32:25] [Server thread/INFO]: [CuuVucCore] player_request_accepted
+[17:32:25] [Server thread/INFO]: System chat: TyninWorld has the following entity data: {Slot: 1b, id: "minecraft:stone", count: 1, components: {"minecraft:max_stack_size": 1, "minecraft:lore": ["Nguyên liệu Cửu Vực • Gắn với chủ sở hữu", "Dùng tại bàn chế tạo hoặc thương nhân Cửu Vực"], "minecraft:custom_name": "Linh thạch thô", "minecraft:custom_data": {PublicBukkitValues: {"cuuvuccore:token": "d96f0346-80b1-49fe-b692-8546be2e46b6", "cuuvuccore:resource": "linh_thach_tho", "cuuvuccore:owner": "3bb5ddbc-5b75-377f-8647-6f25c51f252a"}}}}
+[17:32:25] [Server thread/INFO]: System chat: TyninWorld has the following entity data: {Slot: 2b, id: "minecraft:stone", count: 1, components: {"minecraft:max_stack_size": 1, "minecraft:lore": ["Nguyên liệu Cửu Vực • Gắn với chủ sở hữu", "Dùng tại bàn chế tạo hoặc thương nhân Cửu Vực"], "minecraft:custom_name": "Linh thạch thô", "minecraft:custom_data": {PublicBukkitValues: {"cuuvuccore:token": "10ca34a9-2890-48a5-8fca-492a2efe8df6", "cuuvuccore:resource": "linh_thach_tho", "cuuvuccore:owner": "3bb5ddbc-5b75-377f-8647-6f25c51f252a"}}}}
+[17:32:25] [Server thread/INFO]: System chat: Found no elements matching Inventory[{Slot:3b}]
+[17:32:25] [Server thread/INFO]: System chat: CuuVucNPC1 has the following entity data: {Slot: 1b, id: "minecraft:stone", count: 1, components: {"minecraft:max_stack_size": 1, "minecraft:lore": ["Nguyên liệu Cửu Vực • Gắn với chủ sở hữu", "Dùng tại bàn chế tạo hoặc thương nhân Cửu Vực"], "minecraft:custom_name": "Linh thạch thô", "minecraft:custom_data": {PublicBukkitValues: {"cuuvuccore:token": "c630f59b-d5c1-4471-bb72-f39dd45c0327", "cuuvuccore:resource": "linh_thach_tho", "cuuvuccore:owner": "1194cfbc-1195-338c-9eb1-0c49dd118ae3"}}}}
+[17:34:28] [Server thread/INFO]: [CuuVucCore] player_request_accepted
+[17:34:28] [Server thread/INFO]: System chat: TyninWorld has the following entity data: {Slot: 1b, id: "minecraft:stone", count: 1, components: {"minecraft:max_stack_size": 1, "minecraft:lore": ["Nguyên liệu Cửu Vực • Gắn với chủ sở hữu", "Dùng tại bàn chế tạo hoặc thương nhân Cửu Vực"], "minecraft:custom_name": "Linh thạch thô", "minecraft:custom_data": {PublicBukkitValues: {"cuuvuccore:token": "60764711-2a94-433c-8837-a5726ee913dc", "cuuvuccore:resource": "linh_thach_tho", "cuuvuccore:owner": "3bb5ddbc-5b75-377f-8647-6f25c51f252a"}}}}
+[17:34:28] [Server thread/INFO]: System chat: There are 2 of a max of 4 players online: TyninWorld, CuuVucNPC1
+[17:34:56] [Server thread/INFO]: System chat: Marked chunk [12, 0] in minecraft:cv_sky to be force loaded
+[17:34:56] [Server thread/INFO]: System chat: Stopping the server
+[17:34:56] [Server thread/INFO]: [Not Secure] [Server] TEST_PRE_BACKUP_BUILDER_STRUCTURE
+[17:34:56] [Server thread/INFO]: Stopping server
+[17:34:56] [Server thread/INFO]: [CuuVucCore] Disabling CuuVucCore v0.6.0
+[17:34:56] [Server thread/INFO]: [vn.cuuvuc.internal.hikari.HikariDataSource] HikariPool-1 - Shutdown initiated...
+[17:34:56] [Server thread/INFO]: [vn.cuuvuc.internal.hikari.HikariDataSource] HikariPool-1 - Shutdown completed.
+[17:34:56] [Server thread/INFO]: [vn.cuuvuc.core.GameDatabase] database_drain_complete
+[17:34:56] [Server thread/INFO]: Saving players
+[17:34:56] [Server thread/INFO]: CuuVucNPC1 lost connection: Server closed
+[17:34:56] [Server thread/INFO]: System chat: CuuVucNPC1 left the game
+[17:34:56] [Server thread/INFO]: TyninWorld lost connection: Server closed
+[17:34:56] [Server thread/INFO]: System chat: TyninWorld left the game
+[17:34:56] [Server thread/INFO]: Saving worlds
+[17:34:56] [Server thread/INFO]: Saving chunks for level 'ServerLevel[world]'/minecraft:overworld
+[17:34:56] [Server thread/INFO]: [ChunkHolderManager] Waiting 60s for chunk system to halt for world 'minecraft:overworld'
+[17:34:56] [Server thread/INFO]: [ChunkHolderManager] Halted chunk system for world 'minecraft:overworld'
+[17:34:56] [Server thread/INFO]: [ChunkHolderManager] Saving all chunkholders for world 'minecraft:overworld'
+[17:34:56] [Server thread/INFO]: [ChunkHolderManager] Saved 0 block chunks, 0 entity chunks, 0 poi chunks in world 'minecraft:overworld' in 0.00s
+[17:34:56] [Server thread/INFO]: [ChunkHolderManager] Waiting 60s for chunk I/O to halt for world 'minecraft:overworld'
+[17:34:56] [Server thread/INFO]: [ChunkHolderManager] Halted I/O scheduler for world 'minecraft:overworld'
+[17:34:56] [Server thread/INFO]: Saving chunks for level 'ServerLevel[world]'/minecraft:the_nether
+[17:34:56] [Server thread/INFO]: [ChunkHolderManager] Waiting 60s for chunk system to halt for world 'minecraft:the_nether'
+[17:34:56] [Server thread/INFO]: [ChunkHolderManager] Halted chunk system for world 'minecraft:the_nether'
+[17:34:56] [Server thread/INFO]: [ChunkHolderManager] Saving all chunkholders for world 'minecraft:the_nether'
+[17:34:56] [Server thread/INFO]: [ChunkHolderManager] Saved 0 block chunks, 0 entity chunks, 0 poi chunks in world 'minecraft:the_nether' in 0.00s
+[17:34:56] [Server thread/INFO]: [ChunkHolderManager] Waiting 60s for chunk I/O to halt for world 'minecraft:the_nether'
+[17:34:56] [Server thread/INFO]: [ChunkHolderManager] Halted I/O scheduler for world 'minecraft:the_nether'
+[17:34:56] [Server thread/INFO]: Saving chunks for level 'ServerLevel[world]'/minecraft:the_end
+[17:34:56] [Server thread/INFO]: [ChunkHolderManager] Waiting 60s for chunk system to halt for world 'minecraft:the_end'
+[17:34:56] [Server thread/INFO]: [ChunkHolderManager] Halted chunk system for world 'minecraft:the_end'
+[17:34:56] [Server thread/INFO]: [ChunkHolderManager] Saving all chunkholders for world 'minecraft:the_end'
+[17:34:56] [Server thread/INFO]: [ChunkHolderManager] Saved 0 block chunks, 0 entity chunks, 0 poi chunks in world 'minecraft:the_end' in 0.00s
+[17:34:56] [Server thread/INFO]: [ChunkHolderManager] Waiting 60s for chunk I/O to halt for world 'minecraft:the_end'
+[17:34:56] [Server thread/INFO]: [ChunkHolderManager] Halted I/O scheduler for world 'minecraft:the_end'
+[17:34:56] [Server thread/INFO]: Saving chunks for level 'ServerLevel[world]'/minecraft:cv_prison
+[17:34:56] [Server thread/INFO]: [ChunkHolderManager] Waiting 60s for chunk system to halt for world 'minecraft:cv_prison'
+[17:34:56] [Server thread/INFO]: [ChunkHolderManager] Halted chunk system for world 'minecraft:cv_prison'
+[17:34:56] [Server thread/INFO]: [ChunkHolderManager] Saving all chunkholders for world 'minecraft:cv_prison'
+[17:34:56] [Server thread/INFO]: [ChunkHolderManager] Saved 0 block chunks, 0 entity chunks, 0 poi chunks in world 'minecraft:cv_prison' in 0.00s
+[17:34:56] [Server thread/INFO]: [ChunkHolderManager] Waiting 60s for chunk I/O to halt for world 'minecraft:cv_prison'
+[17:34:56] [Server thread/INFO]: [ChunkHolderManager] Halted I/O scheduler for world 'minecraft:cv_prison'
+[17:34:56] [Server thread/INFO]: Saving chunks for level 'ServerLevel[world]'/minecraft:cv_sky
+[17:34:56] [Server thread/INFO]: [ChunkHolderManager] Waiting 60s for chunk system to halt for world 'minecraft:cv_sky'
+[17:34:56] [Server thread/INFO]: [ChunkHolderManager] Halted chunk system for world 'minecraft:cv_sky'
+[17:34:56] [Server thread/INFO]: [ChunkHolderManager] Saving all chunkholders for world 'minecraft:cv_sky'
+[17:34:56] [Server thread/INFO]: [ChunkHolderManager] Saved 25 block chunks, 25 entity chunks, 0 poi chunks in world 'minecraft:cv_sky' in 0.00s
+[17:34:56] [Server thread/INFO]: [ChunkHolderManager] Waiting 60s for chunk I/O to halt for world 'minecraft:cv_sky'
+[17:34:56] [Server thread/INFO]: [ChunkHolderManager] Halted I/O scheduler for world 'minecraft:cv_sky'
+[17:34:56] [Server thread/INFO]: Waiting for all RegionFile I/O tasks to complete...
+[17:34:56] [Server thread/INFO]: All RegionFile I/O tasks to complete
+[17:34:56] [Server thread/INFO]: [MoonriseCommon] Awaiting termination of worker pool for up to 60s...
+[17:34:56] [Server thread/INFO]: [MoonriseCommon] Awaiting termination of I/O pool for up to 60s...
+

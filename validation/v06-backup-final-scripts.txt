@@ -1,0 +1,4 @@
+BACKUP_COMPLETE files=241 bundle=C:\Users\LOCAL_USER\.codex\.chatgpt-projects\g-p-68cc343744bc8191aa703c926143a15c\CuuVuc-GitHub\backups\v06-final-script-bundle
+RESTORE_COMPLETE files=241 database=cv_v06_script_check server=C:\Users\LOCAL_USER\.codex\.chatgpt-projects\g-p-68cc343744bc8191aa703c926143a15c\CuuVuc-GitHub\backups\v06-final-script-server
+FINAL_SCRIPTS_14_TABLES_MATCH
+
