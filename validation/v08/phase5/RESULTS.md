@@ -16,7 +16,7 @@ Runtime mới `run-v08-three-player`, DB mới `cv_v08_three_player`, world sinh
 | B — Người góp | CuuVucNPC1, Prism | `1194cfbc-1195-338c-9eb1-0c49dd118ae3` |
 | C — Builder | TyninWorld, Modrinth | `3bb5ddbc-5b75-377f-8647-6f25c51f252a` |
 
-Các thao tác nghiệp vụ bên dưới thực hiện bằng lệnh `/cv` của người chơi và nút xác nhận GUI trên client thật. SQL chỉ đọc để đối soát; không INSERT/UPDATE fixture, không console tạo vật phẩm, tiền, block hoặc hợp đồng. Console chỉ dùng điều chỉnh môi trường Peaceful và dừng server.
+Các thao tác nghiệp vụ trong bảng ca đã chạy thực hiện bằng lệnh `/cv` của người chơi và nút xác nhận GUI trên client thật. SQL chỉ đọc để đối soát; không INSERT/UPDATE fixture, không console tạo tiền hoặc hợp đồng. Phiên preflight chỉ dùng console điều chỉnh Peaceful và dừng server. Chuẩn bị công cụ/block của phiên tiếp tục được người dùng cho phép riêng bên dưới; không gộp vào bằng chứng tự thu thập hoặc xây tay.
 
 ## Các ca đã chạy
 
@@ -47,14 +47,16 @@ Sự cố thiết lập phải giữ minh bạch: phiên đầu không giữ đ�
 
 ## Phần còn thiếu để hoàn tất Phase 5
 
-Chưa có câu trả lời cho đề nghị người dùng hỗ trợ phần đào/xây. API điều khiển Windows hiện có click, nhấn phím và drag, không có giữ phím/giữ chuột với thời lượng để khai thác liên tục. Chưa thực hiện khai thác PDC, tạo block vanilla, góp tài sản, thuê C, xây/gửi/duyệt hoặc đối soát sau phục hồi có tài sản. Không thay những bước này bằng fixture hoặc console.
+Người dùng đã đồng ý thao tác đào trên C, rồi yêu cầu cấp cuốc và **dựng sẵn cả hai công trình, không tính ca xây bằng tay**. API điều khiển Windows hiện có click, nhấn phím và drag, không có giữ phím/giữ chuột với thời lượng để khai thác liên tục. Theo yêu cầu, console đã cấp đúng một IRON_PICKAXE cho TyninWorld lúc 01:06:34; [log chuẩn bị](asset-preparation.log). Cuốc vanilla này không đi qua Resource Ledger, không phát hành PDC hoặc Linh Tệ. C đã đăng nhập lại sau restore; chưa chứng minh cả ba kiểm tra tài sản sau restore.
+
+Hai template chưa được dựng: `ContractWorld.createChecked` yêu cầu ô trống khi thuê, nên phải cấp nguyên liệu/tiền bằng gameplay, mở hợp đồng và cho C nhận trước. Việc dựng bằng console sau đó chỉ hỗ trợ kiểm tra gửi/duyệt template; **không đóng điều kiện Builder đặt block bằng tay** của kế hoạch gốc. Chưa thực hiện khai thác PDC, góp tài sản, thuê C, dựng/gửi/duyệt hoặc đối soát sau phục hồi có tài sản. Không dùng fixture hoặc console tạo tài sản PDC, tiền, hợp đồng, membership hay quyền để thay các luồng GUI.
 
 Khi tiếp tục, dùng cùng JAR và checkpoint đã restore, cả ba kết nối lại `127.0.0.1:25580`. Một định lượng nhỏ để kiểm chứng là:
 
-1. A khai thác 7 `linh_thach_tho` thật: craft 5 thành 1 `linh_thach`, bán 2 tại NPC lấy 4 Linh Tệ. B khai thác 10 raw và 1 `huyen_thiet`: craft thành 2 `linh_thach`. Việc bán là mint hợp lệ có ledger/hạn mức, tách rõ khỏi các chuyển tiền hợp đồng.
+1. C khai thác 17 `linh_thach_tho` và 1 `huyen_thiet` thật tại Prison. Qua GUI giao nhận, C chuyển 7 raw cho A, 10 raw và 1 `huyen_thiet` cho B. A craft 5 raw thành 1 `linh_thach`, bán 2 raw tại NPC lấy 4 Linh Tệ; B craft 10 raw thành 2 `linh_thach`. Việc bán là mint hợp lệ có ledger/hạn mức, tách rõ khỏi các chuyển tiền hợp đồng.
 2. A góp 4 Linh Tệ vào ngân khố, góp 1 `linh_thach` vào project; B góp 2 `linh_thach` và 1 `huyen_thiet`. Mỗi xác nhận thử click lặp và đối soát token/Inventory/ledger, không chỉ icon GUI.
-3. Builder C chuẩn bị 9 COBBLESTONE và ít nhất 3 STONE_BRICKS từ gameplay vanilla. A tự chuẩn bị nền đỡ bằng tay nếu cần: đảo mặc định có nền x=68..76,z=4..12 tại y=99, nên sàn yêu cầu nền bổ sung ở x=67,z=3..5 và x=68..69,z=3. Không trao quyền toàn đảo cho C để tránh làm sai ca quyền thi công giới hạn.
-4. A thuê từng stage với 2 Linh Tệ qua GUI; C nhận cả hai, tự đặt 9 COBBLESTONE tại x=67..69,y=100,z=3..5 và 3 STONE_BRICKS tại x=74..76,y=100,z=11. Thử đặt sai vật liệu/ngoài vùng và gửi khi thiếu block.
+3. Theo yêu cầu mới, chuẩn bị hai công trình bằng console sau khi hợp đồng ACTIVE, không chuẩn bị vật phẩm vanilla để C tự xây. Đây là thay đổi phạm vi bằng chứng, không phải đã PASS ca thu thập block, quyền đặt sai vật liệu/ngoài vùng hoặc xây tay. Nếu muốn chạy lại các ca đó thì dùng một phiên riêng và ghi lại thao tác client.
+4. A thuê từng stage với 2 Linh Tệ qua GUI; C nhận cả hai. Thử gửi lúc thiếu block trước khi console đặt 9 COBBLESTONE tại x=67..69,y=100,z=3..5 và 3 STONE_BRICKS tại x=74..76,y=100,z=11. Không gán các block console cho audit PLACE của C.
 5. C gửi, A duyệt cả hai; xác nhận lặp, thử GUI sau thu hồi quyền với tiền/nguyên liệu dương. Cuối cùng tiêu thụ đúng 3 `linh_thach` + 1 `huyen_thiet`, C nhận tổng 4 Linh Tệ, escrow/project/stage dự trữ về 0; mint/burn không đổi trong các bước góp/thuê/duyệt.
 6. Backup lúc đang thi công có dự trữ/escrow, restore vào đích mới, tiếp tục hoàn thành; restart sau commit trước resync; cả ba đăng nhập và kiểm tra Inventory PDC, token, ledger, quyền, project, lịch sử và block thực tế. Không dùng kết quả phục hồi checkpoint trống ở trên thay cho ca này.
 
