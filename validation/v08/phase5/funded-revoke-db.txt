@@ -1,0 +1,32 @@
+ player_name | treasury_spend
+-------------+----------------
+ CuuVucNPC1  | f
+ CuuVucNPC2  | f
+ TyninWorld  | f
+(3 rows)
+
+ balance
+---------
+       4
+(1 row)
+
+              project_id              | resource_id | quantity
+--------------------------------------+-------------+----------
+ 2c3b158d-d5cd-47de-8228-179c315a0c45 | linh_thach  |        3
+ 2c3b158d-d5cd-47de-8228-179c315a0c45 | huyen_thiet |        1
+(2 rows)
+
+ contracts
+-----------
+         0
+(1 row)
+
+ escrows
+---------
+       0
+(1 row)
+
+ reservations
+--------------
+            0
+(1 row)

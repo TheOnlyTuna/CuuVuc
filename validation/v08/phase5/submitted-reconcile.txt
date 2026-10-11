@@ -1,0 +1,22 @@
+  template_id  |  status
+---------------+-----------
+ STONE_PAD_V1  | SUBMITTED
+ STONE_PATH_V1 | SUBMITTED
+(2 rows)
+
+ escrow
+--------
+      4
+(1 row)
+
+ consume_entries
+-----------------
+               0
+(1 row)
+
+ player_name | balance
+-------------+---------
+ TyninWorld  |       0
+ CuuVucNPC2  |       0
+ CuuVucNPC1  |       0
+(3 rows)
