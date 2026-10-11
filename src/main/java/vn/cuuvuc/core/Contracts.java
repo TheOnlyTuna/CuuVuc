@@ -10,9 +10,10 @@ import java.util.UUID;
 public interface Contracts {
     enum Status { OPEN, ACTIVE, SUBMITTED, COMPLETED, CANCELLED, EXPIRED }
     record Job(UUID id, UUID owner, Optional<UUID> builder, int slot, long reward, long escrow,
-               Status status, Instant expiresAt, long revision, Optional<UUID> fundingSect) {
+               Status status, Instant expiresAt, long revision, Optional<UUID> fundingSect, int worksite, String templateId, Optional<UUID> projectStage) {
         public Job { builder = java.util.Objects.requireNonNull(builder); fundingSect = java.util.Objects.requireNonNull(fundingSect); }
-        public int centerX() { return slot * 64 + 8; }
+        public int centerX() { return slot * 64 + template().offsetX(); }
+        public BuildingTemplates.Template template() { return BuildingTemplates.get(templateId); }
     }
     record Board(long revision, Instant databaseTime, List<Job> jobs) {
         public Board { jobs = List.copyOf(jobs); }
@@ -24,7 +25,7 @@ public interface Contracts {
         return job.status() == Status.OPEN || job.status() == Status.ACTIVE || job.status() == Status.SUBMITTED;
     }
     static boolean contains(Job job, int x, int y, int z) {
-        return x >= job.centerX() - 1 && x <= job.centerX() + 1 && y >= 100 && y <= 103 && z >= 7 && z <= 9;
+        return job.template().contains(job.slot(), x, y, z);
     }
     static boolean builderCanBuild(Job job, UUID player, int x, int y, int z, Instant now) {
         return job.status() == Status.ACTIVE && job.builder().filter(player::equals).isPresent()

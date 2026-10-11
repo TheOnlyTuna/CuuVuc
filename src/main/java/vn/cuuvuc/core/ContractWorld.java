@@ -37,12 +37,13 @@ import java.util.concurrent.atomic.AtomicReference;
 public final class ContractWorld implements Listener {
     private record Snapshot(Contracts.Board board, long observedAt) { }
     private record Change(UUID request, UUID contract, UUID actor, String event, String position) { }
+    private record Site(int slot, String template) { }
     private final JavaPlugin plugin;
     private final GameDatabase database;
     private final PlayerTasks tasks;
     private final AtomicReference<Snapshot> snapshot = new AtomicReference<>(new Snapshot(new Contracts.Board(-1, Instant.EPOCH, List.of()), 0));
     private final ConcurrentHashMap<UUID, UUID> fences = new ConcurrentHashMap<>();
-    private final ConcurrentHashMap<Integer, UUID> creating = new ConcurrentHashMap<>();
+    private final ConcurrentHashMap<Site, UUID> creating = new ConcurrentHashMap<>();
     private final ArrayBlockingQueue<Change> changes = new ArrayBlockingQueue<>(128);
     private final AtomicBoolean refreshing = new AtomicBoolean(false);
     private volatile boolean auditInFlight;
@@ -129,8 +130,8 @@ public final class ContractWorld implements Listener {
     }
 
     public boolean permission(UUID actor, Block block, boolean islandPermission) {
-        if (block.getWorld().getName().equals(PlayableWorld.SKY) && block.getY() >= 100 && block.getY() <= 103
-                && block.getZ() >= 7 && block.getZ() <= 9 && creating.keySet().stream().anyMatch(slot -> Math.abs(block.getX() - (slot * 64 + 8)) <= 1)) return false;
+        if (block.getWorld().getName().equals(PlayableWorld.SKY)
+                && creating.keySet().stream().anyMatch(site -> BuildingTemplates.get(site.template()).contains(site.slot(), block.getX(), block.getY(), block.getZ()))) return false;
         Snapshot current = snapshot.get();
         Optional<Contracts.Job> contract = atSnapshot(current, block);
         if (contract.isEmpty()) return islandPermission;
@@ -146,32 +147,42 @@ public final class ContractWorld implements Listener {
     }
 
     public void create(Player player, long reward, Domain.Island island) {
+        if (!island.owner().equals(player.getUniqueId())) throw new IllegalArgumentException("Chỉ chủ được dùng động phủ cho hợp đồng cá nhân.");
         UUID contract = UUID.randomUUID(); UUID owner = player.getUniqueId();
-        createChecked(player, contract, island, () -> database.createContract(contract, owner, reward, Duration.ofHours(1)));
+        createChecked(player, contract, island, BuildingTemplates.get("LEGACY_FLOOR_V1"), () -> database.createContract(contract, owner, reward, Duration.ofHours(1)));
     }
 
     public void createSect(Player player, UUID contract, UUID sect, long reward, Domain.Island island) {
+        if (!island.owner().equals(player.getUniqueId())) throw new IllegalArgumentException("Chỉ chủ được giao động phủ cho hợp đồng ngân khố.");
         UUID owner = player.getUniqueId();
-        createChecked(player, contract, island, () -> database.createSectContract(contract, owner, sect, reward, Duration.ofHours(1)));
+        createChecked(player, contract, island, BuildingTemplates.get("LEGACY_FLOOR_V1"), () -> database.createSectContract(contract, owner, sect, reward, Duration.ofHours(1)));
     }
 
-    private void createChecked(Player player, UUID contract, Domain.Island island, PlayerTasks.DatabaseAction work) {
-        if (!fresh() || !island.ready() || !island.owner().equals(player.getUniqueId())) { player.sendPlainMessage("Cần động phủ và dữ liệu hợp đồng sẵn sàng."); return; }
+    public void createStage(Player player, UUID contract, Projects.Project project, Projects.Stage stage, long reward) {
+        if (!stage.project().equals(project.id())) throw new IllegalArgumentException("Hạng mục không thuộc dự án.");
+        UUID actor = player.getUniqueId();
+        createChecked(player, contract, new Domain.Island(project.owner(), project.slot(), true, List.of()), BuildingTemplates.get(stage.template()),
+                () -> database.createStageContract(contract, actor, stage.id(), reward, Duration.ofHours(1)));
+    }
+
+    private void createChecked(Player player, UUID contract, Domain.Island island, BuildingTemplates.Template template, PlayerTasks.DatabaseAction work) {
+        if (!fresh() || !island.ready()) { player.sendPlainMessage("Cần động phủ và dữ liệu hợp đồng sẵn sàng."); return; }
         UUID request = Contracts.request(contract, "CREATE");
-        if (creating.putIfAbsent(island.slot(), contract) != null) { player.sendPlainMessage("Động phủ đang tạo hợp đồng."); return; }
-        World world = java.util.Objects.requireNonNull(Bukkit.getWorld(PlayableWorld.SKY)); int center = island.slot() * 64 + 8;
-        Bukkit.getRegionScheduler().execute(plugin, new Location(world, center, 100, 8), () -> {
-            for (int x = center - 1; x <= center + 1; x++) for (int z = 7; z <= 9; z++) {
-                if (!world.getBlockAt(x, 100, z).getType().isAir()) {
-                    creating.remove(island.slot(), contract); message(player, "Dọn trống 9 ô sàn tại tâm động phủ, y=100 trước khi thuê xây."); return;
+        Site site = new Site(island.slot(), template.id());
+        if (creating.putIfAbsent(site, contract) != null) { player.sendPlainMessage("Hạng mục đang tạo hợp đồng."); return; }
+        World world = java.util.Objects.requireNonNull(Bukkit.getWorld(PlayableWorld.SKY)); int center = island.slot() * 64 + template.offsetX();
+        Bukkit.getRegionScheduler().execute(plugin, new Location(world, center, 100, template.centerZ()), () -> {
+            for (BuildingTemplates.Cell cell : template.cells(island.slot())) {
+                if (!world.getBlockAt(cell.x(), cell.y(), cell.z()).getType().isAir()) {
+                    creating.remove(site, contract); message(player, "Dọn trống ô block của template " + template.id() + " trước khi thuê xây."); return;
                 }
             }
             player.getScheduler().run(plugin, task -> {
                 boolean accepted = tasks.submit(player, request, () -> {
-                    return executeAndSync(work, () -> creating.remove(island.slot(), contract));
+                    return executeAndSync(work, () -> creating.remove(site, contract));
                 });
-                if (!accepted) creating.remove(island.slot(), contract);
-            }, () -> { creating.remove(island.slot(), contract); plugin.getSLF4JLogger().info("contract_create_player_retired"); });
+                if (!accepted) creating.remove(site, contract);
+            }, () -> { creating.remove(site, contract); plugin.getSLF4JLogger().info("contract_create_player_retired"); });
         });
     }
 
@@ -213,15 +224,15 @@ public final class ContractWorld implements Listener {
         checkAndSave(player, job, Contracts.request(job.id(), "COMPLETE"), () -> database.completeContract(job.id(), actor));
     }
 
-    /** Công trình mẫu: sàn 3×3 cobblestone tại y=100; toàn bộ vùng nằm trong một chunk. */
+    /** Kiểm template phiên bản trong một chunk trước khi tiêu thụ dự trữ và thanh toán. */
     private void checkAndSave(Player player, Contracts.Job job, UUID request, PlayerTasks.DatabaseAction work) {
         if (!fresh() || !changes.isEmpty() || auditInFlight) { player.sendPlainMessage("Chờ đồng bộ lịch sử xây dựng rồi thử lại."); return; }
         if (fences.putIfAbsent(job.id(), request) != null) { player.sendPlainMessage("Hợp đồng đang xử lý."); return; }
         World world = java.util.Objects.requireNonNull(Bukkit.getWorld(PlayableWorld.SKY));
-        Bukkit.getRegionScheduler().execute(plugin, new Location(world, job.centerX(), 100, 8), () -> {
-            for (int x = job.centerX() - 1; x <= job.centerX() + 1; x++) for (int z = 7; z <= 9; z++) {
-                if (world.getBlockAt(x, 100, z).getType() != Material.COBBLESTONE) {
-                    fences.remove(job.id(), request); message(player, "Cần đủ 9 block cobblestone trên sàn 3×3 tại y=100."); return;
+        Bukkit.getRegionScheduler().execute(plugin, new Location(world, job.centerX(), 100, job.template().centerZ()), () -> {
+            for (BuildingTemplates.Cell cell : job.template().cells(job.slot())) {
+                if (world.getBlockAt(cell.x(), cell.y(), cell.z()).getType() != Material.valueOf(cell.material())) {
+                    fences.remove(job.id(), request); message(player, "Chưa đủ block vanilla theo template " + job.templateId() + ". Kho PDC không thay thế thi công."); return;
                 }
             }
             Bukkit.getGlobalRegionScheduler().execute(plugin, () -> {
@@ -240,12 +251,13 @@ public final class ContractWorld implements Listener {
 
     @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true) public void protectPlace(BlockPlaceEvent event) {
         Optional<Contracts.Job> job = at(event.getBlock());
-        if (job.isPresent() && (event.getBlock().getY() != 100 || event.getBlock().getType() != Material.COBBLESTONE
+        if (job.isPresent() && (event.getBlock().getY() != 100 || event.getBlock().getType() != Material.valueOf(job.orElseThrow().template().material())
                 || changes.remainingCapacity() == 0 || !permission(event.getPlayer().getUniqueId(), event.getBlock(), false))) event.setCancelled(true);
     }
 
     @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true) public void protectBreak(BlockBreakEvent event) {
-        if (at(event.getBlock()).isPresent() && (event.getBlock().getY() != 100 || event.getBlock().getType() != Material.COBBLESTONE
+        Optional<Contracts.Job> job = at(event.getBlock());
+        if (job.isPresent() && (event.getBlock().getY() != 100 || event.getBlock().getType() != Material.valueOf(job.orElseThrow().template().material())
                 || changes.remainingCapacity() == 0 || !permission(event.getPlayer().getUniqueId(), event.getBlock(), false))) event.setCancelled(true);
     }
 

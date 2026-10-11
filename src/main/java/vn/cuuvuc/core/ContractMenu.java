@@ -85,14 +85,16 @@ public final class ContractMenu implements Listener {
         Contracts.Job job = contracts.board().jobs().stream().filter(candidate -> candidate.id().equals(contract)).findFirst()
                 .orElseThrow(() -> new IllegalArgumentException("Hợp đồng chưa đồng bộ. Làm mới bảng."));
         Holder holder = new Holder(player.getUniqueId(), List.of(), Optional.of(contract), 0);
-        holder.inventory.setItem(4, icon(Material.BOOK, "Sàn 3×3 • " + status(job.status()), List.of(
-                "X: " + (job.centerX() - 1) + ".." + (job.centerX() + 1) + " | Y: 100 | Z: 7..9",
+        holder.inventory.setItem(4, icon(Material.BOOK, job.templateId() + " • " + status(job.status()), List.of(
+                "X: " + (job.centerX() - 1) + ".." + (job.centerX() + 1) + " | Y: 100 | Z: " + job.template().centerZ() + " ± " + job.template().depth() / 2,
+                "Block vanilla: " + job.template().cells(job.slot()).size() + " " + job.template().material(),
+                "Định mức tu tiên: " + job.template().costs() + "; tiêu thụ khi duyệt",
                 "Tiền công: " + job.reward() + " Linh Tệ; ký quỹ: " + job.escrow(), "Hết hạn: " + job.expiresAt(), "Mã: " + job.id())));
         UUID actor = player.getUniqueId();
         if (job.status() == Contracts.Status.OPEN && !job.owner().equals(actor)) holder.inventory.setItem(10, icon(Material.IRON_PICKAXE, "Nhận hợp đồng", terms()));
         holder.inventory.setItem(12, icon(Material.ENDER_PEARL, "Đến công trình", List.of("Chủ: " + job.owner())));
         if (job.builder().filter(actor::equals).isPresent() && job.status() == Contracts.Status.ACTIVE)
-            holder.inventory.setItem(14, icon(Material.PAPER, "Gửi nghiệm thu", List.of("Cần đủ 9 cobblestone; khóa quyền thi công", "Chờ bên thuê duyệt trước thời hạn")));
+            holder.inventory.setItem(14, icon(Material.PAPER, "Gửi nghiệm thu", List.of("Kiểm template block vanilla; khóa quyền thi công", "Kho PDC không chứng minh đã xây; chờ bên thuê duyệt")));
         if ((job.fundingSect().isPresent() ? job.fundingSect().equals(sect) : job.owner().equals(actor)) && job.status() == Contracts.Status.SUBMITTED)
             holder.inventory.setItem(16, icon(Material.EMERALD, "Nghiệm thu và trả tiền", List.of("Kiểm tra sàn rồi chuyển ký quỹ cho Builder")));
         if ((job.fundingSect().isPresent() ? job.fundingSect().equals(sect) : job.owner().equals(actor)) && job.status() == Contracts.Status.OPEN)

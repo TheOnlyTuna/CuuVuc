@@ -93,6 +93,7 @@ public interface Sects {
     static String kick(Connection connection, UUID request, UUID actor, UUID sect, UUID target) throws SQLException {
         lockSect(connection, sect); requireLeader(connection, sect, actor); GameDatabase.lockPlayer(connection, target);
         if (role(connection, sect, target) == Role.LEADER) throw new IllegalArgumentException("Không thể loại chưởng môn.");
+        requireNoActiveProject(connection, sect, target);
         deleteMember(connection, sect, target);
         event(connection, request, sect, actor, target, "KICK", "Loại khỏi tông môn");
         return "Đã loại " + target + " khỏi tông môn.";
@@ -101,6 +102,7 @@ public interface Sects {
     static String leave(Connection connection, UUID request, UUID actor, UUID sect) throws SQLException {
         lockSect(connection, sect); GameDatabase.lockPlayer(connection, actor);
         if (role(connection, sect, actor) == Role.LEADER) throw new IllegalArgumentException("Chưởng môn chưa thể rời hoặc giải tán tông môn trong prototype.");
+        requireNoActiveProject(connection, sect, actor);
         deleteMember(connection, sect, actor);
         event(connection, request, sect, actor, actor, "LEAVE", "Rời tông môn");
         return "Đã rời tông môn.";
@@ -119,6 +121,15 @@ public interface Sects {
         }
         event(connection, request, sect, actor, recipient, "CANCEL_INVITE", "Hủy lời mời " + invitation);
         return "Đã hủy lời mời " + invitation;
+    }
+
+    private static void requireNoActiveProject(Connection connection, UUID sect, UUID player) throws SQLException {
+        try (PreparedStatement statement = connection.prepareStatement("SELECT contract_id FROM building_contracts WHERE funding_sect_id=? AND builder_id=? AND project_stage_id IS NOT NULL AND status IN ('ACTIVE','SUBMITTED')")) {
+            statement.setObject(1, sect); statement.setObject(2, player);
+            try (ResultSet result = statement.executeQuery()) {
+                if (result.next()) throw new IllegalArgumentException("Cần hoàn thành hoặc bỏ hạng mục đang thi công trước khi rời/loại thành viên: " + result.getObject(1, UUID.class));
+            }
+        }
     }
 
     static View view(Connection connection, UUID player) throws SQLException {

@@ -1,6 +1,6 @@
 # V0.8 Phase 3 — Ngân Khố Linh Tệ
 
-Ngày 11/10/2026, Asia/Bangkok; nhánh `v0.8-khai-son-lap-phai`, nền Phase 2 `18d13ee` đã được người dùng chấp nhận Controlled Gameplay Prototype. Phase 1 đã được chấp nhận tại `12fdc25`. **Phase 3 đã triển khai và kiểm chứng, chờ người dùng đánh giá.** Không tự nghiệm thu toàn bộ V0.8, không merge `main`, không bật GitHub CI hoặc chứng nhận production-ready.
+Ngày 11/10/2026, Asia/Bangkok; nhánh `v0.8-khai-son-lap-phai`, nền Phase 2 `18d13ee` đã được người dùng chấp nhận Controlled Gameplay Prototype. Phase 1 đã được chấp nhận tại `12fdc25`. **Phase 3 ACCEPTED — Controlled Gameplay Prototype** tại `acd2e48` theo quyết định người dùng. Không tự nghiệm thu toàn bộ V0.8, không merge `main`, không bật GitHub CI hoặc chứng nhận production-ready.
 
 ## Phạm vi và quyền
 
@@ -73,6 +73,6 @@ Cả runtime nguồn và phục hồi đã dừng mềm, world I/O hoàn tất; 
 
 Giữ [B01–B06](../../../BACKLOG.md): audit block async chưa bền vững trước kill, `world.save()` thủ công chưa đo tải/TPS, mẫu sàn cố định, giới hạn kiểm thử client/PDC và fingerprint. Không hard-kill, không tải đông người, không bảo đảm nguyên tử xuyên DB/world. Nút duyệt hợp đồng SECT được hiển thị theo membership; DB vẫn quyết định quyền chi. Một thử duyệt không có quyền đã đi qua kiểm tra/lưu world trước khi bị DB từ chối: không chuyển tiền nhưng vẫn có chi phí world I/O, cần cải thiện cùng B02. Lỗi OSHI Perflib của Windows vẫn xuất hiện; không sửa registry.
 
-Không dùng kết quả này để lấp giới hạn toàn bộ lập/mời/nhận Phase 2 trên binary cuối hoặc toàn bộ nghiệm thu V0.8. Phase 4 kho dự án/PDC và Phase 5 ba người chưa triển khai. GUI ngân khố chỉ hiển thị mười bút toán mới nhất; lịch sử đầy đủ nằm trong PostgreSQL.
+Không dùng kết quả này để lấp giới hạn toàn bộ lập/mời/nhận Phase 2 trên binary cuối hoặc toàn bộ nghiệm thu V0.8. Trong phạm vi báo cáo Phase 3 chưa có kho dự án/PDC hoặc nghiệm thu ba người; trạng thái mới xem [Phase 4](../phase4/RESULTS.md). GUI ngân khố chỉ hiển thị mười bút toán mới nhất; lịch sử đầy đủ nằm trong PostgreSQL.
 
 Trước nâng cấp thực tế: dừng mọi writer, cold backup DB/world/JAR/config bằng script hiện có, restore thử vào đích mới và đối soát, rồi chạy JAR V007. Không sửa migration cũ, bỏ fingerprint hoặc chạy hai runtime trên cùng DB. Rollback cần backup trước V007 vào đích mới và JAR Phase 2; hạ JAR trực tiếp trên schema mới bị từ chối. Lệnh build/test và backup/restore được giữ tại [README](../../../README.md), không yêu cầu GitHub CI có phí.

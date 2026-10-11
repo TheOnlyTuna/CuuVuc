@@ -25,3 +25,6 @@
 /run-v08-treasury/
 /run-v08-treasury-restored/
 !/validation/v08/phase3/*.log
+/run-v08-projects/
+/run-v08-projects-restored/
+!/validation/v08/phase4/*.log

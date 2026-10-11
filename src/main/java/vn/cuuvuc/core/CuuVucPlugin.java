@@ -39,6 +39,7 @@ public final class CuuVucPlugin extends JavaPlugin implements Listener {
     private MaterialTransfers transfers;
     private SectMenu sects;
     private TreasuryMenu treasury;
+    private ProjectMenu projects;
     private boolean contractAuditSaved;
     private Duration shutdownTimeout;
 
@@ -72,6 +73,8 @@ public final class CuuVucPlugin extends JavaPlugin implements Listener {
         sects = new SectMenu(this, database, tasks);
         treasury = new TreasuryMenu(this, database, tasks, contracts, world);
         getServer().getPluginManager().registerEvents(treasury, this);
+        projects = new ProjectMenu(this, database, tasks, items, contracts);
+        getServer().getPluginManager().registerEvents(projects, this);
         getServer().getPluginManager().registerEvents(sects, this);
         getServer().getPluginManager().registerEvents(transfers, this);
         getServer().getPluginManager().registerEvents(items, this);
@@ -139,6 +142,7 @@ public final class CuuVucPlugin extends JavaPlugin implements Listener {
             switch (arguments[0]) {
                 case "sect" -> sects.command(player, arguments);
                 case "treasury" -> treasury.command(player, arguments);
+                case "projects" -> projects.command(player, arguments);
                 case "start" -> register(player);
                 case "profile" -> showProfile(player);
                 case "menu", "kho" -> menu.request(player);

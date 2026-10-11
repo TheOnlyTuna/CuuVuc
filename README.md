@@ -2,7 +2,7 @@
 
 > Người chơi đến vì tu tiên, nhưng ở lại vì thế giới mà họ cùng nhau xây dựng.
 
-V0.5.1 là baseline tại [tag v0.5.1](https://github.com/TheOnlyTuna/CuuVuc/tree/v0.5.1), commit `4097ac93729670a0f81d24e3869155725d08dff6`. Người dùng đã chấp nhận V0.6 là Playable Prototype và V0.7 là nền tảng phát triển tiếp ngày 11/10/2026. V0.7 giữ trên `v0.7-living-world`; V0.8 phát triển ở `v0.8-khai-son-lap-phai`. Không tự động merge `main` và chưa chứng nhận production. [Backlog](BACKLOG.md) giữ các giới hạn đã chấp nhận; [kế hoạch V0.8](V0.8-PLAN.md) mô tả milestone đầy đủ. Phase 1 đã nghiệm thu Gameplay Prototype tại `12fdc25`; Phase 2 đã nghiệm thu Controlled Gameplay Prototype tại `18d13ee`. Phase 3 Ngân Khố đã triển khai, có 70/70 tests, hai client và phục hồi DB/world; [báo cáo Phase 3](validation/v08/phase3/RESULTS.md) chờ người dùng đánh giá.
+V0.5.1 là baseline tại [tag v0.5.1](https://github.com/TheOnlyTuna/CuuVuc/tree/v0.5.1), commit `4097ac93729670a0f81d24e3869155725d08dff6`. Người dùng đã chấp nhận V0.6 là Playable Prototype và V0.7 là nền tảng phát triển tiếp ngày 11/10/2026. V0.7 giữ trên `v0.7-living-world`; V0.8 phát triển ở `v0.8-khai-son-lap-phai`. Không tự động merge `main` và chưa chứng nhận production. [Backlog](BACKLOG.md) giữ các giới hạn đã chấp nhận; [kế hoạch V0.8](V0.8-PLAN.md) mô tả milestone đầy đủ. Phase 1 đã nghiệm thu Gameplay Prototype tại `12fdc25`; Phase 2 đã nghiệm thu Controlled Gameplay Prototype tại `18d13ee`. Phase 3 đã nghiệm thu Controlled Gameplay Prototype tại `acd2e48` (70/70, 25/25 DB, 105/105 world). Phase 4 Kho dự án và hạng mục đã triển khai, có 78/78 tests và phục hồi khi còn dự trữ; [báo cáo Phase 4](validation/v08/phase4/RESULTS.md) chờ đánh giá. Phase 5 ba người chưa thực hiện.
 
 ## Giao nhận nguyên liệu — bước đầu V0.8
 
@@ -10,7 +10,7 @@ Dùng `/cv transfer <UUID-người-nhận> <resource> <1..1000>` để mở GUI 
 
 DB khóa hai hồ sơ theo thứ tự, kiểm tra revision nguồn và số lượng, trừ/cộng kho, thu hồi token resource của cả hai bên, tăng revision và ghi hai bút toán `resource_ledger` cùng receipt trong một transaction. Bút toán bất biến; replay không chuyển lần hai. Giao nhận không thay đổi tiền, XP hoặc quota. Nếu kho nguồn đổi sau khi mở cửa sổ, mở lại để xác nhận mới. GUI chuyển theo số lượng kho DB, không nhận ItemStack hay PDC tùy ý làm tài sản.
 
-Sau commit, Inventory nguồn được đồng bộ; người nhận online được yêu cầu đồng bộ trên entity scheduler. Nếu người nhận đang có thao tác khác hoặc máy chủ đang dừng, số lượng vẫn nằm trong DB: mở `/cv kho` hoặc đăng nhập lại để nhận bản thể hiện. Inventory đầy không hoàn trả hay làm mất nguyên liệu. PDC cũ không cấp thêm giá trị. Chưa mở thả item, chuyển PDC qua rương hoặc vào kho dự án/tông môn; ngân khố Phase 3 chỉ nhận Linh Tệ. [Báo cáo Phase 1](validation/v08/RESULTS.md) ghi 53/53 test, hai client trên JAR cuối và phục hồi DB/world; các giới hạn được phân biệt rõ. Người dùng đã nghiệm thu Phase 1 Gameplay Prototype tại `12fdc25`; chưa chốt toàn bộ V0.8.
+Sau commit, Inventory nguồn được đồng bộ; người nhận online được yêu cầu đồng bộ trên entity scheduler. Nếu người nhận đang có thao tác khác hoặc máy chủ đang dừng, số lượng vẫn nằm trong DB: mở `/cv kho` hoặc đăng nhập lại để nhận bản thể hiện. Inventory đầy không hoàn trả hay làm mất nguyên liệu. PDC cũ không cấp thêm giá trị. Chưa mở thả item hoặc chuyển PDC qua rương; Phase 4 nhận đóng góp vào kho dự án bằng transaction DB. Ngân khố chỉ nhận Linh Tệ. [Báo cáo Phase 1](validation/v08/RESULTS.md) ghi 53/53 test, hai client trên JAR cuối và phục hồi DB/world; các giới hạn được phân biệt rõ. Người dùng đã nghiệm thu Phase 1 Gameplay Prototype tại `12fdc25`; chưa chốt toàn bộ V0.8.
 
 ## Tông Môn — V0.8 Phase 2
 
@@ -26,13 +26,21 @@ Phase 2 không cấp quyền xây dựng hoặc kho dự án; ngân khố đư�
 
 `/cv treasury` xem số dư, ví cá nhân, quyền chi, thành viên và mười bút toán gần nhất. Mọi thành viên được góp tiền bằng GUI hoặc `/cv treasury contribute <1..1000>`. Chưởng môn luôn được chi; ELDER cần quyền riêng do chưởng môn cấp qua `/cv treasury grant <UUID>` và thu hồi qua `/cv treasury revoke <UUID>`. Trong GUI, chưởng môn bấm trái thành viên để cấp, phải để thu hồi. Đổi role, rời hoặc bị loại xóa quyền chi; thăng lại ELDER không tự khôi phục quyền.
 
-`/cv treasury withdraw <1..1000>` chỉ rút về ví của chính người thao tác. `/cv treasury hire <1..1000>` ký quỹ từ ngân khố để thuê Builder, dùng động phủ sẵn sàng của người tạo và mẫu sàn 3×3 hiện tại. Không cấp đất chung hoặc quyền xây toàn đảo. Dùng `/cv contracts` nhận, gửi, duyệt hoặc hủy hợp đồng; người có quyền chi hiện tại của đúng tông môn được duyệt/hủy hợp lệ, kể cả khi người tạo đã mất quyền. Hủy/bỏ việc/hết hạn hoàn tiền về ngân khố nguồn, không về ví người tạo.
+`/cv treasury withdraw <1..1000>` chỉ rút về ví của chính người thao tác. `/cv treasury hire <1..1000>` ký quỹ từ ngân khố để thuê Builder, dùng động phủ sẵn sàng của người tạo và mẫu sàn 3×3 hiện tại. Không cấp quyền xây toàn đảo; Phase 4 cho chủ xác nhận giao hai vùng mẫu của động phủ vào dự án. Dùng `/cv contracts` nhận, gửi, duyệt hoặc hủy hợp đồng; người có quyền chi hiện tại của đúng tông môn được duyệt/hủy hợp lệ, kể cả khi người tạo đã mất quyền. Hủy/bỏ việc/hết hạn hoàn tiền về ngân khố nguồn, không về ví người tạo.
 
-Mỗi xác nhận giữ một request và chỉ được tiêu thụ một lần; sau góp/rút, bấm **Làm mới** để mở ý định mới. GUI cũ không cấp quyền: DB khóa tông môn và đọc lại role/quyền chi trong transaction cùng ledger, receipt và lịch sử. Ví PLAYER giữ ở `profiles`; SECT dùng `sect_accounts` và chung `WalletLedger`/`ledger`. Escrow hiện tại giữ nguyên. Phí 0%, không mint/burn khi góp/rút/ký quỹ/hoàn/trả công. Ngân khố không nhận Linh Thạch hoặc token PDC; kho dự án và hợp đồng nhiều hạng mục thuộc Phase 4.
+Mỗi xác nhận giữ một request và chỉ được tiêu thụ một lần; sau góp/rút, bấm **Làm mới** để mở ý định mới. GUI cũ không cấp quyền: DB khóa tông môn và đọc lại role/quyền chi trong transaction cùng ledger, receipt và lịch sử. Ví PLAYER giữ ở `profiles`; SECT dùng `sect_accounts` và chung `WalletLedger`/`ledger`. Escrow hiện tại giữ nguyên. Phí 0%, không mint/burn khi góp/rút/ký quỹ/hoàn/trả công. Ngân khố không nhận Linh Thạch hoặc token PDC; tài nguyên dùng kho dự án Phase 4 riêng bên dưới.
+
+## Kho dự án và hạng mục — V0.8 Phase 4
+
+`/cv projects` xem dự án tông môn; `/cv projects create <tên>` mở xác nhận giao hai vùng mẫu trong động phủ của chưởng môn. Mỗi động phủ có một dự án, chưa giải tán/chuyển đất. `/cv projects view <project>` xem kho DB, định mức/dự trữ từng hạng mục và lịch sử đóng góp. `/cv projects contribute <project> <resource> <1..1000>` xác nhận góp nguyên liệu; đóng góp đã commit chưa được rút lại. PDC là bản thể hiện kho cá nhân: góp trừ kho DB, thu hồi token và đồng bộ Inventory, không nhận item giả làm tài sản.
+
+`/cv projects hire <project> <stage> <1..1000>` thuê Builder từ SECT và dự trữ đủ nguyên liệu trong cùng transaction. GUI có nút góp 1 và thuê 2 Linh Tệ. `STONE_PAD_V1` cần 2 Linh Thạch + 1 Huyền Thiết; Builder đặt 9 cobblestone tại x=slot×64+3..5, y=100, z=3..5. `STONE_PATH_V1` cần 1 Linh Thạch; Builder đặt 3 stone bricks tại x=slot×64+10..12, y=100, z=11. Hai vùng không chồng nhau; có thể thuê hai Builder đồng thời. Chủ cần dọn trống các ô trước khi thuê.
+
+Dùng `/cv contracts` nhận, gửi và duyệt. Gửi kiểm template nhưng chưa tiêu thụ/trả tiền; duyệt kiểm world rồi tiêu thụ định mức một lần và giải ngân qua Economy hiện tại. Hủy OPEN, bỏ việc hoặc hết hạn hoàn dự trữ về PROJECT và tiền về SECT nguồn; không tháo block vanilla. Người đang thi công hạng mục ACTIVE/SUBMITTED cùng tông môn phải giải quyết trước khi rời/bị loại. **Nguyên liệu tu tiên tiêu thụ theo định mức và block vanilla Builder đặt là hai phần riêng; góp PDC không đồng nghĩa đã xây.** [Báo cáo Phase 4](validation/v08/phase4/RESULTS.md) ghi rõ fixture/API và client mục tiêu; nghiệm thu ba người từ đầu đến cuối thuộc Phase 5.
 
 ## Hợp đồng kiến thiết — Vertical Slice 001
 
-Mở `/cv`, bấm **Hợp đồng kiến thiết**, hoặc dùng `/cv contracts`. Chủ động phủ dọn trống sàn tại tâm đảo: `x=[slot*64+7,slot*64+9]`, `y=100`, `z=[7,9]`. GUI cho thuê xây sàn 3×3 cobblestone với tiền công 2/10/100 **Linh Tệ**, thời hạn một giờ. Mỗi động phủ có tối đa một hợp đồng chưa kết thúc.
+Mở `/cv`, bấm **Hợp đồng kiến thiết**, hoặc dùng `/cv contracts`. Chủ động phủ dọn trống sàn tại tâm đảo: `x=[slot*64+7,slot*64+9]`, `y=100`, `z=[7,9]`. GUI cho thuê xây sàn 3×3 cobblestone với tiền công 2/10/100 **Linh Tệ**, thời hạn một giờ. Mỗi động phủ có tối đa một hợp đồng legacy chưa kết thúc; hai hạng mục Phase 4 dùng hai worksite riêng không chồng vùng.
 
 Một người khác nhận việc, đến công trình và đặt chín block bằng Minecraft Inventory. Builder chỉ được đặt/phá cobblestone tại sàn hợp đồng; không được sửa nền, mở rương hay xây ngoài vùng nhờ quyền này. Builder gửi nghiệm thu, chủ duyệt: server kiểm tra sàn, lưu world rồi chuyển tiền ký quỹ sang ví Builder. Gửi nghiệm thu kết thúc quyền thi công; hoàn thành, hủy hoặc hết hạn không thêm Builder vào danh sách mời của đảo. Quyền mời riêng của V0.6 vẫn là cơ chế độc lập.
 
@@ -91,7 +99,7 @@ V0.7 thêm migration V004: trạng thái hợp đồng, tài khoản/ledger ký 
 
 ## Kiểm thử và CI
 
-V0.8 có V005 cho ledger tài nguyên, V006 cho tông môn và V007 cho ngân khố; giữ nguyên V001–V006 đã phát hành. V007 tạo tài khoản SECT số dư 0 cho tông môn cũ, không cấp quyền chi ELDER, không đổi số dư ví hoặc nguồn ký quỹ hợp đồng cá nhân. Trước nâng cấp, dừng mọi writer và backup DB/world/JAR/config như bên dưới; chỉ nâng một runtime, không hot reload. JAR Phase 2 không chạy trên schema v7: rollback cần restore backup trước V007 vào DB/runtime mới, không hạ JAR trực tiếp trên DB đã nâng cấp. JAR V0.7 không chạy trên schema v5/v6/v7; quay lại V0.7 cần backup trước V005. Runtime/DB đã nghiệm thu không được dùng làm DB test.
+V0.8 có V005 cho ledger tài nguyên, V006 cho tông môn, V007 cho ngân khố và V008 cho kho dự án/hạng mục; giữ nguyên V001–V007 đã phát hành. V008 giữ số dư/token/ledger cũ, gắn hợp đồng cũ với template legacy và không tự tạo dự án. JAR Phase 3 không chạy trên schema V008: rollback cần backup trước V008 vào đích mới và JAR Phase 3. V007 tạo tài khoản SECT số dư 0 cho tông môn cũ, không cấp quyền chi ELDER, không đổi số dư ví hoặc nguồn ký quỹ hợp đồng cá nhân. Trước nâng cấp, dừng mọi writer và backup DB/world/JAR/config như bên dưới; chỉ nâng một runtime, không hot reload. JAR Phase 2 không chạy trên schema v7: rollback cần restore backup trước V007 vào DB/runtime mới, không hạ JAR trực tiếp trên DB đã nâng cấp. JAR V0.7 không chạy trên schema v5/v6/v7; quay lại V0.7 cần backup trước V005. Runtime/DB đã nghiệm thu không được dùng làm DB test.
 
 ```powershell
 docker compose --profile test up -d --wait db-test
@@ -101,7 +109,7 @@ $env:CUUVUC_TEST_PASSWORD = 'replace-with-your-test-password'
 ./mvnw.cmd -B -ntp clean verify
 ```
 
-DB test phải riêng; mỗi ca tạo/xóa duy nhất schema `cv_test_<uuid>`. Thiếu DB test là lỗi, không bỏ qua integration tests. Phase 3 đạt 70/70 (4 Domain hiện có + 66 PostgreSQL thật); [bằng chứng hiện tại](validation/v08/phase3/RESULTS.md) phân biệt integration, client và phần chưa thử. [Kết quả V0.6](validation/V0.6-RESULTS.md) và [RESULTS V0.5.1](validation/RESULTS.md) giữ lịch sử baseline.
+DB test phải riêng; mỗi ca tạo/xóa duy nhất schema `cv_test_<uuid>`. Thiếu DB test là lỗi, không bỏ qua integration tests. Phase 4 đạt 78/78 (4 Domain hiện có + 74 PostgreSQL thật); [bằng chứng hiện tại](validation/v08/phase4/RESULTS.md) phân biệt integration, client và phần chưa thử. [Kết quả V0.6](validation/V0.6-RESULTS.md) và [RESULTS V0.5.1](validation/RESULTS.md) giữ lịch sử baseline.
 
 Theo quyết định của người dùng, CI GitHub đã tắt và không phải điều kiện chốt V0.6. Kiểm chứng bằng `clean verify` cục bộ với PostgreSQL thật, hai Minecraft Client và backup/restore đồng bộ. Không cần thanh toán GitHub. Workflow được giữ để tham khảo, chỉ có trigger thủ công và đang disabled trên GitHub; không tự chạy khi push/PR. [Run cũ](https://github.com/TheOnlyTuna/CuuVuc/actions/runs/37992513554) bị chặn do billing, không có kết quả test CI.
 

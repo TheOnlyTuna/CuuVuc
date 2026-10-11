@@ -1,0 +1,23 @@
+             contract_id              |  status   |  template_id
+--------------------------------------+-----------+---------------
+ 48000000-0000-0000-0000-000000000002 | CANCELLED | STONE_PAD_V1
+ 48000000-0000-0000-0000-000000000004 | OPEN      | STONE_PATH_V1
+ 48000000-0000-0000-0000-000000000003 | SUBMITTED | STONE_PAD_V1
+(3 rows)
+
+ reserved
+----------
+        4
+(1 row)
+
+ consumed_entries
+------------------
+                0
+(1 row)
+
+ player_name | balance
+-------------+---------
+ SectNPC3    |       0
+ CuuVucNPC2  |       0
+ CuuVucNPC1  |      10
+(3 rows)

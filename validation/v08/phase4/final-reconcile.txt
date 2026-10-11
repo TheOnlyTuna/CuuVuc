@@ -1,0 +1,75 @@
+             contract_id              |  status   |  template_id
+--------------------------------------+-----------+---------------
+ 48000000-0000-0000-0000-000000000002 | CANCELLED | STONE_PAD_V1
+ 48000000-0000-0000-0000-000000000004 | OPEN      | STONE_PATH_V1
+ 48000000-0000-0000-0000-000000000003 | COMPLETED | STONE_PAD_V1
+(3 rows)
+
+               stage_id               |  status   |             contract_id
+--------------------------------------+-----------+--------------------------------------
+ 0b581683-a55d-3688-8755-952e4cf3dec6 | RESERVED  | 48000000-0000-0000-0000-000000000004
+ 1e318f48-98f2-3a3d-bbff-870cbf5afa55 | COMPLETED | 48000000-0000-0000-0000-000000000003
+(2 rows)
+
+ resource_id | quantity
+-------------+----------
+ huyen_thiet |        0
+ linh_thach  |        0
+(2 rows)
+
+               stage_id               | resource_id | quantity
+--------------------------------------+-------------+----------
+ 0b581683-a55d-3688-8755-952e4cf3dec6 | linh_thach  |        1
+ 1e318f48-98f2-3a3d-bbff-870cbf5afa55 | huyen_thiet |        0
+ 1e318f48-98f2-3a3d-bbff-870cbf5afa55 | linh_thach  |        0
+(3 rows)
+
+   kind   | resource_id | delta | entries
+----------+-------------+-------+---------
+ CONSUME  | huyen_thiet |    -1 |       1
+ CONSUME  | linh_thach  |    -2 |       1
+ TRANSFER | huyen_thiet |     0 |       8
+ TRANSFER | linh_thach  |     0 |      10
+(4 rows)
+
+ event_type | count
+------------+-------
+ CONSUME    |     1
+ CONTRIBUTE |     2
+ CREATE     |     1
+ REFUND     |     1
+ RESERVE    |     3
+(5 rows)
+
+ player_name | balance
+-------------+---------
+ SectNPC3    |       0
+ CuuVucNPC2  |       0
+ CuuVucNPC1  |      12
+(3 rows)
+
+ balance
+---------
+       6
+(1 row)
+
+ escrow
+--------
+      2
+(1 row)
+
+ total_money
+-------------
+          20
+(1 row)
+
+ minted | burned
+--------+--------
+     20 |      0
+(1 row)
+
+              request_id              | delta
+--------------------------------------+-------
+ ae8ce791-0532-3a32-ac4f-cf6912471d3f |     2
+ 5e300661-7e41-3f75-96e5-8dbf3bc56f69 |    -2
+(2 rows)
