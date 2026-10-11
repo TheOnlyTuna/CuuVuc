@@ -1,0 +1,39 @@
+ event_id | event_type |               actor_id               |             contract_id              |                                                  detail                                                   |          created_at
+----------+------------+--------------------------------------+--------------------------------------+-----------------------------------------------------------------------------------------------------------+-------------------------------
+        1 | CREATE     | f3d83b55-4452-39bc-85f4-29f8cebdcc4f | 279bbdf9-0fe9-4eec-8bb6-46a9df8c72a3 | Ký quỹ 2 Linh Tệ; phí 0%; template STONE_PAD_V1; hạng mục Optional[c94506f3-7b05-3a74-8905-dc2f1bf0ba5a]  | 2026-10-12 01:20:13.162987+07
+        2 | CREATE     | f3d83b55-4452-39bc-85f4-29f8cebdcc4f | 7c9c9656-2602-48b4-98de-447f06e34e97 | Ký quỹ 2 Linh Tệ; phí 0%; template STONE_PATH_V1; hạng mục Optional[ccd5125b-fa79-37a5-9f4a-00b99ce180a4] | 2026-10-12 01:24:06.667916+07
+        3 | ACCEPT     | 3bb5ddbc-5b75-377f-8647-6f25c51f252a | 279bbdf9-0fe9-4eec-8bb6-46a9df8c72a3 | Chưa chuyển tiền công; quyền thi công theo hợp đồng.                                                      | 2026-10-12 01:24:47.210892+07
+        4 | ACCEPT     | 3bb5ddbc-5b75-377f-8647-6f25c51f252a | 7c9c9656-2602-48b4-98de-447f06e34e97 | Chưa chuyển tiền công; quyền thi công theo hợp đồng.                                                      | 2026-10-12 01:25:17.80917+07
+        5 | PLACE      | 3bb5ddbc-5b75-377f-8647-6f25c51f252a | 279bbdf9-0fe9-4eec-8bb6-46a9df8c72a3 | 67:100:5                                                                                                  | 2026-10-12 01:48:28.019438+07
+        6 | PLACE      | 3bb5ddbc-5b75-377f-8647-6f25c51f252a | 279bbdf9-0fe9-4eec-8bb6-46a9df8c72a3 | 68:100:5                                                                                                  | 2026-10-12 01:48:29.006154+07
+        7 | BREAK      | 3bb5ddbc-5b75-377f-8647-6f25c51f252a | 279bbdf9-0fe9-4eec-8bb6-46a9df8c72a3 | 68:100:5                                                                                                  | 2026-10-12 01:48:31.008267+07
+        8 | BREAK      | 3bb5ddbc-5b75-377f-8647-6f25c51f252a | 279bbdf9-0fe9-4eec-8bb6-46a9df8c72a3 | 67:100:5                                                                                                  | 2026-10-12 01:48:34.006122+07
+        9 | PLACE      | 3bb5ddbc-5b75-377f-8647-6f25c51f252a | 279bbdf9-0fe9-4eec-8bb6-46a9df8c72a3 | 67:100:5                                                                                                  | 2026-10-12 01:48:35.007712+07
+       10 | BREAK      | 3bb5ddbc-5b75-377f-8647-6f25c51f252a | 279bbdf9-0fe9-4eec-8bb6-46a9df8c72a3 | 67:100:5                                                                                                  | 2026-10-12 01:48:36.007772+07
+       11 | PLACE      | 3bb5ddbc-5b75-377f-8647-6f25c51f252a | 279bbdf9-0fe9-4eec-8bb6-46a9df8c72a3 | 67:100:5                                                                                                  | 2026-10-12 01:48:37.006582+07
+       12 | PLACE      | 3bb5ddbc-5b75-377f-8647-6f25c51f252a | 279bbdf9-0fe9-4eec-8bb6-46a9df8c72a3 | 68:100:5                                                                                                  | 2026-10-12 01:48:55.006384+07
+       13 | PLACE      | 3bb5ddbc-5b75-377f-8647-6f25c51f252a | 279bbdf9-0fe9-4eec-8bb6-46a9df8c72a3 | 67:100:4                                                                                                  | 2026-10-12 01:51:37.005564+07
+       14 | PLACE      | 3bb5ddbc-5b75-377f-8647-6f25c51f252a | 279bbdf9-0fe9-4eec-8bb6-46a9df8c72a3 | 68:100:4                                                                                                  | 2026-10-12 01:51:38.00666+07
+       15 | PLACE      | 3bb5ddbc-5b75-377f-8647-6f25c51f252a | 279bbdf9-0fe9-4eec-8bb6-46a9df8c72a3 | 69:100:4                                                                                                  | 2026-10-12 01:51:39.006066+07
+       16 | PLACE      | 3bb5ddbc-5b75-377f-8647-6f25c51f252a | 279bbdf9-0fe9-4eec-8bb6-46a9df8c72a3 | 69:100:5                                                                                                  | 2026-10-12 01:51:40.005493+07
+       17 | PLACE      | 3bb5ddbc-5b75-377f-8647-6f25c51f252a | 279bbdf9-0fe9-4eec-8bb6-46a9df8c72a3 | 69:100:3                                                                                                  | 2026-10-12 01:51:41.006029+07
+       18 | PLACE      | 3bb5ddbc-5b75-377f-8647-6f25c51f252a | 279bbdf9-0fe9-4eec-8bb6-46a9df8c72a3 | 68:100:3                                                                                                  | 2026-10-12 01:51:42.006391+07
+       19 | PLACE      | 3bb5ddbc-5b75-377f-8647-6f25c51f252a | 279bbdf9-0fe9-4eec-8bb6-46a9df8c72a3 | 67:100:3                                                                                                  | 2026-10-12 01:51:43.006102+07
+       20 | SUBMIT     | 3bb5ddbc-5b75-377f-8647-6f25c51f252a | 279bbdf9-0fe9-4eec-8bb6-46a9df8c72a3 | Gửi chủ hợp đồng nghiệm thu; quyền thi công đã kết thúc.                                                  | 2026-10-12 01:52:39.380622+07
+(20 rows)
+
+  template_id  |  status
+---------------+-----------
+ STONE_PAD_V1  | SUBMITTED
+ STONE_PATH_V1 | ACTIVE
+(2 rows)
+
+ escrow
+--------
+      4
+(1 row)
+
+ consumed
+----------
+        0
+(1 row)

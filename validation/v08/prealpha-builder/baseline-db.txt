@@ -1,0 +1,28 @@
+             contract_id              |  template_id  | status |              builder_id              |          expires_at
+--------------------------------------+---------------+--------+--------------------------------------+-------------------------------
+ 279bbdf9-0fe9-4eec-8bb6-46a9df8c72a3 | STONE_PAD_V1  | ACTIVE | 3bb5ddbc-5b75-377f-8647-6f25c51f252a | 2026-10-12 02:20:13.158353+07
+ 7c9c9656-2602-48b4-98de-447f06e34e97 | STONE_PATH_V1 | ACTIVE | 3bb5ddbc-5b75-377f-8647-6f25c51f252a | 2026-10-12 02:24:06.663888+07
+(2 rows)
+
+ event_type | count
+------------+-------
+ ACCEPT     |     2
+ CREATE     |     2
+(2 rows)
+
+ owner_id | builder_id
+----------+------------
+(0 rows)
+
+ player_name | balance
+-------------+---------
+ CuuVucNPC2  |       0
+ CuuVucNPC1  |       0
+ TyninWorld  |       0
+(3 rows)
+
+             contract_id              | currency_id | balance
+--------------------------------------+-------------+---------
+ 279bbdf9-0fe9-4eec-8bb6-46a9df8c72a3 | linh_te     |       2
+ 7c9c9656-2602-48b4-98de-447f06e34e97 | linh_te     |       2
+(2 rows)

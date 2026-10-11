@@ -1,0 +1,129 @@
+BEGIN
+DO
+ player_name | balance | inventory_revision |  role  | treasury_spend
+-------------+---------+--------------------+--------+----------------
+ CuuVucNPC1  |       0 |                  8 | ELDER  | f
+ CuuVucNPC2  |       0 |                  6 | LEADER | f
+ TyninWorld  |       4 |                 50 | MEMBER | f
+(3 rows)
+
+ player_name |  resource_id   | quantity | tokens
+-------------+----------------+----------+--------
+ CuuVucNPC1  | huyen_thiet    |        0 |      0
+ CuuVucNPC1  | linh_thach     |        0 |      0
+ CuuVucNPC1  | linh_thach_tho |        0 |      0
+ CuuVucNPC2  | linh_thach     |        0 |      0
+ CuuVucNPC2  | linh_thach_tho |        0 |      0
+ TyninWorld  | huyen_thiet    |        7 |      7
+ TyninWorld  | linh_thach_tho |       22 |     22
+(7 rows)
+
+               sect_id                | account_type | currency | balance
+--------------------------------------+--------------+----------+---------
+ 5e305313-c14d-473f-8101-e76fb79db1ee | SECT         | linh_te  |       0
+(1 row)
+
+             contract_id              |  template_id  |  status   |              builder_id              | reward
+--------------------------------------+---------------+-----------+--------------------------------------+--------
+ 279bbdf9-0fe9-4eec-8bb6-46a9df8c72a3 | STONE_PAD_V1  | COMPLETED | 3bb5ddbc-5b75-377f-8647-6f25c51f252a |      2
+ 7c9c9656-2602-48b4-98de-447f06e34e97 | STONE_PATH_V1 | COMPLETED | 3bb5ddbc-5b75-377f-8647-6f25c51f252a |      2
+(2 rows)
+
+             contract_id              | currency_id | balance
+--------------------------------------+-------------+---------
+ 279bbdf9-0fe9-4eec-8bb6-46a9df8c72a3 | linh_te     |       0
+ 7c9c9656-2602-48b4-98de-447f06e34e97 | linh_te     |       0
+(2 rows)
+
+  kind   | count | sum
+---------+-------+-----
+ DEPOSIT |     2 |   4
+ RELEASE |     2 |  -4
+(2 rows)
+
+              project_id              | resource_id | quantity
+--------------------------------------+-------------+----------
+ 2c3b158d-d5cd-47de-8228-179c315a0c45 | huyen_thiet |        0
+ 2c3b158d-d5cd-47de-8228-179c315a0c45 | linh_thach  |        0
+(2 rows)
+
+               stage_id               | resource_id | quantity
+--------------------------------------+-------------+----------
+ c94506f3-7b05-3a74-8905-dc2f1bf0ba5a | linh_thach  |        0
+ c94506f3-7b05-3a74-8905-dc2f1bf0ba5a | huyen_thiet |        0
+ ccd5125b-fa79-37a5-9f4a-00b99ce180a4 | linh_thach  |        0
+(3 rows)
+
+   kind   |  resource_id   | count | sum
+----------+----------------+-------+-----
+ CONSUME  | huyen_thiet    |     1 |  -1
+ CONSUME  | linh_thach     |     2 |  -3
+ TRANSFER | huyen_thiet    |     6 |   0
+ TRANSFER | linh_thach     |     8 |   0
+ TRANSFER | linh_thach_tho |     4 |   0
+(5 rows)
+
+ event_type | count
+------------+-------
+ CONSUME    |     2
+ CONTRIBUTE |     3
+ CREATE     |     1
+ RESERVE    |     2
+(4 rows)
+
+     event_type     | count
+--------------------+-------
+ ACCEPT             |     2
+ CONTRACT_DEPOSIT   |     2
+ CONTRACT_PAYMENT   |     2
+ CONTRIBUTE         |     1
+ CREATE             |     1
+ INVITE             |     2
+ PROJECT_CONTRIBUTE |     3
+ PROJECT_CREATE     |     1
+ ROLE               |     1
+ SPEND_GRANT        |     2
+ SPEND_REVOKE       |     2
+(11 rows)
+
+ event_type | count
+------------+-------
+ ACCEPT     |     2
+ BREAK      |     3
+ COMPLETE   |     2
+ CREATE     |     2
+ PLACE      |    15
+ SUBMIT     |     2
+(6 rows)
+
+              request_id              |              player_id               |               sect_id                | delta | balance_after |                        reason
+--------------------------------------+--------------------------------------+--------------------------------------+-------+---------------+-------------------------------------------------------
+ 33bbd1bb-b35d-443a-83b4-1c25a9aebdd0 | f3d83b55-4452-39bc-85f4-29f8cebdcc4f |                                      |     2 |             2 | NPC_SELL:linh_thach_tho
+ 5b461f44-6f64-4a27-828f-7a01caad15bc | f3d83b55-4452-39bc-85f4-29f8cebdcc4f |                                      |     2 |             4 | NPC_SELL:linh_thach_tho
+ 862d50e7-d809-4a2e-bd7b-4071ca1db8ad | f3d83b55-4452-39bc-85f4-29f8cebdcc4f |                                      |    -4 |             0 | SECT_CONTRIBUTE:5e305313-c14d-473f-8101-e76fb79db1ee
+ 862d50e7-d809-4a2e-bd7b-4071ca1db8ad |                                      | 5e305313-c14d-473f-8101-e76fb79db1ee |     4 |             4 | SECT_CONTRIBUTE:f3d83b55-4452-39bc-85f4-29f8cebdcc4f
+ e6be6dcc-4224-3e0e-be28-3e505b6097f5 |                                      | 5e305313-c14d-473f-8101-e76fb79db1ee |    -2 |             2 | CONTRACT_DEPOSIT:279bbdf9-0fe9-4eec-8bb6-46a9df8c72a3
+ 74dc0e1c-3ee7-31fc-94cb-8e7f01dee010 |                                      | 5e305313-c14d-473f-8101-e76fb79db1ee |    -2 |             0 | CONTRACT_DEPOSIT:7c9c9656-2602-48b4-98de-447f06e34e97
+ 602e0c14-bef9-3e76-9592-71183c3461e4 | 3bb5ddbc-5b75-377f-8647-6f25c51f252a |                                      |     2 |             2 | CONTRACT_PAYMENT:279bbdf9-0fe9-4eec-8bb6-46a9df8c72a3
+ 0a46f7ba-c876-39a9-8813-0ea9228ed6b8 | 3bb5ddbc-5b75-377f-8647-6f25c51f252a |                                      |     2 |             4 | CONTRACT_PAYMENT:7c9c9656-2602-48b4-98de-447f06e34e97
+(8 rows)
+
+ business_day | minted | burned
+--------------+--------+--------
+ 2026-10-11   |      4 |      0
+(1 row)
+
+              request_id              |  kind   | delta | balance_after
+--------------------------------------+---------+-------+---------------
+ e6be6dcc-4224-3e0e-be28-3e505b6097f5 | DEPOSIT |     2 |             2
+ 74dc0e1c-3ee7-31fc-94cb-8e7f01dee010 | DEPOSIT |     2 |             2
+ 602e0c14-bef9-3e76-9592-71183c3461e4 | RELEASE |    -2 |             0
+ 0a46f7ba-c876-39a9-8813-0ea9228ed6b8 | RELEASE |    -2 |             0
+(4 rows)
+
+             result
+---------------------------------
+ SURVIVAL_ASSETS_ASSERTIONS_PASS
+(1 row)
+
+COMMIT

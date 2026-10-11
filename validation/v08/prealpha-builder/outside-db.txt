@@ -1,0 +1,13 @@
+ event_type | count
+------------+-------
+ ACCEPT     |     2
+ BREAK      |     3
+ CREATE     |     2
+ PLACE      |     5
+(4 rows)
+
+             contract_id              | status
+--------------------------------------+--------
+ 279bbdf9-0fe9-4eec-8bb6-46a9df8c72a3 | ACTIVE
+ 7c9c9656-2602-48b4-98de-447f06e34e97 | ACTIVE
+(2 rows)
