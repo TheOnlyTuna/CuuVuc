@@ -47,9 +47,12 @@ public final class ContractWorld implements Listener {
     private final ArrayBlockingQueue<Change> changes = new ArrayBlockingQueue<>(128);
     private final AtomicBoolean refreshing = new AtomicBoolean(false);
     private volatile boolean auditInFlight;
+    private final java.util.Set<UUID> recoveryHolds = ConcurrentHashMap.newKeySet();
+    private final BlockJournalWorld journal;
 
     public ContractWorld(JavaPlugin plugin, GameDatabase database, PlayerTasks tasks) {
         this.plugin = plugin; this.database = database; this.tasks = tasks;
+        this.journal = new BlockJournalWorld(plugin, database, this);
     }
 
     public void publish(Contracts.Board board) {
@@ -59,10 +62,11 @@ public final class ContractWorld implements Listener {
     }
 
     public void start() {
+        journal.start();
         Bukkit.getAsyncScheduler().runAtFixedRate(plugin, task -> refresh(), 1, 1, TimeUnit.SECONDS);
     }
 
-    /** Shutdown mềm lưu hàng đợi chưa commit; request ID bảo đảm replay không ghi trùng. */
+    /** Giữ bằng chứng hàng đợi cũ; không coi đây là journal chống crash. */
     public synchronized void savePendingAudit() throws IOException {
         Properties pending = new Properties();
         for (Change change : changes) pending.setProperty(change.request().toString(), change.contract() + "," + change.actor() + "," + change.event() + "," + change.position());
@@ -82,9 +86,9 @@ public final class ContractWorld implements Listener {
         for (String key : pending.stringPropertyNames()) {
             String[] fields = pending.getProperty(key).split(",", -1);
             if (fields.length != 4) throw new IOException("Journal lịch sử block không hợp lệ: " + path + " request=" + key);
-            database.contractBlockChanged(UUID.fromString(key), UUID.fromString(fields[0]), UUID.fromString(fields[1]), fields[2], fields[3]);
+            database.requireRecovery(new BlockJournal.Finding(UUID.fromString(fields[0]), BlockJournal.Classification.INCOMPLETE, "legacy pending request=" + UUID.fromString(key)));
         }
-        savePendingAudit();
+        if (!pending.isEmpty()) Files.copy(path, path.resolveSibling("contract-audit-pending-review-" + UUID.randomUUID() + ".properties"));
     }
 
     private String executeAndSync(PlayerTasks.DatabaseAction work, Runnable releaseFence) throws SQLException {
@@ -125,7 +129,7 @@ public final class ContractWorld implements Listener {
 
     private static Optional<Contracts.Job> atSnapshot(Snapshot current, Block block) {
         if (!block.getWorld().getName().equals(PlayableWorld.SKY)) return Optional.empty();
-        return current.board().jobs().stream().filter(Contracts::unresolved)
+        return current.board().jobs().stream().filter(job -> Contracts.unresolved(job) || job.recoveryRequired())
                 .filter(job -> Contracts.contains(job, block.getX(), block.getY(), block.getZ())).findFirst();
     }
 
@@ -137,7 +141,7 @@ public final class ContractWorld implements Listener {
         if (contract.isEmpty()) return islandPermission;
         Contracts.Job job = contract.get();
         Instant estimatedTime = current.board().databaseTime().plusNanos(System.nanoTime() - current.observedAt());
-        return System.nanoTime() - current.observedAt() < TimeUnit.SECONDS.toNanos(5) && !fences.containsKey(job.id()) && block.getY() == 100
+        return System.nanoTime() - current.observedAt() < TimeUnit.SECONDS.toNanos(5) && !fences.containsKey(job.id()) && !recoveryHolds.contains(job.id()) && block.getY() == 100
                 && Contracts.builderCanBuild(job, actor, block.getX(), block.getY(), block.getZ(), estimatedTime) && snapshot.get() == current;
     }
 
@@ -226,6 +230,8 @@ public final class ContractWorld implements Listener {
 
     /** Kiểm template phiên bản trong một chunk trước khi tiêu thụ dự trữ và thanh toán. */
     private void checkAndSave(Player player, Contracts.Job job, UUID request, PlayerTasks.DatabaseAction work) {
+        if (job.recoveryRequired() || recoveryHolds.contains(job.id())) { player.sendPlainMessage("Hợp đồng đang chờ phục hồi; chưa thể nghiệm thu hoặc trả công."); return; }
+        if (journal.busy(job.id())) { player.sendPlainMessage("Chờ xác nhận lần thi công vừa rồi trước khi nghiệm thu."); return; }
         if (!fresh() || !changes.isEmpty() || auditInFlight) { player.sendPlainMessage("Chờ đồng bộ lịch sử xây dựng rồi thử lại."); return; }
         if (fences.putIfAbsent(job.id(), request) != null) { player.sendPlainMessage("Hợp đồng đang xử lý."); return; }
         World world = java.util.Objects.requireNonNull(Bukkit.getWorld(PlayableWorld.SKY));
@@ -253,21 +259,30 @@ public final class ContractWorld implements Listener {
         Optional<Contracts.Job> job = at(event.getBlock());
         if (job.isPresent() && (event.getBlock().getY() != 100 || event.getBlock().getType() != Material.valueOf(job.orElseThrow().template().material())
                 || changes.remainingCapacity() == 0 || !permission(event.getPlayer().getUniqueId(), event.getBlock(), false))) event.setCancelled(true);
+        if (job.isPresent() && !event.isCancelled() && !journal.authorize(event, event.getPlayer().getUniqueId(), "PLACE",
+                event.getBlockReplacedState().getType().isAir() ? "AIR" : event.getBlockReplacedState().getType().name(), BlockJournalWorld.material(event.getBlock()))) {
+            event.setCancelled(true); event.getPlayer().sendPlainMessage("Đang chuẩn bị thi công. Thử lại ô này sau một nhịp.");
+        }
     }
 
     @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true) public void protectBreak(BlockBreakEvent event) {
         Optional<Contracts.Job> job = at(event.getBlock());
         if (job.isPresent() && (event.getBlock().getY() != 100 || event.getBlock().getType() != Material.valueOf(job.orElseThrow().template().material())
                 || changes.remainingCapacity() == 0 || !permission(event.getPlayer().getUniqueId(), event.getBlock(), false))) event.setCancelled(true);
+        if (job.isPresent() && !event.isCancelled() && !journal.authorize(event, event.getPlayer().getUniqueId(), "BREAK", BlockJournalWorld.material(event.getBlock()), "AIR")) {
+            event.setCancelled(true); event.getPlayer().sendPlainMessage("Đang chuẩn bị thi công. Thử lại ô này sau một nhịp.");
+        }
     }
 
-    @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true) public void placed(BlockPlaceEvent event) {
-        record(event.getPlayer().getUniqueId(), event.getBlock(), "PLACE");
+    @EventHandler(priority = EventPriority.MONITOR) public void placed(BlockPlaceEvent event) {
+        journal.observe(event, event.isCancelled());
     }
 
-    @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true) public void broken(BlockBreakEvent event) {
-        record(event.getPlayer().getUniqueId(), event.getBlock(), "BREAK");
+    @EventHandler(priority = EventPriority.MONITOR) public void broken(BlockBreakEvent event) {
+        journal.observe(event, event.isCancelled());
     }
+
+    public void holdRecovery(UUID contract) { recoveryHolds.add(contract); }
 
     private void record(UUID actor, Block block, String event) {
         at(block).ifPresent(job -> {

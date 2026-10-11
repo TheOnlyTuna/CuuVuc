@@ -1,0 +1,1 @@
+PREPARATION_ONLY kill pid=48664 journal_count=0; fixture standing support absent at x67 corrected; not a validation crash

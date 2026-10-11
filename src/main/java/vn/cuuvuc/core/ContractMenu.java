@@ -51,7 +51,7 @@ public final class ContractMenu implements Listener {
         for (int index = 0; index < visible.size(); index++) {
             Contracts.Job job = visible.get(index);
             holder.inventory.setItem(index, icon(Material.WRITABLE_BOOK, "Sàn động phủ #" + job.slot(), List.of(
-                    "Tiền công: " + job.reward() + " Linh Tệ", "Nguồn: " + job.fundingSect().map(id -> "SECT " + id).orElse("Ví cá nhân"), "Ký quỹ: " + job.escrow(), "Trạng thái: " + status(job.status()),
+                    "Tiền công: " + job.reward() + " Linh Tệ", "Nguồn: " + job.fundingSect().map(id -> "SECT " + id).orElse("Ví cá nhân"), "Ký quỹ: " + job.escrow(), "Trạng thái: " + (job.recoveryRequired() ? "RECOVERY_REQUIRED" : status(job.status())),
                     "Hết hạn: " + job.expiresAt(), "Bấm để xem và thao tác")));
         }
         holder.inventory.setItem(27, icon(Material.GOLD_NUGGET, "Thuê xây: 2 Linh Tệ", terms()));
@@ -91,6 +91,12 @@ public final class ContractMenu implements Listener {
                 "Định mức tu tiên: " + job.template().costs() + "; tiêu thụ khi duyệt",
                 "Tiền công: " + job.reward() + " Linh Tệ; ký quỹ: " + job.escrow(), "Hết hạn: " + job.expiresAt(), "Mã: " + job.id())));
         UUID actor = player.getUniqueId();
+        if (job.recoveryRequired()) {
+            holder.inventory.setItem(14, icon(Material.BARRIER, "RECOVERY_REQUIRED", List.of("Tạm khóa thi công, nghiệm thu và giao dịch", "Cần đối soát journal, world và PostgreSQL")));
+            holder.inventory.setItem(24, icon(Material.WRITTEN_BOOK, "Lịch sử công trình", List.of("20 sự kiện gần nhất trong chat")));
+            holder.inventory.setItem(35, icon(Material.ARROW, "Về bảng hợp đồng", List.of()));
+            player.openInventory(holder.inventory); return;
+        }
         if (job.status() == Contracts.Status.OPEN && !job.owner().equals(actor)) holder.inventory.setItem(10, icon(Material.IRON_PICKAXE, "Nhận hợp đồng", terms()));
         holder.inventory.setItem(12, icon(Material.ENDER_PEARL, "Đến công trình", List.of("Chủ: " + job.owner())));
         if (job.builder().filter(actor::equals).isPresent() && job.status() == Contracts.Status.ACTIVE)

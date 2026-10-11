@@ -1,0 +1,2 @@
+NATIVE_CLIENT_FAULT pid=21012 runtime=C:\Users\tyngs\.codex\.chatgpt-projects\g-p-68cc343744bc8191aa703c926143a15c\CuuVuc-GitHub\run-b01-client-j01
+NATIVE_PRECOMMIT_FAULT pid=39684 runtime=C:\Users\tyngs\.codex\.chatgpt-projects\g-p-68cc343744bc8191aa703c926143a15c\CuuVuc-GitHub\run-b01-client-j01 observed=PgSleep_before_operations_receipt_commit

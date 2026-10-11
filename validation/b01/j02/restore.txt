@@ -1,0 +1,7 @@
+RESTORE_COMPLETE files=347 database=cv_b01_j02_intent server=C:\Users\tyngs\.codex\.chatgpt-projects\g-p-68cc343744bc8191aa703c926143a15c\CuuVuc-GitHub\run-b01-j02-intent
+RESTORE_COMPLETE files=347 database=cv_b01_j02_applied0 server=C:\Users\tyngs\.codex\.chatgpt-projects\g-p-68cc343744bc8191aa703c926143a15c\CuuVuc-GitHub\run-b01-j02-applied0
+RESTORE_COMPLETE files=347 database=cv_b01_j02_applied1 server=C:\Users\tyngs\.codex\.chatgpt-projects\g-p-68cc343744bc8191aa703c926143a15c\CuuVuc-GitHub\run-b01-j02-applied1
+RESTORE_COMPLETE files=347 database=cv_b01_j02_sequence0 server=C:\Users\tyngs\.codex\.chatgpt-projects\g-p-68cc343744bc8191aa703c926143a15c\CuuVuc-GitHub\run-b01-j02-sequence0
+RESTORE_COMPLETE files=347 database=cv_b01_j02_sequence1 server=C:\Users\tyngs\.codex\.chatgpt-projects\g-p-68cc343744bc8191aa703c926143a15c\CuuVuc-GitHub\run-b01-j02-sequence1
+RESTORE_COMPLETE files=347 database=cv_b01_j02_savecallback server=C:\Users\tyngs\.codex\.chatgpt-projects\g-p-68cc343744bc8191aa703c926143a15c\CuuVuc-GitHub\run-b01-j02-savecallback
+RESTORE_COMPLETE files=347 database=cv_b01_j02_missingproof server=C:\Users\tyngs\.codex\.chatgpt-projects\g-p-68cc343744bc8191aa703c926143a15c\CuuVuc-GitHub\run-b01-j02-missingproof

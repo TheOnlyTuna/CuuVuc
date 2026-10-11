@@ -1,5 +1,7 @@
 # B01 — Hard-kill và đối soát khởi động
 
+Báo cáo này giữ phạm vi chẩn đoán đã được chấp nhận tại `c5687a4`. Bản triển khai journal/fence và kết quả mới được tách tại [JOURNAL-RESULTS.md](JOURNAL-RESULTS.md); không đổi các ca fixture cũ thành bằng chứng callback client.
+
 **DIAGNOSTIC VALIDATION — B01 CHƯA ĐÓNG.** V0.8 giữ ACCEPTED WITH SCOPE LIMIT; phiên Builder Survival `f9ef1d8` đã được người dùng ACCEPTED. Đây là bước củng cố tiếp theo, chưa chuyển B02 hoặc nâng Alpha. Không merge main, không bật CI.
 
 ## Phạm vi và môi trường

@@ -10,7 +10,7 @@ import java.util.UUID;
 public interface Contracts {
     enum Status { OPEN, ACTIVE, SUBMITTED, COMPLETED, CANCELLED, EXPIRED }
     record Job(UUID id, UUID owner, Optional<UUID> builder, int slot, long reward, long escrow,
-               Status status, Instant expiresAt, long revision, Optional<UUID> fundingSect, int worksite, String templateId, Optional<UUID> projectStage) {
+               Status status, Instant expiresAt, long revision, Optional<UUID> fundingSect, int worksite, String templateId, Optional<UUID> projectStage, boolean recoveryRequired) {
         public Job { builder = java.util.Objects.requireNonNull(builder); fundingSect = java.util.Objects.requireNonNull(fundingSect); }
         public int centerX() { return slot * 64 + template().offsetX(); }
         public BuildingTemplates.Template template() { return BuildingTemplates.get(templateId); }
@@ -28,7 +28,7 @@ public interface Contracts {
         return job.template().contains(job.slot(), x, y, z);
     }
     static boolean builderCanBuild(Job job, UUID player, int x, int y, int z, Instant now) {
-        return job.status() == Status.ACTIVE && job.builder().filter(player::equals).isPresent()
+        return !job.recoveryRequired() && job.status() == Status.ACTIVE && job.builder().filter(player::equals).isPresent()
                 && now.isBefore(job.expiresAt()) && contains(job, x, y, z);
     }
 }

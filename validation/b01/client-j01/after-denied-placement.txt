@@ -1,0 +1,46 @@
+BEGIN
+               event_id               |               actor_id               | event_type | position |  state  | audit_event_id 
+--------------------------------------+--------------------------------------+------------+----------+---------+----------------
+ 6f0e7974-4e35-4a29-8160-7757b6413e6c | 3bb5ddbc-5b75-377f-8647-6f25c51f252a | BREAK      | 69:100:4 | APPLIED |              5
+ f6aee352-890f-47ea-bae8-5d3da7f5b50c | 3bb5ddbc-5b75-377f-8647-6f25c51f252a | BREAK      | 69:100:5 | APPLIED |              6
+ f0c18031-b679-454b-9b5f-430955ed2f31 | 3bb5ddbc-5b75-377f-8647-6f25c51f252a | BREAK      | 69:100:3 | ABORTED |               
+ c50fd49e-bdbb-4239-a01e-9192f0e36b36 | 3bb5ddbc-5b75-377f-8647-6f25c51f252a | BREAK      | 68:100:5 | APPLIED |              7
+ 8ab2f8f6-dc99-4d46-9717-9cf8f34dbace | 3bb5ddbc-5b75-377f-8647-6f25c51f252a | BREAK      | 68:100:4 | APPLIED |              8
+ 56c5757b-802b-4260-9c72-9b1860ddb30f | 3bb5ddbc-5b75-377f-8647-6f25c51f252a | PLACE      | 68:100:4 | APPLIED |              9
+ 8db76c1a-5cf4-4213-a3fa-61ffe01322ab | 3bb5ddbc-5b75-377f-8647-6f25c51f252a | PLACE      | 68:100:5 | APPLIED |             10
+ 0ada62ac-cc02-47e4-8457-71e938c4de84 | 3bb5ddbc-5b75-377f-8647-6f25c51f252a | PLACE      | 69:100:5 | APPLIED |             11
+ b39815f5-539b-4200-a8f4-161a01697606 | 3bb5ddbc-5b75-377f-8647-6f25c51f252a | PLACE      | 69:100:4 | APPLIED |             12
+ 41325879-09a5-4016-b777-c96553ebe457 | 3bb5ddbc-5b75-377f-8647-6f25c51f252a | PLACE      | 67:100:5 | ABORTED |               
+ e0656345-48b7-47ae-8435-9417d0171c7f | 3bb5ddbc-5b75-377f-8647-6f25c51f252a | PLACE      | 67:100:5 | INTENT  |               
+(11 rows)
+
+             contract_id              | classification |                       reason                       
+--------------------------------------+----------------+----------------------------------------------------
+ 279bbdf9-0fe9-4eec-8bb6-46a9df8c72a3 | INCOMPLETE     | journal event=e0656345-48b7-47ae-8435-9417d0171c7f
+(1 row)
+
+ event_id | event_type |  detail  
+----------+------------+----------
+        5 | BREAK      | 69:100:4
+        6 | BREAK      | 69:100:5
+        7 | BREAK      | 68:100:5
+        8 | BREAK      | 68:100:4
+        9 | PLACE      | 68:100:4
+       10 | PLACE      | 68:100:5
+       11 | PLACE      | 69:100:5
+       12 | PLACE      | 69:100:4
+(8 rows)
+
+             contract_id              | status | reward | balance 
+--------------------------------------+--------+--------+---------
+ 279bbdf9-0fe9-4eec-8bb6-46a9df8c72a3 | ACTIVE |      2 |       2
+ 7c9c9656-2602-48b4-98de-447f06e34e97 | ACTIVE |      2 |       2
+(2 rows)
+
+DO
+                  ?column?                   
+---------------------------------------------
+ NATIVE_JOURNAL_FENCE_ASSETS_ASSERTIONS_PASS
+(1 row)
+
+COMMIT

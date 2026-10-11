@@ -90,7 +90,7 @@ public final class CuuVucPlugin extends JavaPlugin implements Listener {
                 database.initialize();
                 contracts.recoverAudit();
                 world.publish(database.islands());
-                recovery.inspect(database.contractBoard(), database.contractBlockAudit());
+                recovery.inspect(database.contractBoard(), database.contractBlockAudit(), database.blockJournal(), database);
                 database.expireContracts();
                 contracts.publish(database.contractBoard());
                 contracts.start();
