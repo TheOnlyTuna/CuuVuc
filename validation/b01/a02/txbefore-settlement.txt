@@ -1,0 +1,21 @@
+BEGIN
+DO
+             result
+--------------------------------
+ B01_SETTLEMENT_ASSERTIONS_PASS
+(1 row)
+
+              request_id              |  kind   | delta | balance_after
+--------------------------------------+---------+-------+---------------
+ e6be6dcc-4224-3e0e-be28-3e505b6097f5 | DEPOSIT |     2 |             2
+ 74dc0e1c-3ee7-31fc-94cb-8e7f01dee010 | DEPOSIT |     2 |             2
+ 602e0c14-bef9-3e76-9592-71183c3461e4 | RELEASE |    -2 |             0
+(3 rows)
+
+              request_id              | resource_id | delta
+--------------------------------------+-------------+-------
+ 602e0c14-bef9-3e76-9592-71183c3461e4 | huyen_thiet |    -1
+ 602e0c14-bef9-3e76-9592-71183c3461e4 | linh_thach  |    -2
+(2 rows)
+
+COMMIT

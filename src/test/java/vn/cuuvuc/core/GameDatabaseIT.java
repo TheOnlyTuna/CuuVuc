@@ -960,6 +960,24 @@ final class GameDatabaseIT {
         return contract;
     }
 
+    @Test void recoveryReadsLatestAuditWithoutCreatingHistoryOrReceipts() throws SQLException {
+        UUID owner = UUID.randomUUID(); UUID builder = UUID.randomUUID(); UUID contract = contractFixture(owner, 2);
+        database.register(builder, "Builder"); database.acceptContract(contract, builder);
+        assertTrue(database.contractBlockAudit().isEmpty());
+        UUID place = UUID.randomUUID(); UUID broken = UUID.randomUUID();
+        database.contractBlockChanged(place, contract, builder, "PLACE", "3:100:3");
+        database.contractBlockChanged(broken, contract, builder, "BREAK", "3:100:3");
+        database.contractBlockChanged(broken, contract, builder, "BREAK", "3:100:3");
+        long history = number("SELECT count(*) FROM building_history");
+        long receipts = number("SELECT count(*) FROM operations");
+        List<GameDatabase.BlockAudit> observed = database.contractBlockAudit();
+        assertEquals(1, observed.size()); assertEquals("BREAK", observed.getFirst().event());
+        assertEquals(contract, observed.getFirst().contract()); assertEquals("3:100:3", observed.getFirst().position());
+        assertEquals(observed, database.contractBlockAudit());
+        assertEquals(history, number("SELECT count(*) FROM building_history"));
+        assertEquals(receipts, number("SELECT count(*) FROM operations"));
+    }
+
     @Test void contractPaymentConservesCurrencyAndLeavesMintAndPdcUntouched() throws SQLException {
         UUID owner = UUID.randomUUID(); UUID builder = UUID.randomUUID();
         mine(builder, 1); Domain.PlayerView items = database.view(builder, "before");

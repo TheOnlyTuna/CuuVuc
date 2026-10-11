@@ -1,0 +1,123 @@
+Starting org.bukkit.craftbukkit.Main
+[02:16:43 INFO]: [bootstrap] Running Java 25 (OpenJDK 64-Bit Server VM 25.0.4.1+10-LTS; Amazon.com Inc. Corretto-25.0.4.10.1) on Windows 11 10.0 (amd64)
+[02:16:43 INFO]: [bootstrap] Loading Paper 26.3-166-main@cc7b98a (2026-10-09T00:54:07Z) for Minecraft 26.3
+[02:16:43 INFO]: [PluginInitializerManager] Initializing plugins...
+[02:16:43 INFO]: [PluginInitializerManager] Initialized 2 plugins
+[02:16:43 INFO]: [PluginInitializerManager] Bukkit plugins (2):
+ - CrashProbe (1), CuuVucCore (0.8.0-SNAPSHOT)
+[02:16:43 ERROR]: [oshi.driver.windows.registry.HkeyPerformanceDataUtil] Unable to locate English counter names in registry Perflib 009. Counters may need to be rebuilt:
+com.sun.jna.platform.win32.Win32Exception: The parameter is incorrect.
+	at com.sun.jna.platform.win32.Advapi32Util.registryGetStringArray(Advapi32Util.java:921) ~[jna-platform-5.17.0.jar:5.17.0 (b0)]
+	at com.sun.jna.platform.win32.Advapi32Util.registryGetStringArray(Advapi32Util.java:898) ~[jna-platform-5.17.0.jar:5.17.0 (b0)]
+	at oshi.driver.windows.registry.HkeyPerformanceDataUtil.mapCounterIndicesFromRegistry(HkeyPerformanceDataUtil.java:274) ~[oshi-core-6.9.0.jar:6.9.0]
+	at oshi.driver.windows.registry.HkeyPerformanceDataUtil.<clinit>(HkeyPerformanceDataUtil.java:51) ~[oshi-core-6.9.0.jar:6.9.0]
+	at oshi.driver.windows.registry.ProcessPerformanceData.buildProcessMapFromRegistry(ProcessPerformanceData.java:45) ~[oshi-core-6.9.0.jar:6.9.0]
+	at oshi.software.os.windows.WindowsOperatingSystem.queryProcessMapFromRegistry(WindowsOperatingSystem.java:328) ~[oshi-core-6.9.0.jar:6.9.0]
+	at oshi.util.Memoizer$1.get(Memoizer.java:65) ~[oshi-core-6.9.0.jar:6.9.0]
+	at oshi.software.os.windows.WindowsOperatingSystem.processMapToList(WindowsOperatingSystem.java:298) ~[oshi-core-6.9.0.jar:6.9.0]
+	at oshi.software.os.windows.WindowsOperatingSystem.getProcess(WindowsOperatingSystem.java:292) ~[oshi-core-6.9.0.jar:6.9.0]
+	at oshi.software.os.OperatingSystem.getCurrentProcess(OperatingSystem.java:246) ~[oshi-core-6.9.0.jar:6.9.0]
+	at net.minecraft.SystemReport.lambda$putSoftware$0(SystemReport.java:115) ~[paper-26.3.jar:26.3-166-cc7b98a]
+	at net.minecraft.SystemReport.ignoreErrors(SystemReport.java:120) ~[paper-26.3.jar:26.3-166-cc7b98a]
+	at net.minecraft.SystemReport.putSoftware(SystemReport.java:115) ~[paper-26.3.jar:26.3-166-cc7b98a]
+	at net.minecraft.SystemReport.lambda$new$7(SystemReport.java:68) ~[paper-26.3.jar:26.3-166-cc7b98a]
+	at net.minecraft.SystemReport.ignoreErrors(SystemReport.java:120) ~[paper-26.3.jar:26.3-166-cc7b98a]
+	at net.minecraft.SystemReport.<init>(SystemReport.java:68) ~[paper-26.3.jar:26.3-166-cc7b98a]
+	at net.minecraft.CrashReport.<init>(CrashReport.java:32) ~[paper-26.3.jar:26.3-166-cc7b98a]
+	at net.minecraft.CrashReport.preload(CrashReport.java:240) ~[paper-26.3.jar:26.3-166-cc7b98a]
+	at java.base/java.lang.Thread.run(Thread.java:1474) ~[?:?]
+[02:16:43 WARN]: [oshi.util.platform.windows.PerfCounterQuery] Unable to locate English counter names in registry Perflib 009. Assuming English counters. Error 0x80070057. See https://support.microsoft.com/en-us/help/300956/how-to-manually-rebuild-performance-counter-library-values
+[02:16:44 WARN]: Failed to get system info for Process Loads
+java.lang.NullPointerException: Cannot invoke "oshi.software.os.OSProcess.getUserTime()" because "process" is null
+	at net.minecraft.SystemReport.lambda$putProcessDetails$0(SystemReport.java:191) ~[paper-26.3.jar:26.3-166-cc7b98a]
+	at net.minecraft.SystemReport.setDetail(SystemReport.java:96) ~[paper-26.3.jar:26.3-166-cc7b98a]
+	at net.minecraft.SystemReport.putProcessDetails(SystemReport.java:188) ~[paper-26.3.jar:26.3-166-cc7b98a]
+	at net.minecraft.SystemReport.lambda$putSoftware$0(SystemReport.java:115) ~[paper-26.3.jar:26.3-166-cc7b98a]
+	at net.minecraft.SystemReport.ignoreErrors(SystemReport.java:120) ~[paper-26.3.jar:26.3-166-cc7b98a]
+	at net.minecraft.SystemReport.putSoftware(SystemReport.java:115) ~[paper-26.3.jar:26.3-166-cc7b98a]
+	at net.minecraft.SystemReport.lambda$new$7(SystemReport.java:68) ~[paper-26.3.jar:26.3-166-cc7b98a]
+	at net.minecraft.SystemReport.ignoreErrors(SystemReport.java:120) ~[paper-26.3.jar:26.3-166-cc7b98a]
+	at net.minecraft.SystemReport.<init>(SystemReport.java:68) ~[paper-26.3.jar:26.3-166-cc7b98a]
+	at net.minecraft.CrashReport.<init>(CrashReport.java:32) ~[paper-26.3.jar:26.3-166-cc7b98a]
+	at net.minecraft.CrashReport.preload(CrashReport.java:240) ~[paper-26.3.jar:26.3-166-cc7b98a]
+	at java.base/java.lang.Thread.run(Thread.java:1474) ~[?:?]
+[02:16:44 WARN]: Failed to get system info for Process Virtual Size (MiB)
+java.lang.NullPointerException: Cannot invoke "oshi.software.os.OSProcess.getVirtualSize()" because "process" is null
+	at net.minecraft.SystemReport.lambda$putProcessDetails$1(SystemReport.java:208) ~[paper-26.3.jar:26.3-166-cc7b98a]
+	at net.minecraft.SystemReport.setDetail(SystemReport.java:96) ~[paper-26.3.jar:26.3-166-cc7b98a]
+	at net.minecraft.SystemReport.putProcessDetails(SystemReport.java:208) ~[paper-26.3.jar:26.3-166-cc7b98a]
+	at net.minecraft.SystemReport.lambda$putSoftware$0(SystemReport.java:115) ~[paper-26.3.jar:26.3-166-cc7b98a]
+	at net.minecraft.SystemReport.ignoreErrors(SystemReport.java:120) ~[paper-26.3.jar:26.3-166-cc7b98a]
+	at net.minecraft.SystemReport.putSoftware(SystemReport.java:115) ~[paper-26.3.jar:26.3-166-cc7b98a]
+	at net.minecraft.SystemReport.lambda$new$7(SystemReport.java:68) ~[paper-26.3.jar:26.3-166-cc7b98a]
+	at net.minecraft.SystemReport.ignoreErrors(SystemReport.java:120) ~[paper-26.3.jar:26.3-166-cc7b98a]
+	at net.minecraft.SystemReport.<init>(SystemReport.java:68) ~[paper-26.3.jar:26.3-166-cc7b98a]
+	at net.minecraft.CrashReport.<init>(CrashReport.java:32) ~[paper-26.3.jar:26.3-166-cc7b98a]
+	at net.minecraft.CrashReport.preload(CrashReport.java:240) ~[paper-26.3.jar:26.3-166-cc7b98a]
+	at java.base/java.lang.Thread.run(Thread.java:1474) ~[?:?]
+[02:16:44 WARN]: Failed to get system info for Process Resident Size (MiB)
+java.lang.NullPointerException: Cannot invoke "oshi.software.os.OSProcess.getResidentSetSize()" because "process" is null
+	at net.minecraft.SystemReport.lambda$putProcessDetails$2(SystemReport.java:209) ~[paper-26.3.jar:26.3-166-cc7b98a]
+	at net.minecraft.SystemReport.setDetail(SystemReport.java:96) ~[paper-26.3.jar:26.3-166-cc7b98a]
+	at net.minecraft.SystemReport.putProcessDetails(SystemReport.java:209) ~[paper-26.3.jar:26.3-166-cc7b98a]
+	at net.minecraft.SystemReport.lambda$putSoftware$0(SystemReport.java:115) ~[paper-26.3.jar:26.3-166-cc7b98a]
+	at net.minecraft.SystemReport.ignoreErrors(SystemReport.java:120) ~[paper-26.3.jar:26.3-166-cc7b98a]
+	at net.minecraft.SystemReport.putSoftware(SystemReport.java:115) ~[paper-26.3.jar:26.3-166-cc7b98a]
+	at net.minecraft.SystemReport.lambda$new$7(SystemReport.java:68) ~[paper-26.3.jar:26.3-166-cc7b98a]
+	at net.minecraft.SystemReport.ignoreErrors(SystemReport.java:120) ~[paper-26.3.jar:26.3-166-cc7b98a]
+	at net.minecraft.SystemReport.<init>(SystemReport.java:68) ~[paper-26.3.jar:26.3-166-cc7b98a]
+	at net.minecraft.CrashReport.<init>(CrashReport.java:32) ~[paper-26.3.jar:26.3-166-cc7b98a]
+	at net.minecraft.CrashReport.preload(CrashReport.java:240) ~[paper-26.3.jar:26.3-166-cc7b98a]
+	at java.base/java.lang.Thread.run(Thread.java:1474) ~[?:?]
+[02:16:45 INFO]: [ca.spottedleaf.dataconverter.minecraft.datatypes.MCTypeRegistry] Initialising converters for DataConverter...
+[02:16:45 INFO]: [com.destroystokyo.paper.profile.PaperServicesDiscoveryService] Environment: Environment[discoveryUrl=https://discovery.minecraftservices.com/minecraft/client, name=PROD]
+[02:16:45 INFO]: [ca.spottedleaf.dataconverter.minecraft.datatypes.MCTypeRegistry] Finished initialising converters for DataConverter in 188.4ms
+[02:16:46 INFO]: Loaded 1866 advancements
+[02:16:46 INFO]: Starting minecraft server version 26.3
+[02:16:46 INFO]: Loading properties
+[02:16:46 INFO]: This server is running Paper version 26.3-166-main@cc7b98a (2026-10-09T00:54:07Z) (Implementing API version 26.3.build.166-beta)
+[02:16:46 INFO]: [spark] This server bundles the spark profiler. For more information please visit https://docs.papermc.io/paper/profiling
+[02:16:46 INFO]: Using 4 threads for Netty based IO
+[02:16:46 INFO]: Server Ping Player Sample Count: 12
+[02:16:46 INFO]: [MoonriseCommon] Paper is using 6 worker threads, 1 I/O threads
+[02:16:46 INFO]: Default game type: SURVIVAL
+[02:16:46 INFO]: Generating keypair
+[02:16:46 INFO]: Starting Minecraft server on 127.0.0.1:25590
+[02:16:46 INFO]: Paper: Using Java compression from Velocity.
+[02:16:46 INFO]: Paper: Using Java cipher from Velocity.
+[02:16:47 INFO]: [CuuVucCore] Loading server plugin CuuVucCore v0.8.0-SNAPSHOT
+[02:16:47 INFO]: [CrashProbe] Loading server plugin CrashProbe v1
+[02:16:47 WARN]: **** SERVER IS RUNNING IN OFFLINE/INSECURE MODE!
+[02:16:47 WARN]: The server will make no attempt to authenticate usernames. Beware.
+[02:16:47 WARN]: While this makes the game possible to play without internet access, it also opens up the ability for hackers to connect with any username they choose.
+[02:16:47 WARN]: To change this, set "online-mode" to "true" in the server.properties file.
+[02:16:47 INFO]: Preparing level "world"
+[02:16:47 INFO]: Loading 0 persistent chunks for level 'minecraft:overworld'...
+[02:16:47 INFO]: Prepared spawn area in 1 ms
+[02:16:47 INFO]: Loading 0 persistent chunks for level 'minecraft:the_nether'...
+[02:16:47 INFO]: Prepared spawn area in 0 ms
+[02:16:47 INFO]: Loading 0 persistent chunks for level 'minecraft:the_end'...
+[02:16:47 INFO]: Prepared spawn area in 1 ms
+[02:16:47 INFO]: Done preparing level "world" (0.184s)
+[02:16:47 INFO]: [CuuVucCore] Enabling CuuVucCore v0.8.0-SNAPSHOT
+[02:16:47 INFO]: [vn.cuuvuc.internal.hikari.HikariDataSource] HikariPool-1 - Starting...
+[02:16:47 INFO]: [vn.cuuvuc.internal.hikari.HikariDataSource] HikariPool-1 - Start completed.
+[02:16:47 INFO]: Loading 0 persistent chunks for level 'minecraft:cv_prison'...
+[02:16:47 INFO]: Prepared spawn area in 2 ms
+[02:16:47 INFO]: Loading 0 persistent chunks for level 'minecraft:cv_sky'...
+[02:16:47 INFO]: Prepared spawn area in 1 ms
+[02:16:47 INFO]: [CrashProbe] Enabling CrashProbe v1
+[02:16:47 INFO]: [spark] Starting background profiler...
+[02:16:47 INFO]: [spark] The async-profiler engine is not supported for your os/arch (windows11/amd64), so the built-in Java engine will be used instead.
+[02:16:47 INFO]: Saving chunks for level 'ServerLevel[world]'/minecraft:overworld
+[02:16:47 INFO]: Saving chunks for level 'ServerLevel[world]'/minecraft:the_nether
+[02:16:47 INFO]: Saving chunks for level 'ServerLevel[world]'/minecraft:the_end
+[02:16:47 INFO]: Saving chunks for level 'ServerLevel[world]'/minecraft:cv_prison
+[02:16:47 INFO]: Saving chunks for level 'ServerLevel[world]'/minecraft:cv_sky
+[02:16:47 INFO]: Running delayed init tasks
+[02:16:47 INFO]: Done (4.306s)! For help, type "help"
+[02:16:47 INFO]: *** Currently you are 9 builds behind ***
+[02:16:47 INFO]: *** It is highly recommended to download the latest build from https://papermc.io/downloads/paper ***
+[02:16:47 WARN]: [CuuVucCore] contract_recovery_observation_requires_review_not_history_repair
+[02:16:47 INFO]: [CuuVucCore] cuuvuc_database_ready
+[02:16:47 INFO]: [CrashProbe] B01_PROBE_DONE

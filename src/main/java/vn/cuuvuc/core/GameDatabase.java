@@ -724,6 +724,21 @@ public final class GameDatabase implements AutoCloseable {
         });
     }
 
+    public record BlockAudit(UUID contract, String position, String event, long sequence) { }
+
+    /** Chỉ đọc sự kiện cuối ở mỗi ô; không suy diễn hoặc bổ sung lịch sử từ world. */
+    public List<BlockAudit> contractBlockAudit() throws SQLException {
+        return query("contract_block_audit", connection -> {
+            List<BlockAudit> result = new ArrayList<>();
+            try (Statement statement = connection.createStatement(); ResultSet rows = statement.executeQuery(
+                    "SELECT DISTINCT ON (contract_id,detail) contract_id,detail,event_type,event_id FROM building_history "
+                    + "WHERE event_type IN ('PLACE','BREAK') ORDER BY contract_id,detail,event_id DESC")) {
+                while (rows.next()) result.add(new BlockAudit(rows.getObject(1, UUID.class), rows.getString(2), rows.getString(3), rows.getLong(4)));
+            }
+            return List.copyOf(result);
+        });
+    }
+
     public String contractHistory(UUID contract) throws SQLException {
         return query("contract_history:" + contract, connection -> {
             StringBuilder text = new StringBuilder("Hợp đồng " + contract);

@@ -1,0 +1,7 @@
+pq0 HARD_KILL_OBSERVED startup_state_unchanged=true action=OBSERVE world=AIR
+pq1 HARD_KILL_OBSERVED startup_state_unchanged=true action=OBSERVE world=COBBLESTONE
+pc0 HARD_KILL_OBSERVED startup_state_unchanged=true action=OBSERVE world=AIR
+pc1 HARD_KILL_OBSERVED startup_state_unchanged=true action=OBSERVE world=COBBLESTONE
+bq0 HARD_KILL_OBSERVED startup_state_unchanged=true action=OBSERVE world=COBBLESTONE
+bc0 HARD_KILL_OBSERVED startup_state_unchanged=true action=OBSERVE world=COBBLESTONE
+bc1 HARD_KILL_OBSERVED startup_state_unchanged=true action=OBSERVE world=AIR

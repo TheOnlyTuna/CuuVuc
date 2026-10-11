@@ -83,12 +83,14 @@ public final class CuuVucPlugin extends JavaPlugin implements Listener {
         getServer().getPluginManager().registerEvents(contracts, this);
         getServer().getPluginManager().registerEvents(contractMenu, this);
         world.create();
+        ContractRecovery recovery = new ContractRecovery(this, Objects.requireNonNull(Bukkit.getWorld(PlayableWorld.SKY)));
         Objects.requireNonNull(getCommand("cv")).setExecutor(this);
         Bukkit.getAsyncScheduler().runNow(this, task -> {
             try {
                 database.initialize();
                 contracts.recoverAudit();
                 world.publish(database.islands());
+                recovery.inspect(database.contractBoard(), database.contractBlockAudit());
                 database.expireContracts();
                 contracts.publish(database.contractBoard());
                 contracts.start();

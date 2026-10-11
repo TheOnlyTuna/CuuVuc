@@ -1,0 +1,31 @@
+   kind   |  resource_id   | count | sum
+----------+----------------+-------+-----
+ CONSUME  | huyen_thiet    |     1 |  -1
+ CONSUME  | linh_thach     |     1 |  -2
+ TRANSFER | huyen_thiet    |     6 |   0
+ TRANSFER | linh_thach     |     8 |   0
+ TRANSFER | linh_thach_tho |     4 |   0
+(5 rows)
+
+               stage_id               | resource_id | quantity
+--------------------------------------+-------------+----------
+ c94506f3-7b05-3a74-8905-dc2f1bf0ba5a | huyen_thiet |        0
+ c94506f3-7b05-3a74-8905-dc2f1bf0ba5a | linh_thach  |        0
+ ccd5125b-fa79-37a5-9f4a-00b99ce180a4 | linh_thach  |        1
+(3 rows)
+
+  kind   | count | sum
+---------+-------+-----
+ DEPOSIT |     2 |   4
+ RELEASE |     1 |  -2
+(2 rows)
+
+ tokens
+--------
+     29
+(1 row)
+
+ test_triggers_left
+--------------------
+                  0
+(1 row)

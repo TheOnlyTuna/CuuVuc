@@ -1,0 +1,5 @@
+name: CrashProbe
+version: '1'
+main: vn.cuuvuc.validation.CrashProbe
+api-version: '26.3'
+depend: [CuuVucCore]

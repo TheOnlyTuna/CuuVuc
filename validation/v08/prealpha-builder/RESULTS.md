@@ -1,6 +1,6 @@
 # Pre-Alpha — Builder Survival, quyền vùng và audit
 
-**PASS các ca xây tay được liệt kê — chờ người dùng đánh giá hồ sơ bổ sung.** Phiên riêng ngày 12/10/2026, 01:46–02:01 Asia/Bangkok. V0.8 vẫn ACCEPTED WITH SCOPE LIMIT tại `02adf1e`; không sửa Java, migration hoặc JAR. Đây là phiên mới bổ sung bằng chứng, không đổi phiên dựng console Phase 5 thành xây tay.
+**ACCEPTED — Pre-Alpha Builder Survival Validation tại f9ef1d8 theo quyết định người dùng ngày 12/10/2026.** Phiên riêng ngày 12/10/2026, 01:46–02:01 Asia/Bangkok. V0.8 vẫn ACCEPTED WITH SCOPE LIMIT tại `02adf1e`; không sửa Java, migration hoặc JAR. Đây là phiên mới bổ sung bằng chứng, không đổi phiên dựng console Phase 5 thành xây tay.
 
 Runtime `run-v08-builder-rights`, DB `cv_v08_builder_rights`, restore từ bundle ACTIVE `backups/v08-three-player-active-001`. Checkpoint V0.8 đã hoàn tất giữ riêng, không ghi đè. Paper 26.3 build 166, Corretto 25.0.4.1, PostgreSQL 18.4; localhost 25580, offline-mode được phép từ trước. JAR SHA-256 `79359d168fdd32f5ad7de85dea82969fae03ddd6435c43cf160247cd97505c10`.
 

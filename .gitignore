@@ -34,3 +34,6 @@
 /run-v08-three-player-final-restored/
 /run-v08-builder-rights/
 !/validation/v08/prealpha-builder/*.log
+/run-b01-*/
+!/validation/b01/*.log
+!/validation/b01/*/*.log
