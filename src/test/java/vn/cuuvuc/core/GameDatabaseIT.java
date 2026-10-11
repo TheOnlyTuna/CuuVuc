@@ -81,6 +81,195 @@ final class GameDatabaseIT {
         mine(player, times); database.sell(UUID.randomUUID(), player, "Cultivator", "linh_thach_tho", times);
     }
 
+    private UUID treasuryFixture(UUID leader, UUID elder) throws SQLException {
+        database.register(leader, "Leader"); database.register(elder, "Elder");
+        UUID sect = UUID.randomUUID(); database.createSect(sect, leader, "Treasury Sect");
+        UUID invitation = UUID.randomUUID(); database.inviteSect(invitation, leader, sect, elder);
+        database.acceptSect(UUID.randomUUID(), elder, invitation);
+        database.changeSectRole(UUID.randomUUID(), leader, sect, elder, Sects.Role.ELDER);
+        return sect;
+    }
+
+    private long treasuryBalance(UUID sect) throws SQLException {
+        return scalar("SELECT balance FROM sect_accounts WHERE sect_id=?", sect);
+    }
+
+    private void assertMoneyConserved(long expected) throws SQLException {
+        assertEquals(expected, number("SELECT (SELECT coalesce(sum(balance),0) FROM profiles)+(SELECT coalesce(sum(balance),0) FROM sect_accounts)+(SELECT coalesce(sum(balance),0) FROM contract_escrow_accounts)"));
+        assertEquals(expected, number("SELECT coalesce(sum(minted-burned),0) FROM economy_daily"));
+        assertEquals(expected, number("SELECT (SELECT coalesce(sum(delta),0) FROM ledger)+(SELECT coalesce(sum(delta),0) FROM contract_escrow_ledger)"));
+    }
+
+    @Test void treasuryTransfersShareLedgerPreserveMintAndReplayReceipts() throws SQLException, IOException {
+        UUID leader = UUID.randomUUID(); UUID elder = UUID.randomUUID(); UUID outsider = UUID.randomUUID();
+        UUID sect = treasuryFixture(leader, elder); fund(leader, 10); fund(elder, 5); database.register(outsider, "Outsider");
+        UUID contribution = UUID.randomUUID(); String receipt = database.contributeTreasury(contribution, leader, sect, 12);
+        assertEquals(receipt, database.contributeTreasury(contribution, leader, sect, 12));
+        assertThrows(IllegalArgumentException.class, () -> database.contributeTreasury(contribution, leader, sect, 11));
+        assertThrows(IllegalArgumentException.class, () -> database.contributeTreasury(UUID.randomUUID(), outsider, sect, 1));
+        database.contributeTreasury(UUID.randomUUID(), elder, sect, 4);
+        assertThrows(IllegalArgumentException.class, () -> database.withdrawTreasury(UUID.randomUUID(), elder, sect, 1));
+        database.grantTreasurySpend(UUID.randomUUID(), leader, sect, elder);
+        UUID withdrawal = UUID.randomUUID(); String withdrawn = database.withdrawTreasury(withdrawal, elder, sect, 6);
+        database.revokeTreasurySpend(UUID.randomUUID(), leader, sect, elder);
+        assertEquals(withdrawn, database.withdrawTreasury(withdrawal, elder, sect, 6));
+        assertThrows(IllegalArgumentException.class, () -> database.withdrawTreasury(UUID.randomUUID(), elder, sect, 1));
+        assertEquals(10, treasuryBalance(sect)); assertEquals(8, balance(leader)); assertEquals(12, balance(elder));
+        assertEquals(10, scalar("SELECT sum(delta) FROM ledger WHERE sect_id=?", sect));
+        assertMoneyConserved(30);
+        database.initialize(); assertEquals(10, database.treasuryView(leader).balance());
+        assertThrows(SQLException.class, () -> execute("UPDATE ledger SET reason='tampered' WHERE sect_id='" + sect + "'"));
+        assertThrows(SQLException.class, () -> execute("INSERT INTO ledger(request_id,player_id,sect_id,delta,balance_after,reason) VALUES ('" + UUID.randomUUID() + "',NULL,NULL,1,1,'invalid')"));
+    }
+
+    @Test void treasuryRoleChangesAndDepartureRevokeSpendingWithoutRestoringOldGrants() throws SQLException {
+        UUID leader = UUID.randomUUID(); UUID elder = UUID.randomUUID(); UUID sect = treasuryFixture(leader, elder);
+        fund(leader, 5); database.contributeTreasury(UUID.randomUUID(), leader, sect, 10);
+        UUID grant = UUID.randomUUID(); String receipt = database.grantTreasurySpend(grant, leader, sect, elder);
+        assertTrue(database.treasuryView(elder).spending());
+        assertThrows(IllegalArgumentException.class, () -> database.grantTreasurySpend(UUID.randomUUID(), elder, sect, leader));
+        database.changeSectRole(UUID.randomUUID(), leader, sect, elder, Sects.Role.MEMBER);
+        database.changeSectRole(UUID.randomUUID(), leader, sect, elder, Sects.Role.ELDER);
+        assertFalse(database.treasuryView(elder).spending());
+        assertEquals(receipt, database.grantTreasurySpend(grant, leader, sect, elder));
+        assertFalse(database.treasuryView(elder).spending());
+        assertThrows(IllegalArgumentException.class, () -> database.withdrawTreasury(UUID.randomUUID(), elder, sect, 1));
+        database.grantTreasurySpend(UUID.randomUUID(), leader, sect, elder); database.leaveSect(UUID.randomUUID(), elder, sect);
+        UUID invitation = UUID.randomUUID(); database.inviteSect(invitation, leader, sect, elder); database.acceptSect(UUID.randomUUID(), elder, invitation);
+        database.changeSectRole(UUID.randomUUID(), leader, sect, elder, Sects.Role.ELDER);
+        assertFalse(database.treasuryView(elder).spending());
+        database.grantTreasurySpend(UUID.randomUUID(), leader, sect, elder); database.kickSectMember(UUID.randomUUID(), leader, sect, elder);
+        assertThrows(IllegalArgumentException.class, () -> database.withdrawTreasury(UUID.randomUUID(), elder, sect, 1)); assertMoneyConserved(10);
+    }
+
+    @Test void withdrawalWaitsForSectLockAndRejectsRevokedCapturedIntent() throws Exception {
+        UUID leader = UUID.randomUUID(); UUID elder = UUID.randomUUID(); UUID sect = treasuryFixture(leader, elder);
+        fund(leader, 5); database.contributeTreasury(UUID.randomUUID(), leader, sect, 10); database.grantTreasurySpend(UUID.randomUUID(), leader, sect, elder);
+        Treasury.View old = database.treasuryView(elder); assertTrue(old.spending()); UUID request = UUID.randomUUID();
+        try (Connection blocker = DriverManager.getConnection(url, user, password); ExecutorService executor = Executors.newSingleThreadExecutor()) {
+            blocker.setSchema(schema); blocker.setAutoCommit(false);
+            try (Statement statement = blocker.createStatement()) {
+                statement.execute("SELECT sect_id FROM sects FOR UPDATE");
+                statement.execute("UPDATE sect_members SET treasury_spend=false WHERE player_id='" + elder + "'");
+            }
+            Future<String> result = executor.submit(() -> database.withdrawTreasury(request, elder, old.sect(), 2)); awaitBlockedQuery(); blocker.commit();
+            java.util.concurrent.ExecutionException failure = assertThrows(java.util.concurrent.ExecutionException.class, () -> result.get(10, TimeUnit.SECONDS));
+            assertTrue(failure.getCause() instanceof IllegalArgumentException);
+        }
+        assertEquals(0, scalar("SELECT count(*) FROM operations WHERE request_id=?", request)); assertEquals(10, treasuryBalance(sect)); assertMoneyConserved(10);
+    }
+
+    @Test void concurrentTreasuryWithdrawalsAndRepeatedRequestsCannotOverspend() throws Exception {
+        UUID leader = UUID.randomUUID(); UUID elder = UUID.randomUUID(); UUID sect = treasuryFixture(leader, elder);
+        fund(leader, 20); database.contributeTreasury(UUID.randomUUID(), leader, sect, 40); UUID request = UUID.randomUUID();
+        try (ExecutorService executor = Executors.newFixedThreadPool(4)) {
+            List<Callable<String>> repeated = IntStream.range(0, 12).mapToObj(index -> (Callable<String>) () -> database.withdrawTreasury(request, leader, sect, 4)).toList();
+            List<Future<String>> receipts = executor.invokeAll(repeated); String receipt = receipts.getFirst().get();
+            for (Future<String> result : receipts) assertEquals(receipt, result.get());
+            List<Callable<Boolean>> expenses = IntStream.range(0, 6).mapToObj(index -> (Callable<Boolean>) () -> {
+                try { database.withdrawTreasury(UUID.randomUUID(), leader, sect, 12); return true; }
+                catch (IllegalArgumentException failure) { assertTrue(failure.getMessage().contains("không đủ Linh Tệ")); return false; }
+            }).toList();
+            int paid = 0; for (Future<Boolean> result : executor.invokeAll(expenses)) if (result.get()) paid++;
+            assertEquals(3, paid);
+        }
+        assertEquals(0, treasuryBalance(sect)); assertEquals(2, scalar("SELECT count(*) FROM ledger WHERE request_id=?", request)); assertMoneyConserved(40);
+    }
+
+    @Test void failedTreasuryHistoryOrLedgerRollsBackBothSidesAndReceipt() throws SQLException {
+        UUID leader = UUID.randomUUID(); UUID elder = UUID.randomUUID(); UUID sect = treasuryFixture(leader, elder); fund(leader, 5);
+        execute("CREATE FUNCTION fail_treasury() RETURNS trigger LANGUAGE plpgsql AS $$ BEGIN RAISE EXCEPTION 'Treasury fault' USING ERRCODE='23514'; END $$");
+        execute("CREATE TRIGGER fault BEFORE INSERT ON sect_history FOR EACH ROW EXECUTE FUNCTION fail_treasury()");
+        UUID request = UUID.randomUUID(); assertThrows(SQLException.class, () -> database.contributeTreasury(request, leader, sect, 6));
+        assertEquals(10, balance(leader)); assertEquals(0, treasuryBalance(sect)); assertEquals(0, scalar("SELECT count(*) FROM operations WHERE request_id=?", request));
+        execute("DROP TRIGGER fault ON sect_history"); database.contributeTreasury(request, leader, sect, 6);
+        execute("CREATE TRIGGER fault BEFORE INSERT ON ledger FOR EACH ROW WHEN (NEW.player_id IS NOT NULL) EXECUTE FUNCTION fail_treasury()");
+        UUID withdrawal = UUID.randomUUID(); assertThrows(SQLException.class, () -> database.withdrawTreasury(withdrawal, leader, sect, 2));
+        assertEquals(4, balance(leader)); assertEquals(6, treasuryBalance(sect)); assertEquals(0, scalar("SELECT count(*) FROM operations WHERE request_id=?", withdrawal)); assertMoneyConserved(10);
+    }
+
+    @Test void sectContractDepositAndWithdrawalCompeteForTheSameFundsAtomically() throws Exception {
+        UUID leader = UUID.randomUUID(); UUID elder = UUID.randomUUID(); UUID sect = treasuryFixture(leader, elder);
+        fund(leader, 10); database.contributeTreasury(UUID.randomUUID(), leader, sect, 20);
+        database.reserveIsland(leader, "Leader"); database.islandReady(leader); UUID contract = UUID.randomUUID();
+        try (ExecutorService executor = Executors.newFixedThreadPool(2)) {
+            List<Callable<Boolean>> work = List.of(
+                    () -> competingTreasurySpend(() -> database.createSectContract(contract, leader, sect, 8, Duration.ofHours(1))),
+                    () -> competingTreasurySpend(() -> database.withdrawTreasury(UUID.randomUUID(), leader, sect, 18)));
+            int successes = 0; for (Future<Boolean> result : executor.invokeAll(work)) if (result.get()) successes++;
+            assertEquals(1, successes);
+        }
+        assertMoneyConserved(20);
+        long contracts = number("SELECT count(*) FROM building_contracts");
+        assertEquals(contracts, number("SELECT count(*) FROM contract_escrow_ledger"));
+        assertEquals(contracts, number("SELECT count(*) FROM sect_history WHERE event_type='CONTRACT_DEPOSIT'"));
+        assertEquals(contracts == 1 ? 12 : 2, treasuryBalance(sect));
+    }
+
+    private static boolean competingTreasurySpend(PlayerTasks.DatabaseAction action) throws SQLException {
+        try { action.execute(); return true; }
+        catch (IllegalArgumentException failure) { assertTrue(failure.getMessage().contains("không đủ Linh Tệ")); return false; }
+    }
+
+    @Test void sectContractsPayBuilderAndRefundOriginalTreasuryThroughAllSettlementPaths() throws SQLException {
+        UUID leader = UUID.randomUUID(); UUID elder = UUID.randomUUID(); UUID builder = UUID.randomUUID(); UUID sect = treasuryFixture(leader, elder);
+        database.register(builder, "Builder"); fund(leader, 10); database.contributeTreasury(UUID.randomUUID(), leader, sect, 20);
+        database.reserveIsland(leader, "Leader"); database.islandReady(leader); UUID paid = UUID.randomUUID();
+        String deposited = database.createSectContract(paid, leader, sect, 8, Duration.ofHours(1));
+        assertEquals(deposited, database.createSectContract(paid, leader, sect, 8, Duration.ofHours(1))); assertEquals(0, balance(leader)); assertMoneyConserved(20);
+        database.acceptContract(paid, builder); database.submitContract(paid, builder);
+        String receipt = database.completeContract(paid, leader); assertEquals(receipt, database.completeContract(paid, leader));
+        assertEquals(8, balance(builder)); assertEquals(12, treasuryBalance(sect));
+        UUID cancelled = UUID.randomUUID(); database.createSectContract(cancelled, leader, sect, 4, Duration.ofHours(1)); database.cancelContract(cancelled, leader);
+        UUID abandoned = UUID.randomUUID(); database.createSectContract(abandoned, leader, sect, 2, Duration.ofHours(1)); database.acceptContract(abandoned, builder); database.abandonContract(abandoned, builder);
+        UUID expired = UUID.randomUUID(); database.createSectContract(expired, leader, sect, 2, Duration.ofHours(1));
+        execute("UPDATE building_contracts SET expires_at=clock_timestamp()-interval '1 second' WHERE contract_id='" + expired + "'"); database.expireContracts(); database.expireContracts();
+        assertEquals(12, treasuryBalance(sect)); assertEquals(0, balance(leader)); assertEquals(8, balance(builder)); assertMoneyConserved(20);
+        assertEquals(3, number("SELECT count(*) FROM contract_escrow_ledger WHERE kind='REFUND'")); assertEquals(1, number("SELECT count(*) FROM contract_escrow_ledger WHERE kind='RELEASE'"));
+        assertEquals(3, number("SELECT count(*) FROM sect_history WHERE event_type='CONTRACT_REFUND'"));
+    }
+
+    @Test void revokedContractCreatorCannotSpendCancelOrApproveButCurrentLeaderCanSettle() throws SQLException {
+        UUID leader = UUID.randomUUID(); UUID elder = UUID.randomUUID(); UUID builder = UUID.randomUUID(); UUID sect = treasuryFixture(leader, elder);
+        fund(leader, 10); database.contributeTreasury(UUID.randomUUID(), leader, sect, 20); database.register(builder, "Builder");
+        database.reserveIsland(elder, "Elder"); database.islandReady(elder); database.grantTreasurySpend(UUID.randomUUID(), leader, sect, elder);
+        UUID first = UUID.randomUUID(); database.createSectContract(first, elder, sect, 4, Duration.ofHours(1)); database.revokeTreasurySpend(UUID.randomUUID(), leader, sect, elder);
+        assertThrows(IllegalArgumentException.class, () -> database.cancelContract(first, elder)); database.cancelContract(first, leader);
+        UUID rejected = UUID.randomUUID(); assertThrows(IllegalArgumentException.class, () -> database.createSectContract(rejected, elder, sect, 4, Duration.ofHours(1)));
+        assertEquals(0, scalar("SELECT count(*) FROM operations WHERE request_id=?", Contracts.request(rejected, "CREATE")));
+        database.grantTreasurySpend(UUID.randomUUID(), leader, sect, elder); UUID second = UUID.randomUUID(); database.createSectContract(second, elder, sect, 6, Duration.ofHours(1));
+        database.acceptContract(second, builder); database.submitContract(second, builder); database.kickSectMember(UUID.randomUUID(), leader, sect, elder);
+        assertThrows(IllegalArgumentException.class, () -> database.completeContract(second, elder)); assertEquals(0, balance(builder));
+        database.completeContract(second, leader); assertEquals(6, balance(builder)); assertEquals(14, treasuryBalance(sect)); assertMoneyConserved(20);
+    }
+
+    @Test void v06MigrationAddsZeroTreasuryAndPreservesExistingWalletLedgerAndEscrow() throws SQLException, IOException {
+        legacySchema();
+        try (Connection connection = DriverManager.getConnection(url, user, password)) {
+            connection.setSchema(schema); connection.setAutoCommit(false);
+            Migrations.apply(connection, Migrations.load().subList(0, 6), Migrations.resource("/db/schema-fingerprint.sql"));
+            try (Statement statement = connection.createStatement()) {
+                statement.execute("INSERT INTO profiles(player_id,player_name,balance) VALUES ('00000000-0000-0000-0000-000000000001','Leader',12)");
+                statement.execute("INSERT INTO operations(request_id,actor_id,fingerprint,result) VALUES ('00000000-0000-0000-0000-000000000002','00000000-0000-0000-0000-000000000001','legacy','ok')");
+                statement.execute("INSERT INTO ledger(request_id,player_id,delta,balance_after,reason) VALUES ('00000000-0000-0000-0000-000000000002','00000000-0000-0000-0000-000000000001',12,12,'legacy')");
+                statement.execute("INSERT INTO sects(sect_id,name,name_key,leader_id) VALUES ('00000000-0000-0000-0000-000000000003','Legacy Sect','legacy sect','00000000-0000-0000-0000-000000000001')");
+                statement.execute("INSERT INTO sect_members(player_id,sect_id,role) VALUES ('00000000-0000-0000-0000-000000000001','00000000-0000-0000-0000-000000000003','LEADER')");
+                statement.execute("INSERT INTO islands(player_id,ready) VALUES ('00000000-0000-0000-0000-000000000001',true)");
+                statement.execute("INSERT INTO building_contracts(contract_id,owner_id,island_slot,reward,status,expires_at) VALUES ('00000000-0000-0000-0000-000000000004','00000000-0000-0000-0000-000000000001',1,8,'OPEN',clock_timestamp()+interval '1 hour')");
+                statement.execute("INSERT INTO contract_escrow_accounts VALUES ('00000000-0000-0000-0000-000000000004','linh_te',8)");
+            }
+            connection.commit();
+        }
+        database.initialize(); database.initialize();
+        assertEquals(7, number("SELECT version FROM schema_version")); assertEquals(12, number("SELECT sum(balance) FROM profiles"));
+        assertEquals(0, number("SELECT sum(balance) FROM sect_accounts")); assertEquals(12, number("SELECT sum(delta) FROM ledger"));
+        assertEquals(0, number("SELECT count(*) FROM ledger WHERE sect_id IS NOT NULL")); assertEquals(1, number("SELECT count(*) FROM sect_members"));
+        assertEquals(8, number("SELECT sum(balance) FROM contract_escrow_accounts"));
+        assertTrue(database.contractBoard().jobs().getFirst().fundingSect().isEmpty());
+        database.cancelContract(UUID.fromString("00000000-0000-0000-0000-000000000004"), UUID.fromString("00000000-0000-0000-0000-000000000001"));
+        assertEquals(20, number("SELECT sum(balance) FROM profiles")); assertEquals(0, number("SELECT sum(balance) FROM sect_accounts"));
+    }
+
     @Test void sectLifecyclePersistsRolesHistoryAndLeavesEconomyUntouched() throws SQLException, IOException {
         UUID leader = UUID.randomUUID(); UUID member = UUID.randomUUID(); UUID next = UUID.randomUUID(); UUID sect = UUID.randomUUID();
         database.register(leader, "Leader"); database.register(member, "Member"); database.register(next, "Next");
@@ -218,7 +407,7 @@ final class GameDatabaseIT {
         String receipt = database.transferMaterials(transfer, sender, recipient, "linh_thach_tho", 2, revision);
         Domain.PlayerView before = database.view(recipient, "before");
         database.initialize(); database.initialize();
-        assertEquals(6, number("SELECT version FROM schema_version")); assertEquals(6, number("SELECT count(*) FROM migration_history"));
+        assertEquals(7, number("SELECT version FROM schema_version")); assertEquals(7, number("SELECT count(*) FROM migration_history"));
         assertEquals(before.items(), database.view(recipient, "after").items()); assertEquals(8, balance(sender));
         assertEquals(receipt, database.transferMaterials(transfer, sender, recipient, "linh_thach_tho", 2, revision));
         assertEquals(2, number("SELECT count(*) FROM resource_ledger")); assertEquals(0, number("SELECT count(*) FROM sects"));
@@ -289,7 +478,7 @@ final class GameDatabaseIT {
         try (ExecutorService executor = Executors.newFixedThreadPool(8)) {
             List<Callable<Boolean>> actions = IntStream.range(0, 8).mapToObj(index -> (Callable<Boolean>) () -> {
                 try { database.buy(UUID.randomUUID(), player, "Cultivator", "huyen_thiet", 1); return true; }
-                catch (IllegalArgumentException expected) { assertEquals("Không đủ linh tệ.", expected.getMessage()); return false; }
+                catch (IllegalArgumentException expected) { assertTrue(expected.getMessage().contains("không đủ Linh Tệ")); return false; }
             }).toList();
             long successes = 0;
             for (Future<Boolean> result : executor.invokeAll(actions)) if (result.get()) successes++;
@@ -486,8 +675,8 @@ final class GameDatabaseIT {
         execute("INSERT INTO ledger(request_id,player_id,delta,balance_after,reason) VALUES ('" + request + "','" + player + "',600,600,'NPC_SELL:linh_thach_tho')");
         database.initialize(); database.initialize();
         assertEquals(600, balance(player)); assertEquals(3, stock(player));
-        assertEquals(6, number("SELECT version FROM schema_version"));
-        assertEquals(6, number("SELECT count(*) FROM migration_history"));
+        assertEquals(7, number("SELECT version FROM schema_version"));
+        assertEquals(7, number("SELECT count(*) FROM migration_history"));
         assertEquals(600, number("SELECT sum(minted) FROM player_mint_daily"));
         assertTrue(database.receipt(player, request).contains("legacy_success"));
         assertThrows(IllegalArgumentException.class, () -> database.sell(UUID.randomUUID(), player, "Legacy", "linh_thach_tho", 1));
@@ -572,7 +761,7 @@ final class GameDatabaseIT {
         execute("INSERT INTO profiles(player_id,player_name,balance,cultivation_xp) VALUES ('" + player + "','Legacy',18,50)");
         execute("INSERT INTO inventory VALUES ('" + player + "','linh_thach',1)");
         database.initialize();
-        assertEquals(6, number("SELECT version FROM schema_version"));
+        assertEquals(7, number("SELECT version FROM schema_version"));
         Domain.PlayerView view = database.view(player, "upgraded");
         assertEquals(18, view.balance()); assertEquals(50, view.xp()); assertEquals(1, view.items().size());
         assertEquals(0, number("SELECT count(*) FROM operations"));
@@ -734,7 +923,7 @@ final class GameDatabaseIT {
         database.islandReady(owner); Domain.Claims claims = database.inviteBuilder(owner, builder);
         mine(owner, 1); Domain.PlayerView before = database.view(owner, "before");
         database.initialize(); database.initialize();
-        assertEquals(6, number("SELECT version FROM schema_version")); assertEquals(6, number("SELECT count(*) FROM migration_history"));
+        assertEquals(7, number("SELECT version FROM schema_version")); assertEquals(7, number("SELECT count(*) FROM migration_history"));
         assertEquals(claims, database.islands()); assertEquals(before.items(), database.view(owner, "after").items());
         assertEquals(8, balance(owner)); assertEquals(0, number("SELECT count(*) FROM building_contracts"));
     }
@@ -948,7 +1137,7 @@ final class GameDatabaseIT {
         UUID sender = UUID.randomUUID(); UUID token = UUID.randomUUID(); UUID request = UUID.randomUUID();
         execute("INSERT INTO profiles(player_id,player_name,balance) VALUES ('" + sender + "','Legacy',10); INSERT INTO inventory VALUES ('" + sender + "','linh_thach_tho',5); INSERT INTO item_tokens(token_id,player_id,resource_id,ordinal) VALUES ('" + token + "','" + sender + "','linh_thach_tho',1); INSERT INTO operations(request_id,fingerprint,result,actor_id) VALUES ('" + request + "','legacy','preserved','" + sender + "')");
         database = new GameDatabase(url, user, password, schema, catalog, new Domain.EconomyPolicy(10000, 500)); database.initialize();
-        assertEquals(6, number("SELECT version FROM schema_version")); assertEquals(5, stock(sender)); assertEquals(10, balance(sender));
+        assertEquals(7, number("SELECT version FROM schema_version")); assertEquals(5, stock(sender)); assertEquals(10, balance(sender));
         assertEquals(1, scalar("SELECT count(*) FROM item_tokens WHERE token_id=?", token)); assertTrue(database.receipt(sender, request).contains("preserved"));
         assertEquals(0, number("SELECT count(*) FROM resource_ledger"));
         database.initialize();

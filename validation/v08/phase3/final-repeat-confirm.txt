@@ -1,0 +1,21 @@
+ player_name | balance
+-------------+---------
+ SectNPC3    |       0
+ CuuVucNPC1  |       0
+ CuuVucNPC2  |       0
+(3 rows)
+
+ balance
+---------
+      12
+(1 row)
+
+ count
+-------
+     2
+(1 row)
+
+ count
+-------
+     0
+(1 row)

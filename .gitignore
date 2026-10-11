@@ -21,3 +21,7 @@
 /run-v08-sects-restored/
 /run-v08-sects-final-restored/
 !/validation/v08/phase2/*.log
+
+/run-v08-treasury/
+/run-v08-treasury-restored/
+!/validation/v08/phase3/*.log

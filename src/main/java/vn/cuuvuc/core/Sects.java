@@ -40,6 +40,9 @@ public interface Sects {
             if (statement.executeUpdate() != 1) throw new IllegalArgumentException("Tên tông môn đã được sử dụng.");
         }
         addMember(connection, request, founder, Role.LEADER);
+        try (PreparedStatement statement = connection.prepareStatement("INSERT INTO sect_accounts(sect_id) VALUES (?)")) {
+            statement.setObject(1, request); statement.executeUpdate();
+        }
         event(connection, request, request, founder, founder, "CREATE", name.display());
         return "Đã khai sơn " + name.display() + ". Tông môn: " + request;
     }
@@ -80,7 +83,7 @@ public interface Sects {
         Role previous = role(connection, sect, target);
         if (previous == Role.LEADER) throw new IllegalArgumentException("Không thể đổi quyền chưởng môn.");
         if (previous == role) throw new IllegalArgumentException("Thành viên đã có quyền này.");
-        try (PreparedStatement statement = connection.prepareStatement("UPDATE sect_members SET role=? WHERE sect_id=? AND player_id=?")) {
+        try (PreparedStatement statement = connection.prepareStatement("UPDATE sect_members SET role=?,treasury_spend=false WHERE sect_id=? AND player_id=?")) {
             statement.setString(1, role.name()); statement.setObject(2, sect); statement.setObject(3, target); statement.executeUpdate();
         }
         event(connection, request, sect, actor, target, "ROLE", previous + " → " + role);
@@ -168,7 +171,7 @@ public interface Sects {
         }
     }
 
-    private static void lockSect(Connection connection, UUID sect) throws SQLException {
+    static void lockSect(Connection connection, UUID sect) throws SQLException {
         try (PreparedStatement statement = connection.prepareStatement("SELECT sect_id FROM sects WHERE sect_id=? FOR UPDATE")) {
             statement.setObject(1, sect);
             try (ResultSet result = statement.executeQuery()) {
@@ -187,7 +190,7 @@ public interface Sects {
         }
     }
 
-    private static Role role(Connection connection, UUID sect, UUID player) throws SQLException {
+    static Role role(Connection connection, UUID sect, UUID player) throws SQLException {
         try (PreparedStatement statement = connection.prepareStatement("SELECT role FROM sect_members WHERE sect_id=? AND player_id=?")) {
             statement.setObject(1, sect); statement.setObject(2, player);
             try (ResultSet result = statement.executeQuery()) {
@@ -201,7 +204,7 @@ public interface Sects {
         if (role(connection, sect, actor) == Role.MEMBER) throw new IllegalArgumentException("Cần quyền quản sự hoặc chưởng môn hiện tại trong DB.");
     }
 
-    private static void requireLeader(Connection connection, UUID sect, UUID actor) throws SQLException {
+    static void requireLeader(Connection connection, UUID sect, UUID actor) throws SQLException {
         if (role(connection, sect, actor) != Role.LEADER) throw new IllegalArgumentException("Chỉ chưởng môn hiện tại được đổi quyền hoặc loại thành viên.");
     }
 
@@ -217,7 +220,7 @@ public interface Sects {
         }
     }
 
-    private static void event(Connection connection, UUID request, UUID sect, UUID actor, UUID target, String type, String detail) throws SQLException {
+    static void event(Connection connection, UUID request, UUID sect, UUID actor, UUID target, String type, String detail) throws SQLException {
         try (PreparedStatement statement = connection.prepareStatement("UPDATE sects SET revision=revision+1 WHERE sect_id=?")) {
             statement.setObject(1, sect); statement.executeUpdate();
         }

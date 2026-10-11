@@ -1,0 +1,28 @@
+             contract_id              |           funding_sect_id            |  status
+--------------------------------------+--------------------------------------+-----------
+ b2c6b5a8-8abc-45f1-9764-193991d69db8 | 2de1100e-10da-41e8-9032-f321a2cdd63d | CANCELLED
+(1 row)
+
+ player_name | balance
+-------------+---------
+ SectNPC3    |       0
+ CuuVucNPC2  |       0
+ CuuVucNPC1  |       8
+(3 rows)
+
+ balance
+---------
+      12
+(1 row)
+
+  kind   | delta | balance_after
+---------+-------+---------------
+ DEPOSIT |     2 |             2
+ REFUND  |    -2 |             0
+(2 rows)
+
+                        reason                         |               sect_id                | delta
+-------------------------------------------------------+--------------------------------------+-------
+ CONTRACT_DEPOSIT:b2c6b5a8-8abc-45f1-9764-193991d69db8 | 2de1100e-10da-41e8-9032-f321a2cdd63d |    -2
+ CONTRACT_REFUND:b2c6b5a8-8abc-45f1-9764-193991d69db8  | 2de1100e-10da-41e8-9032-f321a2cdd63d |     2
+(2 rows)

@@ -51,7 +51,7 @@ public final class ContractMenu implements Listener {
         for (int index = 0; index < visible.size(); index++) {
             Contracts.Job job = visible.get(index);
             holder.inventory.setItem(index, icon(Material.WRITABLE_BOOK, "Sàn động phủ #" + job.slot(), List.of(
-                    "Tiền công: " + job.reward() + " Linh Tệ", "Ký quỹ: " + job.escrow(), "Trạng thái: " + status(job.status()),
+                    "Tiền công: " + job.reward() + " Linh Tệ", "Nguồn: " + job.fundingSect().map(id -> "SECT " + id).orElse("Ví cá nhân"), "Ký quỹ: " + job.escrow(), "Trạng thái: " + status(job.status()),
                     "Hết hạn: " + job.expiresAt(), "Bấm để xem và thao tác")));
         }
         holder.inventory.setItem(27, icon(Material.GOLD_NUGGET, "Thuê xây: 2 Linh Tệ", terms()));
@@ -74,6 +74,14 @@ public final class ContractMenu implements Listener {
     }
 
     private void detail(Player player, UUID contract) {
+        UUID actor = player.getUniqueId();
+        tasks.submitSnapshot(player, UUID.randomUUID(), () -> database.sectView(actor), view -> {
+            Optional<UUID> sect = view.organization().map(Sects.Organization::id);
+            showDetail(player, contract, sect);
+        }, view -> "Quyền thao tác sẽ được kiểm tra lại khi xác nhận tại DB.");
+    }
+
+    private void showDetail(Player player, UUID contract, Optional<UUID> sect) {
         Contracts.Job job = contracts.board().jobs().stream().filter(candidate -> candidate.id().equals(contract)).findFirst()
                 .orElseThrow(() -> new IllegalArgumentException("Hợp đồng chưa đồng bộ. Làm mới bảng."));
         Holder holder = new Holder(player.getUniqueId(), List.of(), Optional.of(contract), 0);
@@ -85,9 +93,9 @@ public final class ContractMenu implements Listener {
         holder.inventory.setItem(12, icon(Material.ENDER_PEARL, "Đến công trình", List.of("Chủ: " + job.owner())));
         if (job.builder().filter(actor::equals).isPresent() && job.status() == Contracts.Status.ACTIVE)
             holder.inventory.setItem(14, icon(Material.PAPER, "Gửi nghiệm thu", List.of("Cần đủ 9 cobblestone; khóa quyền thi công", "Chờ bên thuê duyệt trước thời hạn")));
-        if (job.owner().equals(actor) && job.status() == Contracts.Status.SUBMITTED)
+        if ((job.fundingSect().isPresent() ? job.fundingSect().equals(sect) : job.owner().equals(actor)) && job.status() == Contracts.Status.SUBMITTED)
             holder.inventory.setItem(16, icon(Material.EMERALD, "Nghiệm thu và trả tiền", List.of("Kiểm tra sàn rồi chuyển ký quỹ cho Builder")));
-        if (job.owner().equals(actor) && job.status() == Contracts.Status.OPEN)
+        if ((job.fundingSect().isPresent() ? job.fundingSect().equals(sect) : job.owner().equals(actor)) && job.status() == Contracts.Status.OPEN)
             holder.inventory.setItem(20, icon(Material.BARRIER, "Hủy và hoàn ký quỹ", List.of("Chỉ áp dụng khi chưa nhận việc")));
         if (job.builder().filter(actor::equals).isPresent() && (job.status() == Contracts.Status.ACTIVE || job.status() == Contracts.Status.SUBMITTED))
             holder.inventory.setItem(22, icon(Material.BARRIER, "Bỏ việc; hoàn tiền bên thuê", List.of("Bạn không nhận tiền công", "Công trình và vật liệu không tự hoàn trả")));
@@ -116,6 +124,7 @@ public final class ContractMenu implements Listener {
         if (slot < 0 || slot >= 36 || holder.inventory.getItem(slot) == null) return;
         player.getScheduler().run(plugin, task -> {
             try {
+                if (player.getOpenInventory().getTopInventory().getHolder() != holder || !player.hasPermission("cuuvuc.play")) return;
                 if (holder.selected.isEmpty()) {
                     if (slot < holder.entries.size()) { detail(player, holder.entries.get(slot)); return; }
                     switch (slot) {

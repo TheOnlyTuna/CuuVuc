@@ -360,6 +360,32 @@ public final class GameDatabase implements AutoCloseable {
         return operation(request, actor, "sect:cancel:" + actor + ":" + invitation, connection -> Sects.cancelInvitation(connection, request, actor, invitation));
     }
 
+    public Treasury.View treasuryView(UUID actor) throws SQLException {
+        return query("treasury:view:" + actor, connection -> Treasury.view(connection, actor));
+    }
+
+    public String contributeTreasury(UUID request, UUID actor, UUID sect, long amount) throws SQLException {
+        validateCount(amount);
+        return operation(request, actor, "treasury:contribute:" + actor + ":" + sect + ":" + amount,
+                connection -> Treasury.contribute(connection, request, actor, sect, amount));
+    }
+
+    public String withdrawTreasury(UUID request, UUID actor, UUID sect, long amount) throws SQLException {
+        validateCount(amount);
+        return operation(request, actor, "treasury:withdraw:" + actor + ":" + sect + ":" + amount,
+                connection -> Treasury.withdraw(connection, request, actor, sect, amount));
+    }
+
+    public String grantTreasurySpend(UUID request, UUID actor, UUID sect, UUID target) throws SQLException {
+        return operation(request, actor, "treasury:grant:" + actor + ":" + sect + ":" + target,
+                connection -> Treasury.grant(connection, request, actor, sect, target));
+    }
+
+    public String revokeTreasurySpend(UUID request, UUID actor, UUID sect, UUID target) throws SQLException {
+        return operation(request, actor, "treasury:revoke:" + actor + ":" + sect + ":" + target,
+                connection -> Treasury.revoke(connection, request, actor, sect, target));
+    }
+
     private static void validateCount(long count) {
         if (count < 1 || count > 1000) throw new IllegalArgumentException("Số lượng phải từ 1 đến 1000.");
     }
@@ -505,38 +531,58 @@ public final class GameDatabase implements AutoCloseable {
 
     /** Ký quỹ dùng cùng transaction, receipt và ledger ví; không đi qua mint/burn. */
     public String createContract(UUID contract, UUID owner, long reward, Duration lifetime) throws SQLException {
+        validateContract(reward, lifetime);
+        UUID request = Contracts.request(contract, "CREATE");
+        return operation(request, owner, "contract:create:" + contract + ":" + owner + ":" + reward + ":" + lifetime, connection -> {
+            return insertContract(connection, request, contract, owner, reward, lifetime, Optional.empty());
+        });
+    }
+
+    public String createSectContract(UUID contract, UUID owner, UUID sect, long reward, Duration lifetime) throws SQLException {
+        validateContract(reward, lifetime);
+        UUID request = Contracts.request(contract, "CREATE");
+        return operation(request, owner, "contract:sect:create:" + contract + ":" + owner + ":" + sect + ":" + reward + ":" + lifetime, connection -> {
+            Sects.lockSect(connection, sect); Treasury.requireSpender(connection, sect, owner);
+            return insertContract(connection, request, contract, owner, reward, lifetime, Optional.of(sect));
+        });
+    }
+
+    private static void validateContract(long reward, Duration lifetime) {
         validateCount(reward);
         if (lifetime.compareTo(Duration.ofMinutes(5)) < 0 || lifetime.compareTo(Duration.ofDays(1)) > 0)
             throw new IllegalArgumentException("Thời hạn hợp đồng phải từ 5 phút đến 24 giờ.");
-        UUID request = Contracts.request(contract, "CREATE");
-        return operation(request, owner, "contract:create:" + contract + ":" + owner + ":" + reward + ":" + lifetime, connection -> {
-            lockPlayer(connection, owner);
-            int slot;
-            try (PreparedStatement statement = connection.prepareStatement("SELECT slot FROM islands WHERE player_id=? AND ready")) {
-                statement.setObject(1, owner);
-                try (ResultSet result = statement.executeQuery()) {
-                    if (!result.next()) throw new IllegalArgumentException("Cần động phủ sẵn sàng trước khi tạo hợp đồng.");
-                    slot = result.getInt(1);
-                }
+    }
+
+    private static String insertContract(Connection connection, UUID request, UUID contract, UUID owner, long reward, Duration lifetime, Optional<UUID> sect) throws SQLException {
+        lockPlayer(connection, owner);
+        int slot;
+        try (PreparedStatement statement = connection.prepareStatement("SELECT slot FROM islands WHERE player_id=? AND ready")) {
+            statement.setObject(1, owner);
+            try (ResultSet result = statement.executeQuery()) {
+                if (!result.next()) throw new IllegalArgumentException("Cần động phủ sẵn sàng trước khi tạo hợp đồng.");
+                slot = result.getInt(1);
             }
-            try (PreparedStatement statement = connection.prepareStatement("SELECT 1 FROM building_contracts WHERE island_slot=? AND status IN ('OPEN','ACTIVE','SUBMITTED')")) {
-                statement.setInt(1, slot);
-                try (ResultSet result = statement.executeQuery()) {
-                    if (result.next()) throw new IllegalArgumentException("Động phủ đã có hợp đồng chưa kết thúc.");
-                }
+        }
+        try (PreparedStatement statement = connection.prepareStatement("SELECT 1 FROM building_contracts WHERE island_slot=? AND status IN ('OPEN','ACTIVE','SUBMITTED')")) {
+            statement.setInt(1, slot);
+            try (ResultSet result = statement.executeQuery()) {
+                if (result.next()) throw new IllegalArgumentException("Động phủ đã có hợp đồng chưa kết thúc.");
             }
-            try (PreparedStatement statement = connection.prepareStatement("INSERT INTO building_contracts(contract_id,owner_id,island_slot,reward,status,expires_at) VALUES (?,?,?,?,'OPEN',clock_timestamp()+(? * interval '1 millisecond'))")) {
-                statement.setObject(1, contract); statement.setObject(2, owner); statement.setInt(3, slot);
-                statement.setLong(4, reward); statement.setLong(5, lifetime.toMillis()); statement.executeUpdate();
-            }
-            try (PreparedStatement statement = connection.prepareStatement("INSERT INTO contract_escrow_accounts VALUES (?,'linh_te',0)")) {
-                statement.setObject(1, contract); statement.executeUpdate();
-            }
-            changeMoney(connection, request, owner, -reward, "CONTRACT_DEPOSIT:" + contract);
-            escrowEntry(connection, contract, request, "DEPOSIT", reward);
-            contractEvent(connection, contract, owner, "CREATE", "Ký quỹ " + reward + " Linh Tệ; phí 0%; vật liệu ngoài ký quỹ.");
-            return "Đã ký quỹ " + reward + " Linh Tệ. Hợp đồng: " + contract;
-        });
+        }
+        try (PreparedStatement statement = connection.prepareStatement("INSERT INTO building_contracts(contract_id,owner_id,island_slot,reward,funding_sect_id,status,expires_at) VALUES (?,?,?,?,?,'OPEN',clock_timestamp()+(? * interval '1 millisecond'))")) {
+            statement.setObject(1, contract); statement.setObject(2, owner); statement.setInt(3, slot);
+            statement.setLong(4, reward); statement.setObject(5, sect.orElse(null)); statement.setLong(6, lifetime.toMillis()); statement.executeUpdate();
+        }
+        try (PreparedStatement statement = connection.prepareStatement("INSERT INTO contract_escrow_accounts VALUES (?,'linh_te',0)")) {
+            statement.setObject(1, contract); statement.executeUpdate();
+        }
+        WalletLedger.Account funding = sect.map(id -> new WalletLedger.Account(WalletLedger.Type.SECT, id))
+                .orElse(new WalletLedger.Account(WalletLedger.Type.PLAYER, owner));
+        WalletLedger.change(connection, request, funding, -reward, "CONTRACT_DEPOSIT:" + contract);
+        if (sect.isPresent()) Sects.event(connection, request, sect.orElseThrow(), owner, owner, "CONTRACT_DEPOSIT", "Ký quỹ " + reward + " Linh Tệ: " + contract);
+        escrowEntry(connection, contract, request, "DEPOSIT", reward);
+        contractEvent(connection, contract, owner, "CREATE", "Ký quỹ " + reward + " Linh Tệ; phí 0%; vật liệu ngoài ký quỹ.");
+        return "Đã ký quỹ " + reward + " Linh Tệ. Hợp đồng: " + contract;
     }
 
     public String acceptContract(UUID contract, UUID builder) throws SQLException {
@@ -571,12 +617,14 @@ public final class GameDatabase implements AutoCloseable {
         UUID request = Contracts.request(contract, "COMPLETE");
         return operation(request, owner, "contract:complete:" + contract + ":" + owner, connection -> {
             Contracts.Job job = lockContract(connection, contract);
-            requireOwner(job, owner);
+            requireContractManager(connection, job, owner);
             requireContractStatus(connection, job, Contracts.Status.SUBMITTED);
             UUID builder = job.builder().orElseThrow();
             lockPlayer(connection, builder);
             settleEscrow(connection, job, request, "RELEASE");
             changeMoney(connection, request, builder, job.reward(), "CONTRACT_PAYMENT:" + contract);
+            Optional<UUID> sect = job.fundingSect();
+            if (sect.isPresent()) Sects.event(connection, request, sect.orElseThrow(), owner, builder, "CONTRACT_PAYMENT", "Trả " + job.reward() + " Linh Tệ: " + contract);
             contractStatus(connection, contract, Contracts.Status.COMPLETED);
             contractEvent(connection, contract, owner, "COMPLETE", "Nghiệm thu; trả " + job.reward() + " Linh Tệ cho " + builder);
             return "Đã nghiệm thu và thanh toán " + job.reward() + " Linh Tệ; phí 0%.";
@@ -587,7 +635,7 @@ public final class GameDatabase implements AutoCloseable {
         UUID request = Contracts.request(contract, "CANCEL");
         return operation(request, owner, "contract:cancel:" + contract + ":" + owner, connection -> {
             Contracts.Job job = lockContract(connection, contract);
-            requireOwner(job, owner);
+            requireContractManager(connection, job, owner);
             requireContractStatus(connection, job, Contracts.Status.OPEN);
             refundContract(connection, job, request, owner, Contracts.Status.CANCELLED, "CANCEL");
             return "Đã hủy hợp đồng chưa nhận; hoàn " + job.reward() + " Linh Tệ.";
@@ -664,15 +712,23 @@ public final class GameDatabase implements AutoCloseable {
     }
 
     private static String contractSelect() {
-        return "SELECT c.contract_id,c.owner_id,c.builder_id,c.island_slot,c.reward,e.balance,c.status,c.expires_at,c.revision FROM building_contracts c JOIN contract_escrow_accounts e USING(contract_id)";
+        return "SELECT c.contract_id,c.owner_id,c.builder_id,c.island_slot,c.reward,e.balance,c.status,c.expires_at,c.revision,c.funding_sect_id FROM building_contracts c JOIN contract_escrow_accounts e USING(contract_id)";
     }
 
     private static Contracts.Job readContract(ResultSet result) throws SQLException {
         return new Contracts.Job(result.getObject(1, UUID.class), result.getObject(2, UUID.class), Optional.ofNullable(result.getObject(3, UUID.class)),
-                result.getInt(4), result.getLong(5), result.getLong(6), Contracts.Status.valueOf(result.getString(7)), result.getTimestamp(8).toInstant(), result.getLong(9));
+                result.getInt(4), result.getLong(5), result.getLong(6), Contracts.Status.valueOf(result.getString(7)), result.getTimestamp(8).toInstant(), result.getLong(9), Optional.ofNullable(result.getObject(10, UUID.class)));
     }
 
     private static Contracts.Job lockContract(Connection connection, UUID contract) throws SQLException {
+        try (PreparedStatement statement = connection.prepareStatement("SELECT funding_sect_id FROM building_contracts WHERE contract_id=?")) {
+            statement.setObject(1, contract);
+            try (ResultSet result = statement.executeQuery()) {
+                if (!result.next()) throw new IllegalArgumentException("Không có hợp đồng: " + contract);
+                UUID sect = result.getObject(1, UUID.class);
+                if (sect != null) Sects.lockSect(connection, sect);
+            }
+        }
         try (PreparedStatement statement = connection.prepareStatement(contractSelect() + " WHERE c.contract_id=? FOR UPDATE OF c,e")) {
             statement.setObject(1, contract);
             try (ResultSet result = statement.executeQuery()) {
@@ -693,8 +749,10 @@ public final class GameDatabase implements AutoCloseable {
         if (!databaseTime(connection).isBefore(job.expiresAt())) throw new IllegalArgumentException("Hợp đồng đã hết hạn; chờ hoàn ký quỹ.");
     }
 
-    private static void requireOwner(Contracts.Job job, UUID player) {
-        if (!job.owner().equals(player)) throw new IllegalArgumentException("Chỉ chủ hợp đồng được thực hiện thao tác này.");
+    private static void requireContractManager(Connection connection, Contracts.Job job, UUID actor) throws SQLException {
+        Optional<UUID> sect = job.fundingSect();
+        if (sect.isPresent()) Treasury.requireSpender(connection, sect.orElseThrow(), actor);
+        else if (!job.owner().equals(actor)) throw new IllegalArgumentException("Chỉ chủ hợp đồng được thực hiện thao tác này.");
     }
 
     private static void requireBuilder(Contracts.Job job, UUID player) {
@@ -722,9 +780,13 @@ public final class GameDatabase implements AutoCloseable {
     }
 
     private static void refundContract(Connection connection, Contracts.Job job, UUID request, UUID actor, Contracts.Status status, String event) throws SQLException {
-        lockPlayer(connection, job.owner());
+        Optional<UUID> sect = job.fundingSect();
+        if (sect.isEmpty()) lockPlayer(connection, job.owner());
         settleEscrow(connection, job, request, "REFUND");
-        changeMoney(connection, request, job.owner(), job.reward(), "CONTRACT_REFUND:" + job.id());
+        WalletLedger.Account funding = sect.map(id -> new WalletLedger.Account(WalletLedger.Type.SECT, id))
+                .orElse(new WalletLedger.Account(WalletLedger.Type.PLAYER, job.owner()));
+        WalletLedger.change(connection, request, funding, job.reward(), "CONTRACT_REFUND:" + job.id());
+        if (sect.isPresent()) Sects.event(connection, request, sect.orElseThrow(), actor, job.owner(), "CONTRACT_REFUND", "Hoàn " + job.reward() + " Linh Tệ: " + job.id());
         contractStatus(connection, job.id(), status);
         contractEvent(connection, job.id(), actor, event, "Hoàn " + job.reward() + " Linh Tệ; phí 0%; công trình không tự tháo dỡ.");
     }
@@ -743,18 +805,7 @@ public final class GameDatabase implements AutoCloseable {
     }
 
     private static void changeMoney(Connection connection, UUID request, UUID player, long delta, String reason) throws SQLException {
-        long balance;
-        try (PreparedStatement statement = connection.prepareStatement("UPDATE profiles SET balance=balance+? WHERE player_id=? AND (? > 0 OR balance>=?) RETURNING balance")) {
-            statement.setLong(1, delta); statement.setObject(2, player); statement.setLong(3, delta); statement.setLong(4, -delta);
-            try (ResultSet result = statement.executeQuery()) {
-                if (!result.next()) throw new IllegalArgumentException("Không đủ linh tệ.");
-                balance = result.getLong(1);
-            }
-        }
-        try (PreparedStatement statement = connection.prepareStatement("INSERT INTO ledger(request_id,player_id,delta,balance_after,reason) VALUES (?,?,?,?,?)")) {
-            statement.setObject(1, request); statement.setObject(2, player); statement.setLong(3, delta);
-            statement.setLong(4, balance); statement.setString(5, reason); statement.executeUpdate();
-        }
+        WalletLedger.change(connection, request, new WalletLedger.Account(WalletLedger.Type.PLAYER, player), delta, reason);
     }
 
     private void verifyPolicy(Connection connection) throws SQLException {

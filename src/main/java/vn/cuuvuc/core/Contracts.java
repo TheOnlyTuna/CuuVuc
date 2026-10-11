@@ -10,8 +10,8 @@ import java.util.UUID;
 public interface Contracts {
     enum Status { OPEN, ACTIVE, SUBMITTED, COMPLETED, CANCELLED, EXPIRED }
     record Job(UUID id, UUID owner, Optional<UUID> builder, int slot, long reward, long escrow,
-               Status status, Instant expiresAt, long revision) {
-        public Job { builder = java.util.Objects.requireNonNull(builder); }
+               Status status, Instant expiresAt, long revision, Optional<UUID> fundingSect) {
+        public Job { builder = java.util.Objects.requireNonNull(builder); fundingSect = java.util.Objects.requireNonNull(fundingSect); }
         public int centerX() { return slot * 64 + 8; }
     }
     record Board(long revision, Instant databaseTime, List<Job> jobs) {

@@ -146,8 +146,17 @@ public final class ContractWorld implements Listener {
     }
 
     public void create(Player player, long reward, Domain.Island island) {
+        UUID contract = UUID.randomUUID(); UUID owner = player.getUniqueId();
+        createChecked(player, contract, island, () -> database.createContract(contract, owner, reward, Duration.ofHours(1)));
+    }
+
+    public void createSect(Player player, UUID contract, UUID sect, long reward, Domain.Island island) {
+        UUID owner = player.getUniqueId();
+        createChecked(player, contract, island, () -> database.createSectContract(contract, owner, sect, reward, Duration.ofHours(1)));
+    }
+
+    private void createChecked(Player player, UUID contract, Domain.Island island, PlayerTasks.DatabaseAction work) {
         if (!fresh() || !island.ready() || !island.owner().equals(player.getUniqueId())) { player.sendPlainMessage("Cần động phủ và dữ liệu hợp đồng sẵn sàng."); return; }
-        UUID owner = player.getUniqueId(); UUID contract = UUID.randomUUID();
         UUID request = Contracts.request(contract, "CREATE");
         if (creating.putIfAbsent(island.slot(), contract) != null) { player.sendPlainMessage("Động phủ đang tạo hợp đồng."); return; }
         World world = java.util.Objects.requireNonNull(Bukkit.getWorld(PlayableWorld.SKY)); int center = island.slot() * 64 + 8;
@@ -159,7 +168,7 @@ public final class ContractWorld implements Listener {
             }
             player.getScheduler().run(plugin, task -> {
                 boolean accepted = tasks.submit(player, request, () -> {
-                    return executeAndSync(() -> database.createContract(contract, owner, reward, Duration.ofHours(1)), () -> creating.remove(island.slot(), contract));
+                    return executeAndSync(work, () -> creating.remove(island.slot(), contract));
                 });
                 if (!accepted) creating.remove(island.slot(), contract);
             }, () -> { creating.remove(island.slot(), contract); plugin.getSLF4JLogger().info("contract_create_player_retired"); });
@@ -197,7 +206,7 @@ public final class ContractWorld implements Listener {
     }
 
     public void complete(Player player, Contracts.Job job) {
-        if (!job.owner().equals(player.getUniqueId()) || job.status() != Contracts.Status.SUBMITTED) {
+        if ((job.fundingSect().isEmpty() && !job.owner().equals(player.getUniqueId())) || job.status() != Contracts.Status.SUBMITTED) {
             player.sendPlainMessage("Chỉ chủ hợp đồng được nghiệm thu công trình đang chờ duyệt."); return;
         }
         UUID actor = player.getUniqueId();

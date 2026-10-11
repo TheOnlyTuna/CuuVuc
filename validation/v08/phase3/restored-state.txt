@@ -1,0 +1,23 @@
+ player_name | balance
+-------------+---------
+ CuuVucNPC1  |      10
+ CuuVucNPC2  |       0
+ SectNPC3    |       0
+(3 rows)
+
+ balance
+---------
+      10
+(1 row)
+
+  role  | treasury_spend
+--------+----------------
+ ELDER  | f
+ LEADER | f
+(2 rows)
+
+             contract_id              |  status   |           funding_sect_id
+--------------------------------------+-----------+--------------------------------------
+ b2c6b5a8-8abc-45f1-9764-193991d69db8 | CANCELLED | 2de1100e-10da-41e8-9032-f321a2cdd63d
+ 0b41db49-4426-4567-8c54-506ce5d701bc | COMPLETED | 2de1100e-10da-41e8-9032-f321a2cdd63d
+(2 rows)

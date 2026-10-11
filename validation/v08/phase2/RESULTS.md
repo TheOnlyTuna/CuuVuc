@@ -2,7 +2,7 @@
 
 Ngày 11/10/2026, Asia/Bangkok; nhánh `v0.8-khai-son-lap-phai`.
 
-**Phase 1 ACCEPTED** tại `12fdc25`: Gameplay Prototype, 53/53 tests, 20/20 bảng DB khớp. **Phase 2 đã triển khai và có bằng chứng để người dùng đánh giá**, chưa tự nghiệm thu Phase 2 hoặc toàn bộ V0.8. Không merge main, không bật CI, chưa triển khai ngân khố Phase 3.
+**Phase 1 ACCEPTED** tại `12fdc25`: Gameplay Prototype, 53/53 tests, 20/20 bảng DB khớp. **Phase 2 ACCEPTED — Controlled Gameplay Prototype** tại `18d13ee` theo quyết định người dùng; chưa nghiệm thu toàn bộ V0.8 hoặc production. Giới hạn gameplay binary cuối vẫn giữ bên dưới. Không merge main, không bật CI. Ngân khố được kiểm chứng riêng trong [báo cáo Phase 3](../phase3/RESULTS.md).
 
 ## Phạm vi
 
@@ -54,4 +54,4 @@ JAR cuối từ bundle khởi động lại đạt `cuuvuc_database_ready`, rồ
 
 ## Giới hạn giữ lại
 
-Không hard-kill, không tải đông người, chưa thử mọi đường PDC, không tuyên bố chống crash tuyệt đối hoặc atomic xuyên DB/world. Giới hạn Phase 1 và cải thiện fingerprint được ghi [BACKLOG B05/B06](../../../BACKLOG.md). Không thay thuật toán fingerprint/checksum cũ trong Phase 2. GUI hiển thị mười sự kiện và chín lời mời gần nhất mỗi nhóm, chưa có tìm kiếm toàn lịch sử; DB giữ lịch sử đầy đủ. Chưa có ngân khố SECT, dự án hoặc hợp đồng tông môn; các bước đó giữ theo [kế hoạch](../../../V0.8-PLAN.md).
+Không hard-kill, không tải đông người, chưa thử mọi đường PDC, không tuyên bố chống crash tuyệt đối hoặc atomic xuyên DB/world. Giới hạn Phase 1 và cải thiện fingerprint được ghi [BACKLOG B05/B06](../../../BACKLOG.md). Không thay thuật toán fingerprint/checksum cũ trong Phase 2. GUI hiển thị mười sự kiện và chín lời mời gần nhất mỗi nhóm, chưa có tìm kiếm toàn lịch sử; DB giữ lịch sử đầy đủ. Trong phạm vi Phase 2 chưa có ngân khố SECT, dự án hoặc hợp đồng tông môn; trạng thái các bước tiếp theo xem [kế hoạch](../../../V0.8-PLAN.md).

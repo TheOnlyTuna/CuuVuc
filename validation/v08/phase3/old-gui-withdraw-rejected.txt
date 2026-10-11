@@ -1,0 +1,26 @@
+ player_name | balance
+-------------+---------
+ SectNPC3    |       0
+ CuuVucNPC2  |       0
+ CuuVucNPC1  |       8
+(3 rows)
+
+ balance
+---------
+      12
+(1 row)
+
+ count
+-------
+     1
+(1 row)
+
+ count
+-------
+     1
+(1 row)
+
+ role  | treasury_spend
+-------+----------------
+ ELDER | f
+(1 row)

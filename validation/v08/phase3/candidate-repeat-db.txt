@@ -1,0 +1,23 @@
+ player_name | balance
+-------------+---------
+ SectNPC3    |       0
+ CuuVucNPC1  |       0
+ CuuVucNPC2  |       2
+(3 rows)
+
+ balance
+---------
+      10
+(1 row)
+
+ count
+-------
+     1
+(1 row)
+
+              player_id               |               sect_id                | delta | balance_after |                        reason
+--------------------------------------+--------------------------------------+-------+---------------+------------------------------------------------------
+ f3d83b55-4452-39bc-85f4-29f8cebdcc4f |                                      |    12 |            12 | NPC_SELL:linh_thach_tho
+ f3d83b55-4452-39bc-85f4-29f8cebdcc4f |                                      |   -10 |             2 | SECT_CONTRIBUTE:2de1100e-10da-41e8-9032-f321a2cdd63d
+                                      | 2de1100e-10da-41e8-9032-f321a2cdd63d |    10 |            10 | SECT_CONTRIBUTE:f3d83b55-4452-39bc-85f4-29f8cebdcc4f
+(3 rows)

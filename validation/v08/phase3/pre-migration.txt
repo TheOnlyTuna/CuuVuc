@@ -1,0 +1,11 @@
+ version
+---------
+       6
+(1 row)
+
+ player_name | balance
+-------------+---------
+ SectNPC3    |       0
+ CuuVucNPC1  |       0
+ CuuVucNPC2  |       0
+(3 rows)

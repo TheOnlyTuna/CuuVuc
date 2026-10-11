@@ -1,0 +1,21 @@
+  status
+-----------
+ SUBMITTED
+(1 row)
+
+ count
+-------
+     0
+(1 row)
+
+ count
+-------
+     0
+(1 row)
+
+ player_name | balance
+-------------+---------
+ SectNPC3    |       0
+ CuuVucNPC2  |       0
+ CuuVucNPC1  |       8
+(3 rows)

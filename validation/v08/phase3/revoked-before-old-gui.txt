@@ -1,0 +1,15 @@
+              player_id               |  role  | treasury_spend
+--------------------------------------+--------+----------------
+ f3d83b55-4452-39bc-85f4-29f8cebdcc4f | LEADER | f
+ 1194cfbc-1195-338c-9eb1-0c49dd118ae3 | ELDER  | f
+(2 rows)
+
+ balance
+---------
+      12
+(1 row)
+
+ count
+-------
+     1
+(1 row)
