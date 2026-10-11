@@ -1,0 +1,60 @@
+ player_name |  role  | treasury_spend
+-------------+--------+----------------
+ CuuVucNPC1  | ELDER  | f
+ CuuVucNPC2  | LEADER | f
+ TyninWorld  | MEMBER | f
+(3 rows)
+
+   event_type   | count
+----------------+-------
+ ACCEPT         |     2
+ CREATE         |     1
+ INVITE         |     2
+ PROJECT_CREATE |     1
+ ROLE           |     1
+ SPEND_GRANT    |     1
+ SPEND_REVOKE   |     1
+(7 rows)
+
+ player_name | balance | inventory_revision
+-------------+---------+--------------------
+ CuuVucNPC1  |       0 |                  0
+ CuuVucNPC2  |       0 |                  0
+ TyninWorld  |       0 |                  0
+(3 rows)
+
+ balance
+---------
+       0
+(1 row)
+
+ money_ledger
+--------------
+            0
+(1 row)
+
+ resource_ledger
+-----------------
+               0
+(1 row)
+
+ contracts
+-----------
+         0
+(1 row)
+
+ escrows
+---------
+       0
+(1 row)
+
+  template_id  | status | contract_id
+---------------+--------+-------------
+ STONE_PAD_V1  | READY  |
+ STONE_PATH_V1 | READY  |
+(2 rows)
+
+ event_type | count
+------------+-------
+ CREATE     |     1
+(1 row)

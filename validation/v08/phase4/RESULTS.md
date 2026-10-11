@@ -1,6 +1,6 @@
 # V0.8 Phase 4 — Kho dự án và hạng mục
 
-Ngày 12/10/2026, Asia/Bangkok; nhánh `v0.8-khai-son-lap-phai`. Nền `acd2e48`: Phase 1, 2 và 3 đã được người dùng chấp nhận; Phase 3 là Controlled Gameplay Prototype. **Phase 4 đã triển khai và có bằng chứng kỹ thuật/gameplay mục tiêu để đánh giá; chưa tự nghiệm thu.** Phase 5 ba người từ đầu đến cuối vẫn chưa thực hiện. Không merge main, không bật CI và không chứng nhận production-ready.
+Ngày 12/10/2026, Asia/Bangkok; nhánh `v0.8-khai-son-lap-phai`. Nền `acd2e48`: Phase 1, 2 và 3 đã được người dùng chấp nhận; Phase 3 là Controlled Gameplay Prototype. **Người dùng đã chấp nhận Phase 4 ở mức Controlled Gameplay Prototype tại `631f5a3`.** Các giới hạn fixture/console, binary và phạm vi thử bên dưới vẫn giữ nguyên. [Phase 5](../phase5/RESULTS.md) đang thực hiện, chưa hoàn tất luồng ba người từ đầu đến cuối. Không merge main, không bật CI và không chứng nhận production-ready.
 
 ## Hành vi và ranh giới tài sản
 
