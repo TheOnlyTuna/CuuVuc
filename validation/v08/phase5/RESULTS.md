@@ -1,6 +1,6 @@
 # V0.8 Phase 5 — Nghiệm thu ba người
 
-**VALIDATED WITH SCOPE LIMIT — luồng ba client đã chạy qua góp tài sản, thuê, gửi/duyệt, giải ngân và phục hồi; công trình dựng bằng console theo yêu cầu. Chờ người dùng đánh giá Phase 5.** Phase 4 đã được người dùng chấp nhận tại `631f5a3`; toàn bộ V0.8 chưa được nghiệm thu. Không merge `main`, không bật GitHub CI, không chứng nhận production-ready.
+**ACCEPTED WITH SCOPE LIMIT — người dùng chấp nhận Phase 5 và chốt V0.8 ở cấp Controlled Gameplay Prototype, dựa trên checkpoint `189bb27`.** Luồng ba client đã chạy qua góp tài sản, thuê, gửi/duyệt, giải ngân và phục hồi; công trình dựng bằng console theo yêu cầu. Ca xây tay, quyền block và audit PLACE/BREAK chưa PASS. Không merge `main`, không bật GitHub CI, không chứng nhận production-ready.
 
 ## Môi trường và binary
 
@@ -87,4 +87,18 @@ Nguồn `run-v08-three-player-restored`, DB `cv_v08_three_player_restored`; cold
 
 Người dùng cho phép dựng sẵn cả hai công trình và không tính ca xây tay. Vì vậy chưa PASS thu thập block vanilla, Builder đặt/phá bằng tay, đặt sai vật liệu/ngoài vùng hoặc audit PLACE/BREAK. Những ca liên quan quyền block từ milestone trước không được tự coi đã lặp trong phiên này. Chưa thử hard-kill hoặc restart đúng cửa sổ commit/resync, tải đông người, mọi cách sao chép PDC hay craft/sell/transfer đồng thời bằng ba client. B01–B06 và tính nguyên tử xuyên DB/world giữ trong backlog.
 
-Paper vẫn cảnh báo world.save() thủ công; không có phép đo TPS/độ trễ đủ để đóng B02. Log khởi động có lỗi OSHI Perflib counters trên Windows, server vẫn DB ready; không chỉnh registry hoặc tuyên bố hết lỗi môi trường. V3 heightmap chưa được cung cấp hoặc nhập. Phase 5 chờ người dùng đánh giá trong phạm vi đã đổi; toàn bộ V0.8 chưa ACCEPTED, chưa production-ready, `main` giữ nguyên, GitHub CI không thuộc điều kiện nghiệm thu.
+Paper vẫn cảnh báo world.save() thủ công; không có phép đo TPS/độ trễ đủ để đóng B02. Log khởi động có lỗi OSHI Perflib counters trên Windows, server vẫn DB ready; không chỉnh registry hoặc tuyên bố hết lỗi môi trường. V3 heightmap chưa được cung cấp hoặc nhập. Phase 5 và toàn bộ V0.8 được chấp nhận với giới hạn phạm vi, chưa production-ready, `main` giữ nguyên, GitHub CI không thuộc điều kiện nghiệm thu.
+
+## Quyết định nghiệm thu V0.8
+
+Người dùng đã đánh giá checkpoint **CuuVuc V0.8 · 189bb27 · 5/5 Phases Reviewed · Controlled Prototype Accepted with Scope Limit**. Phase 1–4 Accepted; Phase 5 Accepted trong phạm vi đã thực hiện. Quyết định này không bổ sung kết quả kiểm thử mới và không chuyển các ca chưa chạy thành PASS.
+
+Người dùng đã so sánh trực tiếp 31 checksum DB trước/sau restore và đọc hai đối soát hoàn tất/restart, log ba client cùng ca thu hồi quyền. Kết quả 109/109 file world là phép kiểm checksum cục bộ của phiên kiểm thử được lưu trong hồ sơ; người dùng chưa độc lập tải và băm lại world nhị phân.
+
+Điều kiện bổ sung trước khi nâng cấp nghiệm thu gameplay xây dựng hoặc mở Alpha cho người chơi thực:
+
+1. Builder tự đặt/phá block trên binary được đưa ra nghiệm thu; kiểm quyền vùng, vật liệu đúng/sai, ngoài vùng, sau SUBMITTED/COMPLETED và audit PLACE/BREAK. Không dùng block console thay bằng chứng thao tác client.
+2. Xử lý B01 và kiểm chứng phục hồi crash theo ranh giới ghi bền; không dùng soft restart hiện tại để kết luận chống hard-kill.
+3. Đo và xử lý B02 về world.save() với ngân sách hiệu năng và mức đồng thời rõ ràng.
+
+Một client có 173 mod; không chứng nhận ba client vanilla hoặc tương thích rộng. Giữ nguyên các giới hạn còn lại trong báo cáo và [backlog](../../../BACKLOG.md). Không merge main hoặc công bố production-ready chỉ dựa trên nghiệm thu này; GitHub CI tiếp tục tắt.
