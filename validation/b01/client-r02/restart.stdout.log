@@ -121,3 +121,52 @@ java.lang.NullPointerException: Cannot invoke "oshi.software.os.OSProcess.getRes
 [16:18:22 INFO]: *** It is highly recommended to download the latest build from https://papermc.io/downloads/paper ***
 [16:18:22 WARN]: [CuuVucCore] contract_recovery_observation_requires_review_not_history_repair
 [16:18:22 INFO]: [CuuVucCore] cuuvuc_database_ready
+[16:18:39 INFO]: [CrashProbe] B01_PROBE_DONE
+[16:21:26 INFO]: [CrashProbe] B01_PROBE_DONE
+[16:21:26 INFO]: Stopping server
+[16:21:26 INFO]: [CrashProbe] Disabling CrashProbe v1
+[16:21:26 INFO]: [CuuVucCore] Disabling CuuVucCore v0.8.0-SNAPSHOT
+[16:21:26 INFO]: [vn.cuuvuc.internal.hikari.HikariDataSource] HikariPool-1 - Shutdown initiated...
+[16:21:26 INFO]: [vn.cuuvuc.internal.hikari.HikariDataSource] HikariPool-1 - Shutdown completed.
+[16:21:26 INFO]: [vn.cuuvuc.core.GameDatabase] database_drain_complete
+[16:21:26 INFO]: Saving players
+[16:21:26 INFO]: Saving worlds
+[16:21:26 INFO]: Saving chunks for level 'ServerLevel[world]'/minecraft:overworld
+[16:21:26 INFO]: [ChunkHolderManager] Waiting 60s for chunk system to halt for world 'minecraft:overworld'
+[16:21:26 INFO]: [ChunkHolderManager] Halted chunk system for world 'minecraft:overworld'
+[16:21:26 INFO]: [ChunkHolderManager] Saving all chunkholders for world 'minecraft:overworld'
+[16:21:26 INFO]: [ChunkHolderManager] Saved 0 block chunks, 0 entity chunks, 0 poi chunks in world 'minecraft:overworld' in 0.00s
+[16:21:26 INFO]: [ChunkHolderManager] Waiting 60s for chunk I/O to halt for world 'minecraft:overworld'
+[16:21:26 INFO]: [ChunkHolderManager] Halted I/O scheduler for world 'minecraft:overworld'
+[16:21:26 INFO]: Saving chunks for level 'ServerLevel[world]'/minecraft:the_nether
+[16:21:26 INFO]: [ChunkHolderManager] Waiting 60s for chunk system to halt for world 'minecraft:the_nether'
+[16:21:26 INFO]: [ChunkHolderManager] Halted chunk system for world 'minecraft:the_nether'
+[16:21:26 INFO]: [ChunkHolderManager] Saving all chunkholders for world 'minecraft:the_nether'
+[16:21:26 INFO]: [ChunkHolderManager] Saved 0 block chunks, 0 entity chunks, 0 poi chunks in world 'minecraft:the_nether' in 0.00s
+[16:21:26 INFO]: [ChunkHolderManager] Waiting 60s for chunk I/O to halt for world 'minecraft:the_nether'
+[16:21:26 INFO]: [ChunkHolderManager] Halted I/O scheduler for world 'minecraft:the_nether'
+[16:21:26 INFO]: Saving chunks for level 'ServerLevel[world]'/minecraft:the_end
+[16:21:26 INFO]: [ChunkHolderManager] Waiting 60s for chunk system to halt for world 'minecraft:the_end'
+[16:21:26 INFO]: [ChunkHolderManager] Halted chunk system for world 'minecraft:the_end'
+[16:21:26 INFO]: [ChunkHolderManager] Saving all chunkholders for world 'minecraft:the_end'
+[16:21:26 INFO]: [ChunkHolderManager] Saved 0 block chunks, 0 entity chunks, 0 poi chunks in world 'minecraft:the_end' in 0.00s
+[16:21:26 INFO]: [ChunkHolderManager] Waiting 60s for chunk I/O to halt for world 'minecraft:the_end'
+[16:21:26 INFO]: [ChunkHolderManager] Halted I/O scheduler for world 'minecraft:the_end'
+[16:21:26 INFO]: Saving chunks for level 'ServerLevel[world]'/minecraft:cv_prison
+[16:21:26 INFO]: [ChunkHolderManager] Waiting 60s for chunk system to halt for world 'minecraft:cv_prison'
+[16:21:26 INFO]: [ChunkHolderManager] Halted chunk system for world 'minecraft:cv_prison'
+[16:21:26 INFO]: [ChunkHolderManager] Saving all chunkholders for world 'minecraft:cv_prison'
+[16:21:26 INFO]: [ChunkHolderManager] Saved 0 block chunks, 0 entity chunks, 0 poi chunks in world 'minecraft:cv_prison' in 0.00s
+[16:21:26 INFO]: [ChunkHolderManager] Waiting 60s for chunk I/O to halt for world 'minecraft:cv_prison'
+[16:21:26 INFO]: [ChunkHolderManager] Halted I/O scheduler for world 'minecraft:cv_prison'
+[16:21:26 INFO]: Saving chunks for level 'ServerLevel[world]'/minecraft:cv_sky
+[16:21:26 INFO]: [ChunkHolderManager] Waiting 60s for chunk system to halt for world 'minecraft:cv_sky'
+[16:21:26 INFO]: [ChunkHolderManager] Halted chunk system for world 'minecraft:cv_sky'
+[16:21:26 INFO]: [ChunkHolderManager] Saving all chunkholders for world 'minecraft:cv_sky'
+[16:21:26 INFO]: [ChunkHolderManager] Saved 1 block chunks, 1 entity chunks, 0 poi chunks in world 'minecraft:cv_sky' in 0.00s
+[16:21:26 INFO]: [ChunkHolderManager] Waiting 60s for chunk I/O to halt for world 'minecraft:cv_sky'
+[16:21:26 INFO]: [ChunkHolderManager] Halted I/O scheduler for world 'minecraft:cv_sky'
+[16:21:26 INFO]: Waiting for all RegionFile I/O tasks to complete...
+[16:21:26 INFO]: All RegionFile I/O tasks to complete
+[16:21:26 INFO]: [MoonriseCommon] Awaiting termination of worker pool for up to 60s...
+[16:21:26 INFO]: [MoonriseCommon] Awaiting termination of I/O pool for up to 60s...
