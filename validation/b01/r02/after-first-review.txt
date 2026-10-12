@@ -1,0 +1,1 @@
+Review 27d4e597-a3f4-4d2d-8e6a-52c7aafa4f94: chỉ quan sát, fence vẫn giữ. Đọc hồ sơ trước khi hold/resolve với lý do. Hồ sơ: plugins\CuuVucCore\recovery\reviews\27d4e597-a3f4-4d2d-8e6a-52c7aafa4f94-d272647e-e244-4e5d-a908-9faca84db934.txt

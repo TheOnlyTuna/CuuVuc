@@ -1,0 +1,11 @@
+             contract_id              | classification |                       reason                       
+--------------------------------------+----------------+----------------------------------------------------
+ 279bbdf9-0fe9-4eec-8bb6-46a9df8c72a3 | INCOMPLETE     | journal event=80d42e38-0f7e-4f7d-b22e-a3e427232f52
+(1 row)
+
+        state         | count 
+----------------------+-------
+ INTENT               |     1
+ REVIEWED_UNCONFIRMED |     1
+(2 rows)
+

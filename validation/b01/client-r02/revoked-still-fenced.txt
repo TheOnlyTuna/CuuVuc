@@ -1,0 +1,10 @@
+              review_id               |          decision          
+--------------------------------------+----------------------------
+ 408b797b-b5ff-4567-a511-670fc3730799 | RESOLVE_INTENTS_AND_REOPEN
+(1 row)
+
+             contract_id              | classification 
+--------------------------------------+----------------
+ 279bbdf9-0fe9-4eec-8bb6-46a9df8c72a3 | INCOMPLETE
+(1 row)
+

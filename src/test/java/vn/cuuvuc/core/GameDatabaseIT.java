@@ -269,7 +269,7 @@ final class GameDatabaseIT {
             connection.commit();
         }
         database = new GameDatabase(url, user, password, schema, catalog, new Domain.EconomyPolicy(10000, 500)); database.initialize(); database.initialize();
-        assertEquals(9, number("SELECT version FROM schema_version")); assertEquals(8, balance(leader)); assertEquals(3, treasuryBalance(sect));
+        assertEquals(10, number("SELECT version FROM schema_version")); assertEquals(8, balance(leader)); assertEquals(3, treasuryBalance(sect));
         assertEquals(2, stock(leader)); assertEquals(1, number("SELECT count(*) FROM item_tokens")); assertEquals(1, number("SELECT count(*) FROM resource_ledger"));
         assertEquals(0, number("SELECT count(*) FROM projects")); Contracts.Job job = database.contractBoard().jobs().getFirst();
         assertEquals("LEGACY_FLOOR_V1", job.templateId()); assertTrue(job.projectStage().isEmpty()); assertEquals(0, job.worksite());
@@ -437,7 +437,7 @@ final class GameDatabaseIT {
             connection.commit();
         }
         database.initialize(); database.initialize();
-        assertEquals(9, number("SELECT version FROM schema_version")); assertEquals(12, number("SELECT sum(balance) FROM profiles"));
+        assertEquals(10, number("SELECT version FROM schema_version")); assertEquals(12, number("SELECT sum(balance) FROM profiles"));
         assertEquals(0, number("SELECT sum(balance) FROM sect_accounts")); assertEquals(12, number("SELECT sum(delta) FROM ledger"));
         assertEquals(0, number("SELECT count(*) FROM ledger WHERE sect_id IS NOT NULL")); assertEquals(1, number("SELECT count(*) FROM sect_members"));
         assertEquals(8, number("SELECT sum(balance) FROM contract_escrow_accounts"));
@@ -583,7 +583,7 @@ final class GameDatabaseIT {
         String receipt = database.transferMaterials(transfer, sender, recipient, "linh_thach_tho", 2, revision);
         Domain.PlayerView before = database.view(recipient, "before");
         database.initialize(); database.initialize();
-        assertEquals(9, number("SELECT version FROM schema_version")); assertEquals(9, number("SELECT count(*) FROM migration_history"));
+        assertEquals(10, number("SELECT version FROM schema_version")); assertEquals(10, number("SELECT count(*) FROM migration_history"));
         assertEquals(before.items(), database.view(recipient, "after").items()); assertEquals(8, balance(sender));
         assertEquals(receipt, database.transferMaterials(transfer, sender, recipient, "linh_thach_tho", 2, revision));
         assertEquals(2, number("SELECT count(*) FROM resource_ledger")); assertEquals(0, number("SELECT count(*) FROM sects"));
@@ -851,8 +851,8 @@ final class GameDatabaseIT {
         execute("INSERT INTO ledger(request_id,player_id,delta,balance_after,reason) VALUES ('" + request + "','" + player + "',600,600,'NPC_SELL:linh_thach_tho')");
         database.initialize(); database.initialize();
         assertEquals(600, balance(player)); assertEquals(3, stock(player));
-        assertEquals(9, number("SELECT version FROM schema_version"));
-        assertEquals(9, number("SELECT count(*) FROM migration_history"));
+        assertEquals(10, number("SELECT version FROM schema_version"));
+        assertEquals(10, number("SELECT count(*) FROM migration_history"));
         assertEquals(600, number("SELECT sum(minted) FROM player_mint_daily"));
         assertTrue(database.receipt(player, request).contains("legacy_success"));
         assertThrows(IllegalArgumentException.class, () -> database.sell(UUID.randomUUID(), player, "Legacy", "linh_thach_tho", 1));
@@ -937,7 +937,7 @@ final class GameDatabaseIT {
         execute("INSERT INTO profiles(player_id,player_name,balance,cultivation_xp) VALUES ('" + player + "','Legacy',18,50)");
         execute("INSERT INTO inventory VALUES ('" + player + "','linh_thach',1)");
         database.initialize();
-        assertEquals(9, number("SELECT version FROM schema_version"));
+        assertEquals(10, number("SELECT version FROM schema_version"));
         Domain.PlayerView view = database.view(player, "upgraded");
         assertEquals(18, view.balance()); assertEquals(50, view.xp()); assertEquals(1, view.items().size());
         assertEquals(0, number("SELECT count(*) FROM operations"));
@@ -1054,6 +1054,147 @@ final class GameDatabaseIT {
         }
         assertEquals(0, balance(builder)); assertEquals(2, number("SELECT sum(balance) FROM contract_escrow_accounts"));
         assertEquals(0, number("SELECT count(*) FROM contract_escrow_ledger WHERE kind='RELEASE'"));
+    }
+
+    @Test void recoveryMigrationPreservesExistingV9IntentFenceAndEscrow() throws SQLException, IOException {
+        UUID owner = UUID.randomUUID(); UUID builder = UUID.randomUUID(); UUID contract = UUID.randomUUID(); UUID event = UUID.randomUUID();
+        database.close(); execute("DROP SCHEMA " + schema + " CASCADE; CREATE SCHEMA " + schema);
+        try (Connection connection = DriverManager.getConnection(url, user, password)) {
+            connection.setSchema(schema); connection.setAutoCommit(false);
+            Migrations.apply(connection, Migrations.load().subList(0, 9), Migrations.resource("/db/schema-fingerprint.sql")); connection.commit();
+        }
+        execute("INSERT INTO profiles(player_id,player_name,balance) VALUES ('" + owner + "','Owner V9',18),('" + builder + "','Builder V9',0); INSERT INTO islands(player_id,slot,ready) OVERRIDING SYSTEM VALUE VALUES ('" + owner + "',1,true); INSERT INTO operations(request_id,actor_id,fingerprint,result) VALUES ('" + contract + "','" + owner + "','legacy contract creation','committed'); INSERT INTO building_contracts(contract_id,owner_id,builder_id,island_slot,reward,status,expires_at) VALUES ('" + contract + "','" + owner + "','" + builder + "',1,2,'ACTIVE',clock_timestamp()+interval '1 hour'); INSERT INTO contract_escrow_accounts VALUES ('" + contract + "','linh_te',2); INSERT INTO contract_block_journal(event_id,contract_id,actor_id,event_type,position,before_material,after_material,state) VALUES ('" + event + "','" + contract + "','" + builder + "','PLACE','71:100:7','AIR','COBBLESTONE','INTENT'); INSERT INTO contract_recovery_fences(contract_id,classification,reason) VALUES ('" + contract + "','INCOMPLETE','V9 durable intent'); INSERT INTO economy_daily VALUES (current_date,20,0)");
+        database = new GameDatabase(url, user, password, schema, catalog, new Domain.EconomyPolicy(10000, 500)); database.initialize(); database.initialize();
+        assertEquals(10, number("SELECT version FROM schema_version")); assertEquals(10, number("SELECT count(*) FROM migration_history"));
+        assertEquals(BlockJournal.State.INTENT, database.blockJournal().getFirst().entry().state());
+        assertEquals(event, database.blockJournal().getFirst().entry().id()); assertEquals(1, number("SELECT count(*) FROM contract_recovery_fences"));
+        assertEquals(18, balance(owner)); assertEquals(2, number("SELECT sum(balance) FROM contract_escrow_accounts"));
+        assertEquals(20, number("SELECT sum(minted) FROM economy_daily")); assertEquals(0, number("SELECT count(*) FROM recovery_decisions"));
+    }
+
+    private RecoveryResolution.Review recoveryFixture() throws SQLException {
+        UUID owner = UUID.randomUUID(); UUID builder = UUID.randomUUID(); UUID contract = contractFixture(owner, 2);
+        database.register(builder, "Recovery Builder"); database.acceptContract(contract, builder);
+        database.prepareBlock(new BlockJournal.Entry(UUID.randomUUID(), contract, builder, "PLACE", "71:100:7", "AIR", "COBBLESTONE", BlockJournal.State.INTENT));
+        database.requireRecovery(new BlockJournal.Finding(contract, BlockJournal.Classification.INCOMPLETE, "journal intent test"));
+        database.recoveryAuthority(owner, true, "Integration administrator grant");
+        RecoveryResolution.Evidence evidence = database.recoveryEvidence(owner, contract);
+        List<RecoveryResolution.Observation> world = evidence.job().template().cells(evidence.job().slot()).stream()
+                .map(cell -> new RecoveryResolution.Observation(cell.x() + ":" + cell.y() + ":" + cell.z(), "AIR")).toList();
+        RecoveryResolution.Review review = new RecoveryResolution.Review(UUID.randomUUID(), owner, evidence, world);
+        database.createRecoveryReview(review); return review;
+    }
+
+    @Test void recoveryDecisionResolvesUnconfirmedIntentOnceWithoutInventingHistoryOrMovingAssets() throws SQLException, IOException {
+        RecoveryResolution.Review review = recoveryFixture(); UUID contract = review.evidence().job().id();
+        database.createRecoveryReview(review);
+        assertEquals(1, number("SELECT count(*) FROM contract_recovery_fences"));
+        database.decideRecovery(review.actor(), review.id(), RecoveryResolution.Decision.RESOLVE_INTENTS_AND_REOPEN, "Verified unchanged world before intent", review.world());
+        database.decideRecovery(review.actor(), review.id(), RecoveryResolution.Decision.RESOLVE_INTENTS_AND_REOPEN, "Verified unchanged world before intent", review.world());
+        assertTrue(database.recoveryDecision(review.actor(), review.id(), RecoveryResolution.Decision.RESOLVE_INTENTS_AND_REOPEN, "Verified unchanged world before intent").isPresent());
+        assertEquals(0, number("SELECT count(*) FROM contract_recovery_fences"));
+        assertEquals(1, number("SELECT count(*) FROM recovery_decisions"));
+        assertEquals(BlockJournal.State.REVIEWED_UNCONFIRMED, database.blockJournal().getFirst().entry().state());
+        assertEquals(0, number("SELECT count(*) FROM building_history WHERE event_type IN ('PLACE','BREAK')"));
+        assertThrows(IllegalArgumentException.class, () -> database.abortBlock(review.evidence().journal().getFirst().entry().id()));
+        assertEquals(0, number("SELECT count(*) FROM operations WHERE fingerprint LIKE 'contract:block:%'"));
+        assertEquals(2, number("SELECT sum(balance) FROM contract_escrow_accounts"));
+        assertEquals(18, balance(review.actor())); assertEquals(20, number("SELECT sum(minted) FROM economy_daily"));
+        assertEquals(0, number("SELECT count(*) FROM contract_escrow_ledger WHERE kind IN ('RELEASE','REFUND')"));
+        database.initialize(); assertFalse(database.contractBoard().jobs().stream().filter(job -> job.id().equals(contract)).findFirst().orElseThrow().recoveryRequired());
+        database.submitContract(contract, review.evidence().job().builder().orElseThrow());
+    }
+
+    @Test void recoveryHoldAndEvidenceHistoryAreImmutableAndCannotBecomeUnlock() throws SQLException {
+        RecoveryResolution.Review review = recoveryFixture();
+        RecoveryResolution.Review stale = new RecoveryResolution.Review(UUID.randomUUID(), review.actor(), review.evidence(), review.world());
+        database.createRecoveryReview(stale);
+        database.decideRecovery(review.actor(), review.id(), RecoveryResolution.Decision.KEEP_LOCKED, "Cannot verify intermediate callbacks", List.of());
+        assertThrows(IllegalArgumentException.class, () -> database.decideRecovery(stale.actor(), stale.id(), RecoveryResolution.Decision.RESOLVE_INTENTS_AND_REOPEN, "Review preceded another decision", stale.world()));
+        assertThrows(IllegalArgumentException.class, () -> database.decideRecovery(review.actor(), review.id(), RecoveryResolution.Decision.RESOLVE_INTENTS_AND_REOPEN, "Cannot verify intermediate callbacks", review.world()));
+        assertEquals(1, number("SELECT count(*) FROM contract_recovery_fences"));
+        assertEquals(BlockJournal.State.INTENT, database.blockJournal().getFirst().entry().state());
+        for (String table : List.of("recovery_reviews", "recovery_decisions", "recovery_authority_history")) {
+            assertThrows(SQLException.class, () -> execute("DELETE FROM " + table));
+            assertThrows(SQLException.class, () -> execute("TRUNCATE " + table + " CASCADE"));
+        }
+        assertThrows(SQLException.class, () -> execute("UPDATE recovery_decisions SET reason='alter history'"));
+        assertTrue(database.recoveryReport(review.actor(), review.id()).contains("KEEP_LOCKED"));
+    }
+
+    @Test void recoveryRejectsChangedWorldIncompleteSnapshotAndStaleDatabaseReview() throws SQLException {
+        RecoveryResolution.Review review = recoveryFixture();
+        List<RecoveryResolution.Observation> changed = review.world().stream().map(cell -> new RecoveryResolution.Observation(cell.position(), "COBBLESTONE")).toList();
+        assertThrows(IllegalArgumentException.class, () -> database.decideRecovery(review.actor(), review.id(), RecoveryResolution.Decision.RESOLVE_INTENTS_AND_REOPEN, "Reject altered world observation", changed));
+        assertThrows(IllegalArgumentException.class, () -> database.decideRecovery(review.actor(), review.id(), RecoveryResolution.Decision.RESOLVE_INTENTS_AND_REOPEN, "Reject partial world observation", List.of()));
+        execute("UPDATE contract_recovery_fences SET reason='new investigation evidence'");
+        assertThrows(IllegalArgumentException.class, () -> database.decideRecovery(review.actor(), review.id(), RecoveryResolution.Decision.RESOLVE_INTENTS_AND_REOPEN, "Reject stale database observation", review.world()));
+        RecoveryResolution.Evidence current = database.recoveryEvidence(review.actor(), review.evidence().job().id());
+        UUID expired = UUID.randomUUID();
+        try (Connection connection = DriverManager.getConnection(url, user, password)) {
+            connection.setSchema(schema);
+            try (PreparedStatement statement = connection.prepareStatement("INSERT INTO recovery_reviews(review_id,contract_id,actor_id,evidence,world_observation,created_at) VALUES (?,?,?,?,?,clock_timestamp()-interval '11 minutes')")) {
+                statement.setObject(1, expired); statement.setObject(2, current.job().id()); statement.setObject(3, review.actor());
+                statement.setString(4, current.canonical()); statement.setString(5, RecoveryResolution.worldText(review.world())); statement.executeUpdate();
+            }
+        }
+        assertThrows(IllegalArgumentException.class, () -> database.decideRecovery(review.actor(), expired, RecoveryResolution.Decision.RESOLVE_INTENTS_AND_REOPEN, "Reject expired review snapshot", review.world()));
+        assertEquals(0, number("SELECT count(*) FROM recovery_decisions"));
+        assertEquals(1, number("SELECT count(*) FROM contract_recovery_fences"));
+    }
+
+    @Test void recoveryRevocationAndRegrantInvalidatePreviouslyAuthorizedReview() throws SQLException {
+        RecoveryResolution.Review review = recoveryFixture(); UUID outsider = UUID.randomUUID(); database.register(outsider, "Outsider");
+        assertThrows(IllegalArgumentException.class, () -> database.recoveryEvidence(outsider, review.evidence().job().id()));
+        assertThrows(IllegalArgumentException.class, () -> database.recoveryReport(outsider, review.id()));
+        database.recoveryAuthority(outsider, true, "Independent recovery administrator");
+        assertThrows(IllegalArgumentException.class, () -> database.recoveryReport(outsider, review.id()));
+        database.recoveryAuthority(review.actor(), false, "Revoke recovery authority now");
+        assertThrows(IllegalArgumentException.class, () -> database.decideRecovery(review.actor(), review.id(), RecoveryResolution.Decision.RESOLVE_INTENTS_AND_REOPEN, "Revoked request must not reopen", review.world()));
+        database.recoveryAuthority(review.actor(), true, "Grant new authority revision");
+        assertThrows(IllegalArgumentException.class, () -> database.decideRecovery(review.actor(), review.id(), RecoveryResolution.Decision.RESOLVE_INTENTS_AND_REOPEN, "Old authority epoch must not reopen", review.world()));
+        assertEquals(0, number("SELECT count(*) FROM recovery_decisions")); assertEquals(1, number("SELECT count(*) FROM contract_recovery_fences"));
+    }
+
+    @Test void recoveryMissingReceiptCannotBeOverriddenEvenWhenWorldMatches() throws SQLException {
+        RecoveryResolution.Review original = recoveryFixture(); UUID contract = original.evidence().job().id();
+        execute("DELETE FROM contract_recovery_fences");
+        database.applyBlock(original.evidence().journal().getFirst().entry());
+        execute("DELETE FROM operations WHERE request_id=(SELECT event_id FROM contract_block_journal)");
+        database.requireRecovery(new BlockJournal.Finding(contract, BlockJournal.Classification.UNRECOVERABLE, "missing committed receipt"));
+        RecoveryResolution.Evidence evidence = database.recoveryEvidence(original.actor(), contract);
+        List<RecoveryResolution.Observation> world = original.world().stream().map(cell -> new RecoveryResolution.Observation(cell.position(), cell.position().equals("71:100:7") ? "COBBLESTONE" : cell.material())).toList();
+        RecoveryResolution.Review review = new RecoveryResolution.Review(UUID.randomUUID(), original.actor(), evidence, world); database.createRecoveryReview(review);
+        assertThrows(IllegalArgumentException.class, () -> database.decideRecovery(review.actor(), review.id(), RecoveryResolution.Decision.RESOLVE_INTENTS_AND_REOPEN, "World matches but proof is missing", world));
+        assertEquals(0, number("SELECT count(*) FROM recovery_decisions")); assertEquals(1, number("SELECT count(*) FROM contract_recovery_fences"));
+        assertEquals(BlockJournal.State.APPLIED, database.blockJournal().getFirst().entry().state());
+    }
+
+    @Test void recoveryDecisionRollbackRetainsFenceIntentAndCanRetryAfterRestart() throws SQLException, IOException {
+        RecoveryResolution.Review review = recoveryFixture();
+        execute("CREATE FUNCTION fail_reopen() RETURNS trigger LANGUAGE plpgsql AS $$ BEGIN RAISE EXCEPTION 'injected decision rollback'; END $$; CREATE TRIGGER fail_reopen BEFORE DELETE ON contract_recovery_fences FOR EACH ROW EXECUTE FUNCTION fail_reopen()");
+        assertThrows(SQLException.class, () -> database.decideRecovery(review.actor(), review.id(), RecoveryResolution.Decision.RESOLVE_INTENTS_AND_REOPEN, "Verify atomic decision transaction", review.world()));
+        assertEquals(0, number("SELECT count(*) FROM recovery_decisions")); assertEquals(1, number("SELECT count(*) FROM contract_recovery_fences"));
+        assertEquals(BlockJournal.State.INTENT, database.blockJournal().getFirst().entry().state());
+        execute("DROP TRIGGER fail_reopen ON contract_recovery_fences; DROP FUNCTION fail_reopen()");
+        database.close(); database = new GameDatabase(url, user, password, schema, catalog, new Domain.EconomyPolicy(10000, 500)); database.initialize();
+        database.decideRecovery(review.actor(), review.id(), RecoveryResolution.Decision.RESOLVE_INTENTS_AND_REOPEN, "Verify atomic decision transaction", review.world());
+        assertEquals(1, number("SELECT count(*) FROM recovery_decisions")); assertEquals(0, number("SELECT count(*) FROM contract_recovery_fences"));
+    }
+
+    @Test void recoveryWaitsForAuthorityLockAndRechecksRevocationBeforeOpening() throws Exception {
+        RecoveryResolution.Review review = recoveryFixture();
+        try (Connection blocker = DriverManager.getConnection(url, user, password); ExecutorService executor = Executors.newSingleThreadExecutor()) {
+            blocker.setSchema(schema); blocker.setAutoCommit(false);
+            try (Statement statement = blocker.createStatement()) {
+                statement.execute("SELECT pg_advisory_xact_lock(5080510)");
+                Future<IllegalArgumentException> resolution = executor.submit(() -> assertThrows(IllegalArgumentException.class, () -> database.decideRecovery(review.actor(), review.id(), RecoveryResolution.Decision.RESOLVE_INTENTS_AND_REOPEN, "Queued resolution after revoke", review.world())));
+                awaitBlockedQuery();
+                statement.execute("UPDATE recovery_authorities SET enabled=false,revision=revision+1 WHERE player_id='" + review.actor() + "'");
+                blocker.commit(); assertTrue(resolution.get(5, TimeUnit.SECONDS).getMessage().contains("thu hồi"));
+            }
+        }
+        assertEquals(0, number("SELECT count(*) FROM recovery_decisions")); assertEquals(1, number("SELECT count(*) FROM contract_recovery_fences"));
     }
 
     @Test void recoveryReadsLatestAuditWithoutCreatingHistoryOrReceipts() throws SQLException {
@@ -1213,7 +1354,7 @@ final class GameDatabaseIT {
         database.islandReady(owner); Domain.Claims claims = database.inviteBuilder(owner, builder);
         mine(owner, 1); Domain.PlayerView before = database.view(owner, "before");
         database.initialize(); database.initialize();
-        assertEquals(9, number("SELECT version FROM schema_version")); assertEquals(9, number("SELECT count(*) FROM migration_history"));
+        assertEquals(10, number("SELECT version FROM schema_version")); assertEquals(10, number("SELECT count(*) FROM migration_history"));
         assertEquals(claims, database.islands()); assertEquals(before.items(), database.view(owner, "after").items());
         assertEquals(8, balance(owner)); assertEquals(0, number("SELECT count(*) FROM building_contracts"));
     }
@@ -1427,7 +1568,7 @@ final class GameDatabaseIT {
         UUID sender = UUID.randomUUID(); UUID token = UUID.randomUUID(); UUID request = UUID.randomUUID();
         execute("INSERT INTO profiles(player_id,player_name,balance) VALUES ('" + sender + "','Legacy',10); INSERT INTO inventory VALUES ('" + sender + "','linh_thach_tho',5); INSERT INTO item_tokens(token_id,player_id,resource_id,ordinal) VALUES ('" + token + "','" + sender + "','linh_thach_tho',1); INSERT INTO operations(request_id,fingerprint,result,actor_id) VALUES ('" + request + "','legacy','preserved','" + sender + "')");
         database = new GameDatabase(url, user, password, schema, catalog, new Domain.EconomyPolicy(10000, 500)); database.initialize();
-        assertEquals(9, number("SELECT version FROM schema_version")); assertEquals(5, stock(sender)); assertEquals(10, balance(sender));
+        assertEquals(10, number("SELECT version FROM schema_version")); assertEquals(5, stock(sender)); assertEquals(10, balance(sender));
         assertEquals(1, scalar("SELECT count(*) FROM item_tokens WHERE token_id=?", token)); assertTrue(database.receipt(sender, request).contains("preserved"));
         assertEquals(0, number("SELECT count(*) FROM resource_ledger"));
         database.initialize();

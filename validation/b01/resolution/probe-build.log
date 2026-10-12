@@ -1,0 +1,19 @@
+WARNING: A terminally deprecated method in sun.misc.Unsafe has been called
+WARNING: sun.misc.Unsafe::staticFieldBase has been called by com.google.inject.internal.aop.HiddenClassDefiner (file:/C:/Users/tyngs/.codex/.chatgpt-projects/g-p-68cc343744bc8191aa703c926143a15c/CuuVucCore/.tools/apache-maven-3.9.11/lib/guice-5.1.0-classes.jar)
+WARNING: Please consider reporting this to the maintainers of class com.google.inject.internal.aop.HiddenClassDefiner
+WARNING: sun.misc.Unsafe::staticFieldBase will be removed in a future release
+[INFO] Scanning for projects...
+[INFO] 
+[INFO] ------------------------< vn.cuuvuc:CuuVucCore >------------------------
+[INFO] Building CuuVucCore 0.8.0-SNAPSHOT
+[INFO]   from pom.xml
+[INFO] --------------------------------[ jar ]---------------------------------
+[INFO] 
+[INFO] --- dependency:3.7.0:build-classpath (default-cli) @ CuuVucCore ---
+[INFO] Skipped writing classpath file 'C:\Users\tyngs\.codex\.chatgpt-projects\g-p-68cc343744bc8191aa703c926143a15c\CuuVuc-GitHub\target\b01-classpath.txt'.  No changes found.
+[INFO] ------------------------------------------------------------------------
+[INFO] BUILD SUCCESS
+[INFO] ------------------------------------------------------------------------
+[INFO] Total time:  0.732 s
+[INFO] Finished at: 2026-10-12T15:57:28+07:00
+[INFO] ------------------------------------------------------------------------

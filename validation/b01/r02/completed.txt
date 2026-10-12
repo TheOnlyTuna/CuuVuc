@@ -1,0 +1,2 @@
+before RESOLUTION_HARD_KILL_PASS atomic_decision=true replay_once=true no_asset_movement=true
+after RESOLUTION_HARD_KILL_PASS atomic_decision=true replay_once=true no_asset_movement=true

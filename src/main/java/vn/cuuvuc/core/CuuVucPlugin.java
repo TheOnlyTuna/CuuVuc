@@ -3,6 +3,7 @@ package vn.cuuvuc.core;
 import org.bukkit.Bukkit;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
+import org.bukkit.command.ConsoleCommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -18,6 +19,7 @@ import java.nio.file.Path;
 import java.nio.file.StandardCopyOption;
 import java.sql.SQLException;
 import java.time.Duration;
+import java.util.Arrays;
 import java.util.Objects;
 import java.util.Map;
 import java.util.Properties;
@@ -40,6 +42,7 @@ public final class CuuVucPlugin extends JavaPlugin implements Listener {
     private SectMenu sects;
     private TreasuryMenu treasury;
     private ProjectMenu projects;
+    private RecoveryCommands recoveryCommands;
     private boolean contractAuditSaved;
     private Duration shutdownTimeout;
 
@@ -84,6 +87,7 @@ public final class CuuVucPlugin extends JavaPlugin implements Listener {
         getServer().getPluginManager().registerEvents(contractMenu, this);
         world.create();
         ContractRecovery recovery = new ContractRecovery(this, Objects.requireNonNull(Bukkit.getWorld(PlayableWorld.SKY)));
+        recoveryCommands = new RecoveryCommands(this, database, tasks, contracts, Objects.requireNonNull(Bukkit.getWorld(PlayableWorld.SKY)));
         Objects.requireNonNull(getCommand("cv")).setExecutor(this);
         Bukkit.getAsyncScheduler().runNow(this, task -> {
             try {
@@ -127,11 +131,15 @@ public final class CuuVucPlugin extends JavaPlugin implements Listener {
     }
 
     @Override public boolean onCommand(CommandSender sender, Command command, String label, String[] arguments) {
+        if (sender instanceof ConsoleCommandSender && arguments.length >= 2 && arguments[0].equals("recovery")) {
+            consoleRecovery(sender, arguments); return true;
+        }
         if (!(sender instanceof Player player)) { sender.sendMessage("CuuVucCore " + getPluginMeta().getVersion() + " | database-ready=" + isReady()); return true; }
         if (!player.hasPermission("cuuvuc.play")) { player.sendPlainMessage("Bạn không có quyền cuuvuc.play."); return true; }
         if (!isReady()) { player.sendPlainMessage("Cơ sở dữ liệu chưa sẵn sàng."); return true; }
         if (arguments.length == 0) { menu.request(player); return true; }
         if (arguments[0].equals("help")) {
+            player.sendPlainMessage("/cv recovery review <contract> | show <review> | hold/resolve <review> <lý do> (quản trị phục hồi)");
             player.sendPlainMessage("/cv treasury | contribute/withdraw/hire <số> | grant/revoke <UUID> (dùng /cv treasury)");
             player.sendPlainMessage("/cv sect | sect create <tên> | invite/kick <UUID> | accept/cancel <UUID-lời-mời> | role <UUID> <ELDER/MEMBER> | leave (các thao tác dùng /cv sect)");
             player.sendPlainMessage("/cv menu | prison | home | visit/invite/revoke <UUID> | start | profile | kho | catalog | craft <recipe> <1..1000> | buy/sell <resource> <1..1000> | pay <UUID> <1..1000> | transfer <UUID> <resource> <1..1000> | materials | ledger | receipt <UUID> | economy (OP)");
@@ -142,6 +150,7 @@ public final class CuuVucPlugin extends JavaPlugin implements Listener {
         UUID request = UUID.randomUUID();
         try {
             switch (arguments[0]) {
+                case "recovery" -> recoveryCommands.command(player, arguments);
                 case "sect" -> sects.command(player, arguments);
                 case "treasury" -> treasury.command(player, arguments);
                 case "projects" -> projects.command(player, arguments);
@@ -212,6 +221,28 @@ public final class CuuVucPlugin extends JavaPlugin implements Listener {
 
     private static void requireThree(String[] arguments) {
         if (arguments.length != 3) throw new IllegalArgumentException("Cần đúng 2 tham số. Dùng /cv help.");
+    }
+
+    /** Chỉ console được cấp/thu hồi quyền DB; mọi quyết định của người chơi vẫn kiểm tra quyền dưới khóa. */
+    private void consoleRecovery(CommandSender sender, String[] arguments) {
+        try {
+            if (!isReady()) throw new IllegalArgumentException("Cơ sở dữ liệu chưa sẵn sàng.");
+            if (arguments.length < 4 || !(arguments[1].equals("grant") || arguments[1].equals("revoke")))
+                throw new IllegalArgumentException("Console: cv recovery grant/revoke <UUID-hồ-sơ> <lý do 8..500 ký tự>");
+            UUID actor = UUID.fromString(arguments[2]);
+            String reason = String.join(" ", Arrays.copyOfRange(arguments, 3, arguments.length));
+            RecoveryResolution.requireReason(reason);
+            boolean enabled = arguments[1].equals("grant");
+            Bukkit.getAsyncScheduler().runNow(this, task -> {
+                try {
+                    String result = database.recoveryAuthority(actor, enabled, reason);
+                    Bukkit.getGlobalRegionScheduler().execute(this, () -> sender.sendMessage(result));
+                } catch (SQLException | IllegalArgumentException failure) {
+                    getSLF4JLogger().atError().addKeyValue("actor", actor).setCause(failure).log("recovery_authority_change_failed");
+                    Bukkit.getGlobalRegionScheduler().execute(this, () -> sender.sendMessage("Không đổi quyền phục hồi: " + failure.getMessage()));
+                }
+            });
+        } catch (IllegalArgumentException failure) { sender.sendMessage(failure.getMessage()); }
     }
 
     private boolean isReady() { return state.get() == State.READY; }

@@ -55,7 +55,7 @@ public final class ContractRecovery {
                     for (BlockJournal.Recorded recorded : journal.stream().filter(row -> row.entry().contract().equals(job.id())).toList()) {
                         BlockJournal.Entry entry = recorded.entry();
                         BlockJournal.Classification classification = entry.state() == BlockJournal.State.INTENT ? BlockJournal.Classification.INCOMPLETE
-                                : entry.state() == BlockJournal.State.APPLIED && !recorded.proof() ? BlockJournal.Classification.UNRECOVERABLE : BlockJournal.Classification.CONFIRMED;
+                                : (entry.state() == BlockJournal.State.APPLIED || entry.state() == BlockJournal.State.REVIEWED_UNCONFIRMED) && !recorded.proof() ? BlockJournal.Classification.UNRECOVERABLE : BlockJournal.Classification.CONFIRMED;
                         boolean latest = journal.stream().noneMatch(other -> other.entry().contract().equals(job.id())
                                 && other.entry().position().equals(entry.position()) && other.entry().state() == BlockJournal.State.APPLIED && other.auditSequence() > recorded.auditSequence());
                         if (!superseded && classification == BlockJournal.Classification.CONFIRMED && entry.state() == BlockJournal.State.APPLIED && latest) {
@@ -63,7 +63,8 @@ public final class ContractRecovery {
                             String actual = BlockJournalWorld.material(world.getBlockAt(Integer.parseInt(coordinates[0]), Integer.parseInt(coordinates[1]), Integer.parseInt(coordinates[2])));
                             if (!actual.equals(entry.after())) classification = BlockJournal.Classification.MISMATCH;
                         }
-                        rows.add("# journal\t" + entry.id() + "\t" + entry.state() + "\t" + classification + "\t" + recorded.auditSequence());
+                        String assessment = entry.state() == BlockJournal.State.REVIEWED_UNCONFIRMED && recorded.proof() ? "MANUAL_DECISION_NOT_EVENT_PROOF" : classification.name();
+                        rows.add("# journal\t" + entry.id() + "\t" + entry.state() + "\t" + assessment + "\t" + recorded.auditSequence());
                         if (classification != BlockJournal.Classification.CONFIRMED) findings.add(new BlockJournal.Finding(job.id(), classification, "journal event=" + entry.id()));
                     }
                     inspection.complete(new Inspection(List.copyOf(rows), List.copyOf(findings)));

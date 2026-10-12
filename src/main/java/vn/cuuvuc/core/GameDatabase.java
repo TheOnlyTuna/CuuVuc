@@ -782,7 +782,8 @@ public final class GameDatabase implements AutoCloseable {
         retry("block_abort:" + event, connection -> {
             BlockJournal.Entry entry = readJournal(connection, event);
             lockContractRecord(connection, entry.contract());
-            if (entry.state() == BlockJournal.State.APPLIED) throw new IllegalArgumentException("Không thể hủy sự kiện đã APPLIED: " + event);
+            if (entry.state() == BlockJournal.State.APPLIED || entry.state() == BlockJournal.State.REVIEWED_UNCONFIRMED)
+                throw new IllegalArgumentException("Không thể hủy journal đã áp dụng hoặc có quyết định quản trị: " + event);
             if (entry.state() == BlockJournal.State.INTENT) {
                 try (PreparedStatement statement = connection.prepareStatement("UPDATE contract_block_journal SET state='ABORTED',resolved_at=clock_timestamp() WHERE event_id=? AND state='INTENT'")) {
                     statement.setObject(1, event);
@@ -808,16 +809,49 @@ public final class GameDatabase implements AutoCloseable {
     }
 
     public List<BlockJournal.Recorded> blockJournal() throws SQLException {
-        return query("block_journal", connection -> {
+        return query("block_journal", GameDatabase::readBlockJournal);
+    }
+
+    static List<BlockJournal.Recorded> readBlockJournal(Connection connection) throws SQLException {
             List<BlockJournal.Recorded> entries = new ArrayList<>();
             try (Statement statement = connection.createStatement(); ResultSet rows = statement.executeQuery("SELECT j.event_id,j.contract_id,j.actor_id,j.event_type,j.position,j.before_material,j.after_material,j.state,j.audit_event_id,"
-                    + "EXISTS(SELECT 1 FROM operations o WHERE o.request_id=j.event_id AND o.actor_id=j.actor_id AND o.result<>'pending' AND o.fingerprint='contract:block:'||j.contract_id||':'||j.actor_id||':'||j.event_type||':'||j.position) "
+                    + "CASE WHEN j.state='REVIEWED_UNCONFIRMED' THEN EXISTS(SELECT 1 FROM recovery_decisions d JOIN recovery_reviews r USING(review_id) WHERE d.review_id=j.resolution_review_id AND d.decision='RESOLVE_INTENTS_AND_REOPEN' AND r.contract_id=j.contract_id) ELSE EXISTS(SELECT 1 FROM operations o WHERE o.request_id=j.event_id AND o.actor_id=j.actor_id AND o.result<>'pending' AND o.fingerprint='contract:block:'||j.contract_id||':'||j.actor_id||':'||j.event_type||':'||j.position) "
                     + "AND EXISTS(SELECT 1 FROM building_history h WHERE h.event_id=j.audit_event_id AND h.contract_id=j.contract_id AND h.actor_id=j.actor_id AND h.event_type=j.event_type AND h.detail=j.position) "
-                    + "FROM contract_block_journal j ORDER BY j.prepared_at,j.event_id")) {
+                    + "END FROM contract_block_journal j ORDER BY j.prepared_at,j.event_id")) {
                 while (rows.next()) entries.add(new BlockJournal.Recorded(journalEntry(rows), rows.getLong(9), rows.getBoolean(10)));
             }
             return List.copyOf(entries);
+    }
+
+    public String recoveryAuthority(UUID player, boolean enabled, String reason) throws SQLException {
+        return retry("recovery_authority:" + player, connection -> {
+            RecoveryStore.authority(connection, player, enabled, reason);
+            return "Quyền phục hồi DB: " + player + " enabled=" + enabled;
         });
+    }
+
+    public RecoveryResolution.Evidence recoveryEvidence(UUID actor, UUID contract) throws SQLException {
+        return retry("recovery_evidence:" + contract, connection -> RecoveryStore.evidence(connection, actor, contract));
+    }
+
+    public String createRecoveryReview(RecoveryResolution.Review review) throws SQLException {
+        return retry("recovery_review:" + review.id(), connection -> RecoveryStore.createReview(connection, review));
+    }
+
+    public RecoveryResolution.Evidence reviewedRecoveryEvidence(UUID actor, UUID review) throws SQLException {
+        return retry("recovery_reviewed:" + review, connection -> RecoveryStore.reviewedEvidence(connection, actor, review));
+    }
+
+    public String decideRecovery(UUID actor, UUID review, RecoveryResolution.Decision decision, String reason, List<RecoveryResolution.Observation> world) throws SQLException {
+        return retry("recovery_decide:" + review, connection -> RecoveryStore.decide(connection, actor, review, decision, reason, world));
+    }
+
+    public String recoveryReport(UUID actor, UUID review) throws SQLException {
+        return retry("recovery_report:" + review, connection -> RecoveryStore.report(connection, actor, review));
+    }
+
+    public Optional<String> recoveryDecision(UUID actor, UUID review, RecoveryResolution.Decision decision, String reason) throws SQLException {
+        return retry("recovery_decision:" + review, connection -> RecoveryStore.committedDecision(connection, actor, review, decision, reason));
     }
 
     public void requireRecovery(BlockJournal.Finding finding) throws SQLException {
@@ -889,7 +923,7 @@ public final class GameDatabase implements AutoCloseable {
         }
     }
 
-    private static Contracts.Job lockContractRecord(Connection connection, UUID contract) throws SQLException {
+    static Contracts.Job lockContractRecord(Connection connection, UUID contract) throws SQLException {
         try (PreparedStatement statement = connection.prepareStatement("SELECT funding_sect_id,project_stage_id FROM building_contracts WHERE contract_id=?")) {
             statement.setObject(1, contract);
             try (ResultSet result = statement.executeQuery()) {

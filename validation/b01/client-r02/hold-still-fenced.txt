@@ -1,0 +1,16 @@
+              review_id               |  decision   |                          reason                           
+--------------------------------------+-------------+-----------------------------------------------------------
+ 66bffae6-5270-42c5-8d50-00d4dd925a5a | KEEP_LOCKED | Keep locked pending explicit review of unconfirmed intent
+(1 row)
+
+             contract_id              | classification 
+--------------------------------------+----------------
+ 279bbdf9-0fe9-4eec-8bb6-46a9df8c72a3 | INCOMPLETE
+(1 row)
+
+        state         | count 
+----------------------+-------
+ INTENT               |     1
+ REVIEWED_UNCONFIRMED |     1
+(2 rows)
+

@@ -13,6 +13,7 @@ import org.bukkit.event.world.WorldSaveEvent;
 import vn.cuuvuc.core.BlockJournal;
 import vn.cuuvuc.core.ContractWorld;
 import vn.cuuvuc.core.GameDatabase;
+import vn.cuuvuc.core.RecoveryCommands;
 
 import java.io.IOException;
 import java.lang.reflect.Field;
@@ -67,6 +68,36 @@ public final class CrashProbe extends JavaPlugin implements Listener {
         ContractWorld contracts = (ContractWorld) field("contracts");
         Field refreshing = ContractWorld.class.getDeclaredField("refreshing"); refreshing.setAccessible(true);
         switch (action) {
+            case "RECOVERY_GRANT", "RECOVERY_REVOKE" -> Bukkit.getGlobalRegionScheduler().execute(this, () -> {
+                String operation = action.equals("RECOVERY_GRANT") ? "grant" : "revoke";
+                if (!Bukkit.dispatchCommand(Bukkit.getConsoleSender(), "cv recovery " + operation + " " + OWNER + " Controlled isolated Paper recovery validation"))
+                    throw new IllegalStateException("Không dispatch được lệnh quyền phục hồi");
+                try { done(id, "CONSOLE_RECOVERY_" + operation); }
+                catch (IOException failure) { throw new IllegalStateException("Không ghi kết quả quyền phục hồi", failure); }
+            });
+            case "RECOVERY_REVIEW" -> {
+                RecoveryCommands connector = (RecoveryCommands) field("recoveryCommands");
+                Method method = RecoveryCommands.class.getDeclaredMethod("review", UUID.class, UUID.class); method.setAccessible(true);
+                done(id, (String) method.invoke(connector, OWNER, CONTRACT));
+            }
+            case "RECOVERY_RESOLVE", "RECOVERY_REJECT" -> {
+                UUID review = UUID.fromString(Files.readString(getDataFolder().toPath().resolve("review-id.txt")).strip());
+                RecoveryCommands connector = (RecoveryCommands) field("recoveryCommands");
+                Method method = RecoveryCommands.class.getDeclaredMethod("resolve", UUID.class, UUID.class, String.class); method.setAccessible(true);
+                try {
+                    String result = (String) method.invoke(connector, OWNER, review, "World unchanged and intent unconfirmed; reviewed fixture evidence");
+                    if (action.equals("RECOVERY_REJECT")) throw new IllegalStateException("Lẽ ra phải từ chối recovery resolve");
+                    done(id, result);
+                } catch (InvocationTargetException failure) {
+                    if (!action.equals("RECOVERY_REJECT") || !(failure.getCause() instanceof IllegalArgumentException)) throw failure;
+                    done(id, "RESOLVE_REJECTED " + failure.getCause().getMessage());
+                }
+            }
+            case "STOP" -> Bukkit.getGlobalRegionScheduler().execute(this, () -> {
+                try { done(id, "SOFT_STOP_REQUESTED"); }
+                catch (IOException failure) { throw new IllegalStateException("Không ghi yêu cầu dừng", failure); }
+                Bukkit.shutdown();
+            });
             case "CLIENT_POSITION" -> {
                 org.bukkit.entity.Player player = Bukkit.getPlayer(BUILDER);
                 if (player == null) throw new IllegalStateException("Client C chưa online; không chuẩn bị vị trí");

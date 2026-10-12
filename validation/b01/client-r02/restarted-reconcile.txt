@@ -1,0 +1,59 @@
+               event_id               | event_type | position |        state         | audit_event_id |         resolution_review_id         
+--------------------------------------+------------+----------+----------------------+----------------+--------------------------------------
+ 7d08bac0-cad3-40af-823b-a0069b588496 | PLACE      | 67:100:5 | REVIEWED_UNCONFIRMED |                | 408b797b-b5ff-4567-a511-670fc3730799
+ 80d42e38-0f7e-4f7d-b22e-a3e427232f52 | PLACE      | 67:100:5 | REVIEWED_UNCONFIRMED |                | e7f1330b-4366-49db-bab2-0caa015dcf40
+ 0a3c3766-c7f1-409d-8dd5-b037d666fa6a | PLACE      | 67:100:5 | APPLIED              |              5 | 
+ 9bb019f8-6434-4ebc-9344-134db2d257d9 | BREAK      | 67:100:5 | APPLIED              |              6 | 
+(4 rows)
+
+ event_id |             contract_id              |               actor_id               | event_type |                                                  detail                                                   
+----------+--------------------------------------+--------------------------------------+------------+-----------------------------------------------------------------------------------------------------------
+        1 | 279bbdf9-0fe9-4eec-8bb6-46a9df8c72a3 | f3d83b55-4452-39bc-85f4-29f8cebdcc4f | CREATE     | Ký quỹ 2 Linh Tệ; phí 0%; template STONE_PAD_V1; hạng mục Optional[c94506f3-7b05-3a74-8905-dc2f1bf0ba5a]
+        2 | 7c9c9656-2602-48b4-98de-447f06e34e97 | f3d83b55-4452-39bc-85f4-29f8cebdcc4f | CREATE     | Ký quỹ 2 Linh Tệ; phí 0%; template STONE_PATH_V1; hạng mục Optional[ccd5125b-fa79-37a5-9f4a-00b99ce180a4]
+        3 | 279bbdf9-0fe9-4eec-8bb6-46a9df8c72a3 | 3bb5ddbc-5b75-377f-8647-6f25c51f252a | ACCEPT     | Chưa chuyển tiền công; quyền thi công theo hợp đồng.
+        4 | 7c9c9656-2602-48b4-98de-447f06e34e97 | 3bb5ddbc-5b75-377f-8647-6f25c51f252a | ACCEPT     | Chưa chuyển tiền công; quyền thi công theo hợp đồng.
+        5 | 279bbdf9-0fe9-4eec-8bb6-46a9df8c72a3 | 3bb5ddbc-5b75-377f-8647-6f25c51f252a | PLACE      | 67:100:5
+        6 | 279bbdf9-0fe9-4eec-8bb6-46a9df8c72a3 | 3bb5ddbc-5b75-377f-8647-6f25c51f252a | BREAK      | 67:100:5
+(6 rows)
+
+              review_id               |               actor_id               |          decision          |                                       reason                                        
+--------------------------------------+--------------------------------------+----------------------------+-------------------------------------------------------------------------------------
+ 408b797b-b5ff-4567-a511-670fc3730799 | f3d83b55-4452-39bc-85f4-29f8cebdcc4f | RESOLVE_INTENTS_AND_REOPEN | World unchanged and intent unconfirmed; reviewed fixture evidence
+ 66bffae6-5270-42c5-8d50-00d4dd925a5a | 3bb5ddbc-5b75-377f-8647-6f25c51f252a | KEEP_LOCKED                | Keep locked pending explicit review of unconfirmed intent
+ e7f1330b-4366-49db-bab2-0caa015dcf40 | 3bb5ddbc-5b75-377f-8647-6f25c51f252a | RESOLVE_INTENTS_AND_REOPEN | World AIR matches before intent; acknowledge uncertainty without fabricating events
+(3 rows)
+
+              player_id               | enabled | revision 
+--------------------------------------+---------+----------
+ 3bb5ddbc-5b75-377f-8647-6f25c51f252a | f       |        4
+ f3d83b55-4452-39bc-85f4-29f8cebdcc4f | t       |        1
+(2 rows)
+
+             contract_id              | status | reward 
+--------------------------------------+--------+--------
+ 279bbdf9-0fe9-4eec-8bb6-46a9df8c72a3 | ACTIVE |      2
+ 7c9c9656-2602-48b4-98de-447f06e34e97 | ACTIVE |      2
+(2 rows)
+
+  resource_id   | quantity 
+----------------+----------
+ huyen_thiet    |        7
+ linh_thach_tho |       23
+(2 rows)
+
+  kind   | count | sum 
+---------+-------+-----
+ DEPOSIT |     2 |   4
+(1 row)
+
+                                               json_build_object                                               
+---------------------------------------------------------------------------------------------------------------
+ {"escrow" : 4, "wallet" : 0, "sect" : 0, "mint" : 4, "burn" : 0, "tokens" : 30, "reserve" : 4, "project" : 0}
+(1 row)
+
+DO
+             ?column?              
+-----------------------------------
+ CLIENT_RESOLUTION_ASSERTIONS_PASS
+(1 row)
+

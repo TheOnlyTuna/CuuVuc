@@ -12,3 +12,5 @@ permissions:
     default: true
   cuuvuc.admin:
     default: op
+  cuuvuc.recovery:
+    default: op

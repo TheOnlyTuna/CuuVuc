@@ -1,0 +1,1 @@
+Review 3edb159c-4268-4029-b9d2-bbaf44a232df: chỉ quan sát, fence vẫn giữ. Đọc hồ sơ trước khi hold/resolve với lý do. Hồ sơ: plugins\CuuVucCore\recovery\reviews\3edb159c-4268-4029-b9d2-bbaf44a232df-361b716c-dc24-431c-8ef1-b30d9f996dcd.txt

@@ -1,0 +1,28 @@
+              review_id               |               actor_id               |          decision          |                                       reason                                        
+--------------------------------------+--------------------------------------+----------------------------+-------------------------------------------------------------------------------------
+ 408b797b-b5ff-4567-a511-670fc3730799 | f3d83b55-4452-39bc-85f4-29f8cebdcc4f | RESOLVE_INTENTS_AND_REOPEN | World unchanged and intent unconfirmed; reviewed fixture evidence
+ 66bffae6-5270-42c5-8d50-00d4dd925a5a | 3bb5ddbc-5b75-377f-8647-6f25c51f252a | KEEP_LOCKED                | Keep locked pending explicit review of unconfirmed intent
+ e7f1330b-4366-49db-bab2-0caa015dcf40 | 3bb5ddbc-5b75-377f-8647-6f25c51f252a | RESOLVE_INTENTS_AND_REOPEN | World AIR matches before intent; acknowledge uncertainty without fabricating events
+(3 rows)
+
+               event_id               |        state         |         resolution_review_id         | audit_event_id 
+--------------------------------------+----------------------+--------------------------------------+----------------
+ 7d08bac0-cad3-40af-823b-a0069b588496 | REVIEWED_UNCONFIRMED | 408b797b-b5ff-4567-a511-670fc3730799 |               
+ 80d42e38-0f7e-4f7d-b22e-a3e427232f52 | REVIEWED_UNCONFIRMED | e7f1330b-4366-49db-bab2-0caa015dcf40 |               
+(2 rows)
+
+ fences 
+--------
+      0
+(1 row)
+
+ block_history 
+---------------
+             0
+(1 row)
+
+ escrow 
+--------
+      4
+(1 row)
+

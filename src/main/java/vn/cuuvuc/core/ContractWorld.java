@@ -284,6 +284,19 @@ public final class ContractWorld implements Listener {
 
     public void holdRecovery(UUID contract) { recoveryHolds.add(contract); }
 
+    public void requireRecoveryQuiescent(UUID contract) {
+        holdRecovery(contract);
+        if (journal.busy(contract) || auditInFlight || !changes.isEmpty())
+            throw new IllegalArgumentException("Còn callback/audit đang xử lý; giữ khóa và thử review sau khi hàng đợi dừng.");
+    }
+
+    public void releaseRecovery(UUID contract) throws SQLException {
+        publish(database.contractBoard());
+        if (board().jobs().stream().anyMatch(job -> job.id().equals(contract) && job.recoveryRequired()))
+            throw new IllegalArgumentException("Fence mới đã xuất hiện; giữ khóa và tạo review mới.");
+        recoveryHolds.remove(contract);
+    }
+
     private void record(UUID actor, Block block, String event) {
         at(block).ifPresent(job -> {
             Change change = new Change(UUID.randomUUID(), job.id(), actor, event, block.getX() + ":" + block.getY() + ":" + block.getZ());

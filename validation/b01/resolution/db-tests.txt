@@ -1,0 +1,4 @@
+-------------------------------------------------------------------------------
+Test set: vn.cuuvuc.core.GameDatabaseIT
+-------------------------------------------------------------------------------
+Tests run: 89, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 43.18 s -- in vn.cuuvuc.core.GameDatabaseIT
