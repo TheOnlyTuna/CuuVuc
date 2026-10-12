@@ -1,0 +1,7 @@
+RESTORE_COMPLETE files=347 database=cv_b01_io09_intent server=D:\CuuVucCore\CuuVuc-GitHub\run-b01-io09-intent
+RESTORE_COMPLETE files=347 database=cv_b01_io09_applied0 server=D:\CuuVucCore\CuuVuc-GitHub\run-b01-io09-applied0
+RESTORE_COMPLETE files=347 database=cv_b01_io09_applied1 server=D:\CuuVucCore\CuuVuc-GitHub\run-b01-io09-applied1
+RESTORE_COMPLETE files=347 database=cv_b01_io09_sequence0 server=D:\CuuVucCore\CuuVuc-GitHub\run-b01-io09-sequence0
+RESTORE_COMPLETE files=347 database=cv_b01_io09_sequence1 server=D:\CuuVucCore\CuuVuc-GitHub\run-b01-io09-sequence1
+RESTORE_COMPLETE files=347 database=cv_b01_io09_savecallback server=D:\CuuVucCore\CuuVuc-GitHub\run-b01-io09-savecallback
+RESTORE_COMPLETE files=347 database=cv_b01_io09_missingproof server=D:\CuuVucCore\CuuVuc-GitHub\run-b01-io09-missingproof

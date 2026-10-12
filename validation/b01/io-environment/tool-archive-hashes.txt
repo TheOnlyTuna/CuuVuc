@@ -1,0 +1,9 @@
+
+Algorithm : SHA256
+Hash      : 7055981AEDA6927CFA4C8BEDD619EB6809B923C47DBFD42441A70D47C3235E71
+Path      : D:\CuuVucCore\CuuVuc-GitHub\.tools\jdk25.zip
+
+Algorithm : SHA256
+Hash      : 0D7125E8C91097B36EDB990EA5934E6C68B4440EEF4EA96510A0F6815E7EEADB
+Path      : D:\CuuVucCore\CuuVuc-GitHub\.tools\maven-central.zip
+

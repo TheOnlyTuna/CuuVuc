@@ -1,0 +1,53 @@
+WARNING: A terminally deprecated method in sun.misc.Unsafe has been called
+WARNING: sun.misc.Unsafe::staticFieldBase has been called by com.google.inject.internal.aop.HiddenClassDefiner (file:/D:/CuuVucCore/CuuVuc-GitHub/.tools/maven/apache-maven-3.9.11/lib/guice-5.1.0-classes.jar)
+WARNING: Please consider reporting this to the maintainers of class com.google.inject.internal.aop.HiddenClassDefiner
+WARNING: sun.misc.Unsafe::staticFieldBase will be removed in a future release
+[INFO] Scanning for projects...
+[INFO] 
+[INFO] -----------------< vn.cuuvuc.validation:b01-io-agent >------------------
+[INFO] Building b01-io-agent 1.0
+[INFO]   from pom.xml
+[INFO] --------------------------------[ jar ]---------------------------------
+[INFO] 
+[INFO] --- resources:3.3.1:resources (default-resources) @ b01-io-agent ---
+[INFO] skip non existing resourceDirectory D:\CuuVucCore\CuuVuc-GitHub\validation\b01\io-agent\src\main\resources
+[INFO] 
+[INFO] --- compiler:3.14.1:compile (default-compile) @ b01-io-agent ---
+[INFO] Recompiling the module because of changed source code.
+[INFO] Compiling 2 source files with javac [debug release 25] to target\classes
+[INFO] 
+[INFO] --- resources:3.3.1:testResources (default-testResources) @ b01-io-agent ---
+[INFO] skip non existing resourceDirectory D:\CuuVucCore\CuuVuc-GitHub\validation\b01\io-agent\src\test\resources
+[INFO] 
+[INFO] --- compiler:3.14.1:testCompile (default-testCompile) @ b01-io-agent ---
+[INFO] No sources to compile
+[INFO] 
+[INFO] --- surefire:3.2.5:test (default-test) @ b01-io-agent ---
+[INFO] No tests to run.
+[INFO] 
+[INFO] --- jar:3.4.2:jar (default-jar) @ b01-io-agent ---
+[INFO] Building jar: D:\CuuVucCore\CuuVuc-GitHub\validation\b01\io-agent\target\b01-io-agent-1.0.jar
+[INFO] 
+[INFO] --- jar:3.4.2:jar (hooks) @ b01-io-agent ---
+[INFO] Building jar: D:\CuuVucCore\CuuVuc-GitHub\validation\b01\io-agent\target\b01-io-agent-1.0-hooks.jar
+[INFO] 
+[INFO] --- shade:3.6.1:shade (default) @ b01-io-agent ---
+[WARNING] Discovered module-info.class. Shading will break its strong encapsulation.
+[WARNING] Discovered module-info.class. Shading will break its strong encapsulation.
+[WARNING] Discovered module-info.class. Shading will break its strong encapsulation.
+[WARNING] asm-9.8.jar, asm-commons-9.8.jar, asm-tree-9.8.jar, b01-io-agent-1.0.jar define 1 overlapping resource: 
+[WARNING]   - META-INF/MANIFEST.MF
+[WARNING] maven-shade-plugin has detected that some files are
+[WARNING] present in two or more JARs. When this happens, only one
+[WARNING] single version of the file is copied to the uber jar.
+[WARNING] Usually this is not harmful and you can skip these warnings,
+[WARNING] otherwise try to manually exclude artifacts based on
+[WARNING] mvn dependency:tree -Ddetail=true and the above output.
+[WARNING] See https://maven.apache.org/plugins/maven-shade-plugin/
+[INFO] Replacing original artifact with shaded artifact.
+[INFO] ------------------------------------------------------------------------
+[INFO] BUILD SUCCESS
+[INFO] ------------------------------------------------------------------------
+[INFO] Total time:  2.232 s
+[INFO] Finished at: 2026-10-12T22:41:58+07:00
+[INFO] ------------------------------------------------------------------------

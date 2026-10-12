@@ -1,0 +1,247 @@
+[
+  {
+    "path": "validation\\b01\\io01\\kills.txt",
+    "sha256": "BFE806CADD9DD041636E151E6032A6C6901D4901BCF1CBBD3AEB2BAC5C8B39A2",
+    "bytes": 96
+  },
+  {
+    "path": "validation\\b01\\io01\\payloadbefore-before.stderr.log",
+    "sha256": "D08C9A159A5F35F4C661DE421F5CE3CCD0BFDA2C380DAB7A96C614B8823D1ED2",
+    "bytes": 459
+  },
+  {
+    "path": "validation\\b01\\io01\\payloadbefore-before.stdout.log",
+    "sha256": "7F98B95B4351153178A21296AE9012825FFC6E3F6AB7FFDA8057DB371B0E19CC",
+    "bytes": 7213
+  },
+  {
+    "path": "validation\\b01\\io01\\restore.txt",
+    "sha256": "A12476F988C0930E7D5AFF33E41FFF7C89A2603B414B4653A2BC432666BFBE6D",
+    "bytes": 125
+  },
+  {
+    "path": "validation\\b01\\io02\\kills.txt",
+    "sha256": "17AE5DB5D8C679B77D280BC698CDB4571CF569007B8D1B7E1FD93B6BE21B0F82",
+    "bytes": 96
+  },
+  {
+    "path": "validation\\b01\\io02\\payloadbefore-before.stderr.log",
+    "sha256": "ABE7902A1F89568379A2EEE778C2E909E762C2E9A57A3231810C1FB022BE59BA",
+    "bytes": 459
+  },
+  {
+    "path": "validation\\b01\\io02\\payloadbefore-before.stdout.log",
+    "sha256": "D7808FA078960E51DAF22A8BD90237354829D37699ED76EB3BCA6D742C4AE43A",
+    "bytes": 7213
+  },
+  {
+    "path": "validation\\b01\\io02\\restore.txt",
+    "sha256": "139802B7C268446B26AF627995890B3C5F279A33D0A5B4457DF0698C75AF0427",
+    "bytes": 125
+  },
+  {
+    "path": "validation\\b01\\io03\\payloadbefore-before.stderr.log",
+    "sha256": "6FD5DD79612D71FD1685101882DF3E4F0CDB0491ACC6A9052ED1E6C0B1D1C93D",
+    "bytes": 459
+  },
+  {
+    "path": "validation\\b01\\io03\\payloadbefore-before.stdout.log",
+    "sha256": "20B830E3FC6CDF7F0CB404351057369FB7E34B2B32C87B8FDE77811776DDD31D",
+    "bytes": 18054
+  },
+  {
+    "path": "validation\\b01\\io03\\restore.txt",
+    "sha256": "11AC5DAF3326CB92DCCB91FC3FD45704538A52A68037A8D334647B6B9E803779",
+    "bytes": 125
+  },
+  {
+    "path": "validation\\b01\\io04\\kills.txt",
+    "sha256": "D0B21F8961EB4A7E084A12A3DEF905EDD0336E631F7C2943F5EC901B97F5232F",
+    "bytes": 96
+  },
+  {
+    "path": "validation\\b01\\io04\\payloadbefore-baseline-world-files.json",
+    "sha256": "8E38EF38484A46A1BBEED213B9627FB69CC39862A10E862E461CDF01923C46EC",
+    "bytes": 18341
+  },
+  {
+    "path": "validation\\b01\\io04\\payloadbefore-baseline.jsonl",
+    "sha256": "466EB2F36342ABCE15FF764624B19E9592454A9159EF2DAFC2CB92322F827E0A",
+    "bytes": 68516
+  },
+  {
+    "path": "validation\\b01\\io04\\payloadbefore-before.stderr.log",
+    "sha256": "ACE70E143BB14183CEA3318607B17C96322E7E984644BF0087A3C4D6FDFEA705",
+    "bytes": 459
+  },
+  {
+    "path": "validation\\b01\\io04\\payloadbefore-before.stdout.log",
+    "sha256": "A16A348DF06A609ED0731EA8E10BA055CCB29B5E23CF64E4F54B01BBB97F9725",
+    "bytes": 16542274
+  },
+  {
+    "path": "validation\\b01\\io04\\payloadbefore-fixture.txt",
+    "sha256": "BD1263DE87AB0FA3A98D36CE9943ED16405F6BF9C366A4A03B6C72296FF5AD90",
+    "bytes": 69
+  },
+  {
+    "path": "validation\\b01\\io04\\payloadbefore-prekill.jsonl",
+    "sha256": "5FECBAE66FAE1A0B1F97319AA2EE675A8853F4F63C8005BA46DC45988606D272",
+    "bytes": 69609
+  },
+  {
+    "path": "validation\\b01\\io04\\restore.txt",
+    "sha256": "91B3A15CAD424AD6F85EC4A0BDB46CF54CA3508343E00EF628606C143721C119",
+    "bytes": 125
+  },
+  {
+    "path": "validation\\b01\\io05\\kills.txt",
+    "sha256": "DC2B0EEA5FF5CE5C71A8549EEBB8E5697B40AFCD8952105E176FB445348DE686",
+    "bytes": 96
+  },
+  {
+    "path": "validation\\b01\\io05\\payloadbefore-baseline.jsonl",
+    "sha256": "B30E87DD6DE938ACCCBA3876D399DDFE19E9DEFB793FFDA6C50256E26332D183",
+    "bytes": 68519
+  },
+  {
+    "path": "validation\\b01\\io05\\payloadbefore-before.stderr.log",
+    "sha256": "48AD51CF1D3BB0DDFBC9055A44EAA0E76E69995E373A4F5D81E724509407B1D0",
+    "bytes": 459
+  },
+  {
+    "path": "validation\\b01\\io05\\payloadbefore-before.stdout.log",
+    "sha256": "3EA5E7467CFDA351862FA91A9059F3EEB4CE6F3527007179FE411CDDFE98C4A6",
+    "bytes": 13158
+  },
+  {
+    "path": "validation\\b01\\io05\\restore.txt",
+    "sha256": "E736D40E22873E7BB6EECA7B9F766310ADA6A32EC1D07E72F7AE927B9610FA59",
+    "bytes": 125
+  },
+  {
+    "path": "validation\\b01\\io06\\kills.txt",
+    "sha256": "07A2420BCA144120DDA5E8AD355CD3C9FBD4F3C8EC241648EC5736A82EEDEC29",
+    "bytes": 96
+  },
+  {
+    "path": "validation\\b01\\io06\\payloadbefore-baseline-world-files.json",
+    "sha256": "77B77DBC76B6F1BC0DE8D055C4A0BDAB96AFB0E17C68E0BA30E1E45D2BECB6B0",
+    "bytes": 765
+  },
+  {
+    "path": "validation\\b01\\io06\\payloadbefore-baseline.jsonl",
+    "sha256": "279A569E7AFB63B1669951FDAA1F95A8350D1201AB4AA9B5FAA783B0008E4D42",
+    "bytes": 68519
+  },
+  {
+    "path": "validation\\b01\\io06\\payloadbefore-before.stderr.log",
+    "sha256": "E70A894F4460D0F97F1C661D5BDDAF98735D8736680686EDD78B624413EF02AD",
+    "bytes": 459
+  },
+  {
+    "path": "validation\\b01\\io06\\payloadbefore-before.stdout.log",
+    "sha256": "2B0E82F1D715680CDB761F4282BAE9FD0848852D7E5142F8DAEEE1F90C717269",
+    "bytes": 18620
+  },
+  {
+    "path": "validation\\b01\\io06\\payloadbefore-fixture.txt",
+    "sha256": "C4B0CA1FAD7884AFDDAEAB1417166DBD499326DF218B172628AF08357FA7DDEE",
+    "bytes": 69
+  },
+  {
+    "path": "validation\\b01\\io06\\payloadbefore-prekill.jsonl",
+    "sha256": "41E8348C417603E50B6006F3373580DEDFBC0A9B80979077CD28F6EFC7153807",
+    "bytes": 69612
+  },
+  {
+    "path": "validation\\b01\\io06\\restore.txt",
+    "sha256": "DE706045B858A98EA4A7DCE090305948DD0F3302C79BE6465F736E26E381BA19",
+    "bytes": 125
+  },
+  {
+    "path": "validation\\b01\\io07\\kills.txt",
+    "sha256": "5493EB3FFBD0634615778F3DE384E81C4B161A17D8F57B22EFCD5999CC40118F",
+    "bytes": 197
+  },
+  {
+    "path": "validation\\b01\\io07\\payloadbefore-baseline-world-files.json",
+    "sha256": "4BBAD45A09BD342B20B03C9BC265B4D2472FC100DA240E04C95DB0D5F428DC07",
+    "bytes": 765
+  },
+  {
+    "path": "validation\\b01\\io07\\payloadbefore-baseline.jsonl",
+    "sha256": "7412C49BC6BD0000E8C25B237F0D85AC9A463E959E508D5F8504096C335EC6E2",
+    "bytes": 68518
+  },
+  {
+    "path": "validation\\b01\\io07\\payloadbefore-before.stderr.log",
+    "sha256": "4BAA99A59755DBD2ACF3B9CFFACEFA593FA2A12DCE91E48C4DFBFB408CC73F96",
+    "bytes": 589
+  },
+  {
+    "path": "validation\\b01\\io07\\payloadbefore-before.stdout.log",
+    "sha256": "AD0972F84CC3C1CA64FFF94237954C9AD5C296E64E24B36611EECB4A6B6958AB",
+    "bytes": 7579
+  },
+  {
+    "path": "validation\\b01\\io07\\payloadbefore-denied.txt",
+    "sha256": "7E3E7E925E4964E6455F86A70BC23440DC63E593C560EDC7A77FC2414D534FB5",
+    "bytes": 45
+  },
+  {
+    "path": "validation\\b01\\io07\\payloadbefore-fixture.txt",
+    "sha256": "F82E8A8B6C45CE793EE1E2BA5D1CB6CA11D3E3C56B45DFC70077A8E1C3B84E33",
+    "bytes": 69
+  },
+  {
+    "path": "validation\\b01\\io07\\payloadbefore-killed-backup-hashes.txt",
+    "sha256": "7D28720389ACF82C8DCB1A976EFF0A36B261A431E25148EEE147C569DC9F364B",
+    "bytes": 384
+  },
+  {
+    "path": "validation\\b01\\io07\\payloadbefore-killed-world-files.json",
+    "sha256": "4BBAD45A09BD342B20B03C9BC265B4D2472FC100DA240E04C95DB0D5F428DC07",
+    "bytes": 765
+  },
+  {
+    "path": "validation\\b01\\io07\\payloadbefore-killed.jsonl",
+    "sha256": "A47FB56AC3F0552A3C274B0817F68DAEF8076FC121A27A8135FF41CE66E22593",
+    "bytes": 69611
+  },
+  {
+    "path": "validation\\b01\\io07\\payloadbefore-marker.txt",
+    "sha256": "27DDB6FD2BBEC39D0E43F5F958AC6E8FD498A6BE762407B709048C8E18815BE1",
+    "bytes": 2105
+  },
+  {
+    "path": "validation\\b01\\io07\\payloadbefore-prekill.jsonl",
+    "sha256": "A47FB56AC3F0552A3C274B0817F68DAEF8076FC121A27A8135FF41CE66E22593",
+    "bytes": 69611
+  },
+  {
+    "path": "validation\\b01\\io07\\payloadbefore-restart.stderr.log",
+    "sha256": "F93953AD221B0B457150B5CCFEDF5BA216AF0D1AD3E3C498BA4054F0EDE042DA",
+    "bytes": 459
+  },
+  {
+    "path": "validation\\b01\\io07\\payloadbefore-restart.stdout.log",
+    "sha256": "53C7083920517DAD935CFA17D0165F6832E50EABBA083725D2BF9B02D3A2B482",
+    "bytes": 7305
+  },
+  {
+    "path": "validation\\b01\\io07\\payloadbefore-state.json",
+    "sha256": "85F11DA30F31F71B36D6D5937E7FD1CF571EB33411CC0C694DA8A37F2B476BC6",
+    "bytes": 168
+  },
+  {
+    "path": "validation\\b01\\io07\\payloadbefore-world.txt",
+    "sha256": "F9D25E00643469FA30DE02ECE5ACB1817C86FDBCA7B9BDFE4474D530AEF96ED3",
+    "bytes": 26
+  },
+  {
+    "path": "validation\\b01\\io07\\restore.txt",
+    "sha256": "BF53B15FECAEE054FC474E9A93EF04E8C912F3FD05D1BFACC0883BCD88C1B799",
+    "bytes": 125
+  }
+]

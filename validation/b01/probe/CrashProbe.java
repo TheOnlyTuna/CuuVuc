@@ -68,6 +68,13 @@ public final class CrashProbe extends JavaPlugin implements Listener {
         ContractWorld contracts = (ContractWorld) field("contracts");
         Field refreshing = ContractWorld.class.getDeclaredField("refreshing"); refreshing.setAccessible(true);
         switch (action) {
+            case "BASELINE_FLUSH" -> Bukkit.getGlobalRegionScheduler().execute(this, () -> {
+                World world = java.util.Objects.requireNonNull(Bukkit.getWorld("cv_sky"));
+                world.setAutoSave(false);
+                world.save(true);
+                try { done(id, "BASELINE_WORLD_SAVE_FLUSH_RETURNED"); }
+                catch (IOException failure) { throw new IllegalStateException("Không ghi được marker baseline flush", failure); }
+            });
             case "RECOVERY_GRANT", "RECOVERY_REVOKE" -> Bukkit.getGlobalRegionScheduler().execute(this, () -> {
                 String operation = action.equals("RECOVERY_GRANT") ? "grant" : "revoke";
                 if (!Bukkit.dispatchCommand(Bukkit.getConsoleSender(), "cv recovery " + operation + " " + OWNER + " Controlled isolated Paper recovery validation"))

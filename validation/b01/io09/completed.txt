@@ -1,0 +1,7 @@
+intent HARD_KILL_PASS classification=INCOMPLETE journal=1 audit=0 other_contract_unfenced=true action=OBSERVE world=AIR
+applied0 HARD_KILL_PASS classification=MISMATCH journal=1 audit=1 other_contract_unfenced=true action=OBSERVE world=AIR
+applied1 HARD_KILL_PASS classification=CONFIRMED journal=1 audit=1 other_contract_unfenced=true action=OBSERVE world=COBBLESTONE
+sequence0 HARD_KILL_PASS classification=MISMATCH journal=3 audit=3 other_contract_unfenced=true action=OBSERVE world=AIR
+sequence1 HARD_KILL_PASS classification=CONFIRMED journal=3 audit=3 other_contract_unfenced=true action=OBSERVE world=COBBLESTONE
+savecallback HARD_KILL_PASS classification=MISMATCH journal=1 audit=1 other_contract_unfenced=true action=OBSERVE world=AIR
+missingproof HARD_KILL_PASS classification=UNRECOVERABLE journal=1 audit=1 other_contract_unfenced=true action=OBSERVE world=COBBLESTONE

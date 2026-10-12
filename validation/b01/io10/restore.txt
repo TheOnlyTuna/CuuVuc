@@ -1,0 +1,4 @@
+RESTORE_COMPLETE files=347 database=cv_b01_io10_payloadbefore server=D:\CuuVucCore\CuuVuc-GitHub\run-b01-io10-payloadbefore
+RESTORE_COMPLETE files=347 database=cv_b01_io10_payloadafter server=D:\CuuVucCore\CuuVuc-GitHub\run-b01-io10-payloadafter
+RESTORE_COMPLETE files=347 database=cv_b01_io10_headerbefore server=D:\CuuVucCore\CuuVuc-GitHub\run-b01-io10-headerbefore
+RESTORE_COMPLETE files=347 database=cv_b01_io10_headerafter server=D:\CuuVucCore\CuuVuc-GitHub\run-b01-io10-headerafter

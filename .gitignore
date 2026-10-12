@@ -1,4 +1,5 @@
 /target/
+/validation/b01/io-agent/target/
 /.tools/
 /run/
 /run-v051/

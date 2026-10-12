@@ -1,0 +1,9 @@
+
+Algorithm : SHA256
+Hash      : 48D782EED680FB6C860B3F5B3925D04B206EA1EC2C6E7D49D807871B1B5E54B7
+Path      : D:\CuuVucCore\CuuVuc-GitHub\backups\b01-io11-payloadbefore-killed\r.0.0.mca
+
+Algorithm : SHA256
+Hash      : D8889663292060788400D2847A1F35721F092202A4FD8EAACFF8AC1505A5CEFC
+Path      : D:\CuuVucCore\CuuVuc-GitHub\backups\b01-io11-payloadbefore-killed\database.dump
+
