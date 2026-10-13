@@ -1,0 +1,1 @@
+Review fbb8e789-a617-49e9-92c6-4e683b1cf58c: chỉ quan sát, fence vẫn giữ. Đọc hồ sơ trước khi hold/resolve với lý do. Hồ sơ: plugins\CuuVucCore\recovery\reviews\fbb8e789-a617-49e9-92c6-4e683b1cf58c-db36b57b-70e9-4158-b3dc-844ab98ea1b0.txt

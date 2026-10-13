@@ -30,7 +30,7 @@ public interface RecoveryStore {
         try (Statement statement = connection.createStatement()) { statement.execute("SELECT pg_advisory_xact_lock(5080510)"); }
     }
 
-    private static void requireAuthority(Connection connection, UUID actor) throws SQLException {
+    static void requireAuthority(Connection connection, UUID actor) throws SQLException {
         lockAuthority(connection);
         try (PreparedStatement statement = connection.prepareStatement("SELECT 1 FROM recovery_authorities WHERE player_id=? AND enabled")) {
             statement.setObject(1, actor);
@@ -89,7 +89,7 @@ public interface RecoveryStore {
 
     record Stored(UUID contract, String evidence, String world, boolean fresh) { }
 
-    private static Stored stored(Connection connection, UUID actor, UUID review) throws SQLException {
+    static Stored stored(Connection connection, UUID actor, UUID review) throws SQLException {
         requireAuthority(connection, actor);
         try (PreparedStatement statement = connection.prepareStatement("SELECT contract_id,evidence,world_observation,created_at > clock_timestamp()-interval '10 minutes' FROM recovery_reviews WHERE review_id=? AND actor_id=?")) {
             statement.setObject(1, review); statement.setObject(2, actor);
@@ -139,6 +139,12 @@ public interface RecoveryStore {
             throw new IllegalArgumentException("Review hết hạn hoặc DB/quyền/fence đã thay đổi; tạo review mới.");
         String checkedWorld = decision == RecoveryResolution.Decision.KEEP_LOCKED ? stored.world() : RecoveryResolution.worldText(world);
         if (decision == RecoveryResolution.Decision.RESOLVE_INTENTS_AND_REOPEN) {
+            try (PreparedStatement statement = connection.prepareStatement("SELECT 1 FROM unrecoverable_cases c LEFT JOIN unrecoverable_decisions d USING(case_id) WHERE c.contract_id=? AND (d.case_id IS NULL OR d.outcome='APPROVED') LIMIT 1")) {
+                statement.setObject(1, stored.contract());
+                try (ResultSet rows = statement.executeQuery()) {
+                    if (rows.next()) throw new IllegalArgumentException("Hồ sơ UNRECOVERABLE giữ vùng cách ly; resolve không được vượt quyết định này.");
+                }
+            }
             if (!stored.world().equals(checkedWorld)) throw new IllegalArgumentException("World đã thay đổi sau review; giữ fence và tạo review mới.");
             RecoveryResolution.requireReopenable(current, world);
             try (PreparedStatement statement = connection.prepareStatement("SELECT 1 FROM contract_recovery_fences WHERE contract_id=? AND reason LIKE 'legacy pending%' UNION ALL SELECT 1 FROM building_history h WHERE h.contract_id=? AND h.event_type IN ('PLACE','BREAK') AND NOT EXISTS(SELECT 1 FROM contract_block_journal j WHERE j.audit_event_id=h.event_id AND j.state='APPLIED') LIMIT 1")) {

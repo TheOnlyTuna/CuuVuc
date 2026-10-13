@@ -869,6 +869,60 @@ public final class GameDatabase implements AutoCloseable {
         return retry("recovery_report:" + review, connection -> RecoveryStore.report(connection, actor, review));
     }
 
+    public String proposeUnrecoverable(UnrecoverableResolution.Proposal proposal) throws SQLException {
+        return retry("unrecoverable_proposal:" + proposal.id(), connection -> UnrecoverableStore.propose(connection, proposal));
+    }
+
+    public UnrecoverableResolution.Case unrecoverableCase(UUID actor, UUID incident) throws SQLException {
+        return retry("unrecoverable_case:" + incident, connection -> UnrecoverableStore.incident(connection, actor, incident));
+    }
+
+    public String unrecoverableReport(UUID actor, UUID incident) throws SQLException {
+        return retry("unrecoverable_report:" + incident, connection -> UnrecoverableStore.report(connection, actor, incident));
+    }
+
+    /** Quyết định và mọi bút toán cùng transaction; replay kiểm lại người/lý do, không sửa proof block. */
+    public String approveUnrecoverable(UUID actor, UUID incident, String reason, List<RecoveryResolution.Observation> world) throws SQLException {
+        return retry("unrecoverable_approval:" + incident, connection -> {
+            if (UnrecoverableStore.committed(connection, actor, incident, UnrecoverableResolution.Outcome.APPROVED, reason)) {
+                try (PreparedStatement statement = connection.prepareStatement("SELECT result FROM operations WHERE request_id=? AND actor_id=? AND fingerprint=? AND result<>'pending'")) {
+                    statement.setObject(1, UnrecoverableResolution.request(incident)); statement.setObject(2, actor); statement.setString(3, "recovery:unrecoverable:approve:" + incident);
+                    try (ResultSet rows = statement.executeQuery()) { if (!rows.next()) throw new SQLException("Quyết định thiếu receipt hành chính; giữ cách ly: " + incident, "55000"); return rows.getString(1); }
+                }
+            }
+            Contracts.Job job = UnrecoverableStore.requireApproval(connection, actor, incident, world);
+            UnrecoverableResolution.Case data = UnrecoverableStore.incident(connection, actor, incident);
+            UUID request = UnrecoverableResolution.request(incident);
+            return recordOperation(connection, request, actor, "recovery:unrecoverable:approve:" + incident, work -> {
+                if (data.plan() == UnrecoverableResolution.Plan.SETTLE_HELD_ESCROW) settleUnrecoverable(work, job, request, actor, data.compensation());
+                return UnrecoverableStore.decide(work, actor, incident, UnrecoverableResolution.Outcome.APPROVED, reason, world, job);
+            });
+        });
+    }
+
+    public String rejectUnrecoverable(UUID actor, UUID incident, String reason, List<RecoveryResolution.Observation> world) throws SQLException {
+        return retry("unrecoverable_rejection:" + incident, connection -> {
+            if (UnrecoverableStore.committed(connection, actor, incident, UnrecoverableResolution.Outcome.REJECTED, reason)) return "Quyết định REJECTED đã commit: " + incident;
+            UnrecoverableResolution.Case data = UnrecoverableStore.incident(connection, actor, incident);
+            Contracts.Job job = lockContractRecord(connection, data.contract());
+            UnrecoverableStore.lockParticipants(connection, job);
+            return UnrecoverableStore.decide(connection, actor, incident, UnrecoverableResolution.Outcome.REJECTED, reason, world, job);
+        });
+    }
+
+    private static void settleUnrecoverable(Connection connection, Contracts.Job job, UUID request, UUID actor, long compensation) throws SQLException {
+        if (job.projectStage().isPresent()) Projects.refund(connection, request, actor, job.projectStage().orElseThrow(), job.id());
+        settleEscrow(connection, job, request, "RECOVERY_SETTLEMENT");
+        WalletLedger.Account funding = job.fundingSect().map(id -> new WalletLedger.Account(WalletLedger.Type.SECT, id))
+                .orElse(new WalletLedger.Account(WalletLedger.Type.PLAYER, job.owner()));
+        long returned = job.reward() - compensation;
+        if (returned > 0) WalletLedger.change(connection, request, funding, returned, "RECOVERY_RETURN:" + job.id());
+        if (compensation > 0) WalletLedger.change(connection, request, new WalletLedger.Account(WalletLedger.Type.PLAYER, job.builder().orElseThrow()), compensation, "RECOVERY_COMPENSATION_NOT_WORK_PAYMENT:" + job.id());
+        if (job.fundingSect().isPresent()) Sects.event(connection, request, job.fundingSect().orElseThrow(), actor, job.owner(), "CONTRACT_REFUND", "Phân bổ hành chính UNRECOVERABLE: hoàn " + returned + "; bồi thường " + compensation + "; không xác nhận thi công: " + job.id());
+        contractStatus(connection, job.id(), Contracts.Status.CANCELLED);
+        contractEvent(connection, job.id(), actor, "CANCEL", "UNRECOVERABLE: phân bổ escrow được phê duyệt; hoàn " + returned + ", bồi thường " + compensation + "; giữ world/journal/fence, không nghiệm thu.");
+    }
+
     public Optional<String> recoveryDecision(UUID actor, UUID review, RecoveryResolution.Decision decision, String reason) throws SQLException {
         return retry("recovery_decision:" + review, connection -> RecoveryStore.committedDecision(connection, actor, review, decision, reason));
     }

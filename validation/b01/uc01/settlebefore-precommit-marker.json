@@ -1,0 +1,1 @@
+{"backend_pid" : 39560, "wait" : "PgSleep", "query" : "INSERT INTO unrecoverable_decisions(case_id,actor_id,outcome,reason,checked_world,assets_after,request_id,authority_revision) SELECT $1,$2,$3,$4,$5,$6,$7,revision FROM recovery_authorities WHERE player_id=$8 AND enabled"}

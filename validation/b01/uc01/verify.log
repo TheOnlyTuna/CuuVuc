@@ -1,0 +1,4 @@
+holdbefore UNRECOVERABLE_EVIDENCE_PASS tables=39 money=4 resources_conserved=true original_receipt_absent=true audit_unchanged=true scoped_fence=true replay_once=true
+holdafter UNRECOVERABLE_EVIDENCE_PASS tables=39 money=4 resources_conserved=true original_receipt_absent=true audit_unchanged=true scoped_fence=true replay_once=true
+settlebefore UNRECOVERABLE_EVIDENCE_PASS tables=39 money=4 resources_conserved=true original_receipt_absent=true audit_unchanged=true scoped_fence=true replay_once=true
+settleafter UNRECOVERABLE_EVIDENCE_PASS tables=39 money=4 resources_conserved=true original_receipt_absent=true audit_unchanged=true scoped_fence=true replay_once=true

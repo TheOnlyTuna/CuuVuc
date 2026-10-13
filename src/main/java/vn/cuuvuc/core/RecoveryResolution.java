@@ -28,11 +28,7 @@ public interface RecoveryResolution {
 
     /** Chỉ kết thúc ý định chưa chứng minh khi world còn trạng thái trước; giữ nguyên mọi proof đã commit. */
     static void requireReopenable(Evidence evidence, List<Observation> world) {
-        Map<String, String> cells = world.stream().collect(Collectors.toUnmodifiableMap(Observation::position, Observation::material));
-        List<String> expectedCells = evidence.job().template().cells(evidence.job().slot()).stream()
-                .map(cell -> cell.x() + ":" + cell.y() + ":" + cell.z()).toList();
-        if (cells.size() != expectedCells.size() || !cells.keySet().containsAll(expectedCells))
-            throw new IllegalArgumentException("Quan sát world không đủ đúng các ô template.");
+        Map<String, String> cells = observedCells(evidence, world);
         for (BlockJournal.Recorded row : evidence.journal()) {
             BlockJournal.Entry entry = row.entry();
             if ((entry.state() == BlockJournal.State.APPLIED || entry.state() == BlockJournal.State.REVIEWED_UNCONFIRMED) && !row.proof())
@@ -47,5 +43,12 @@ public interface RecoveryResolution {
         }
         if (evidence.journal().isEmpty() && evidence.audit().isEmpty())
             throw new IllegalArgumentException("Không có bằng chứng journal/audit; cần quy trình thủ công, không tự mở fence.");
+    }
+
+    static Map<String, String> observedCells(Evidence evidence, List<Observation> world) {
+        Map<String, String> cells = world.stream().collect(Collectors.toUnmodifiableMap(Observation::position, Observation::material));
+        List<String> expected = evidence.job().template().cells(evidence.job().slot()).stream().map(cell -> cell.x() + ":" + cell.y() + ":" + cell.z()).toList();
+        if (cells.size() != expected.size() || !cells.keySet().containsAll(expected)) throw new IllegalArgumentException("Quan sát world không đủ đúng các ô template.");
+        return cells;
     }
 }

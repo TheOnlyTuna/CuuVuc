@@ -1,0 +1,1 @@
+Hồ sơ ad30041f-7102-4500-a099-4e2fd2e8f869 / SETTLE_HELD_ESCROW; bồi thường 1 LT từ escrow. Chưa chuyển tài sản; cần người khác phê duyệt, fence giữ nguyên. Hồ sơ: plugins\CuuVucCore\recovery\cases\ad30041f-7102-4500-a099-4e2fd2e8f869-fcca4e9f-b8ef-4323-a6af-09d221d01c23.txt

@@ -37,7 +37,7 @@ public final class RecoveryCommands {
 
     public void command(Player player, String[] arguments) {
         if (!player.hasPermission("cuuvuc.recovery")) throw new IllegalArgumentException("Cần quyền cuuvuc.recovery và quyền phục hồi PostgreSQL.");
-        if (arguments.length < 3) throw new IllegalArgumentException("/cv recovery review <contract> | show <review> | hold/resolve <review> <lý do 8..500 ký tự>");
+        if (arguments.length < 3) throw new IllegalArgumentException("/cv recovery review <contract> | show <review> | hold/resolve <review> <lý do> | incident-hold/incident-settle <review> | case/approve-case/reject-case <case>");
         UUID actor = player.getUniqueId(); UUID reference = UUID.fromString(arguments[2]);
         switch (arguments[1]) {
             case "review" -> {
@@ -56,13 +56,61 @@ public final class RecoveryCommands {
                 String reason = reason(arguments);
                 tasks.submit(player, UUID.randomUUID(), () -> resolve(actor, reference, reason));
             }
+            case "incident-hold" -> {
+                String reason = reason(arguments);
+                tasks.submit(player, UUID.randomUUID(), () -> proposeIncident(actor, reference, UnrecoverableResolution.Plan.KEEP_QUARANTINED, 0, reason));
+            }
+            case "incident-settle" -> {
+                if (arguments.length < 5) throw new IllegalArgumentException("/cv recovery incident-settle <review UUID> <bồi thường LT từ escrow, 0..1000> <lý do>");
+                long compensation = Long.parseLong(arguments[3]);
+                String reason = reasonFrom(arguments, 4);
+                tasks.submit(player, UUID.randomUUID(), () -> proposeIncident(actor, reference, UnrecoverableResolution.Plan.SETTLE_HELD_ESCROW, compensation, reason));
+            }
+            case "case" -> {
+                if (arguments.length != 3) throw new IllegalArgumentException("/cv recovery case <case UUID>");
+                tasks.submit(player, UUID.randomUUID(), () -> exportIncident(actor, reference));
+            }
+            case "approve-case" -> {
+                String reason = reason(arguments);
+                tasks.submit(player, UUID.randomUUID(), () -> approveIncident(actor, reference, reason));
+            }
+            case "reject-case" -> {
+                String reason = reason(arguments);
+                tasks.submit(player, UUID.randomUUID(), () -> rejectIncident(actor, reference, reason));
+            }
             default -> throw new IllegalArgumentException("Thao tác phục hồi không hợp lệ: " + arguments[1]);
         }
     }
 
     private static String reason(String[] arguments) {
-        String reason = String.join(" ", Arrays.copyOfRange(arguments, 3, arguments.length));
+        return reasonFrom(arguments, 3);
+    }
+
+    private static String reasonFrom(String[] arguments, int first) {
+        String reason = String.join(" ", Arrays.copyOfRange(arguments, first, arguments.length));
         RecoveryResolution.requireReason(reason); return reason;
+    }
+
+    private String proposeIncident(UUID actor, UUID review, UnrecoverableResolution.Plan plan, long compensation, String reason) throws SQLException {
+        UUID incident = UUID.randomUUID();
+        String result = database.proposeUnrecoverable(new UnrecoverableResolution.Proposal(incident, actor, review, plan, compensation, reason));
+        return result + " " + exportIncident(actor, incident);
+    }
+
+    private String approveIncident(UUID actor, UUID incident, String reason) throws SQLException {
+        UnrecoverableResolution.Case data = database.unrecoverableCase(actor, incident);
+        contracts.requireRecoveryQuiescent(data.contract());
+        Contracts.Job job = database.contractBoard().jobs().stream().filter(value -> value.id().equals(data.contract())).findFirst().orElseThrow();
+        String result = database.approveUnrecoverable(actor, incident, reason, observe(job));
+        contracts.publish(database.contractBoard());
+        return result + " " + exportIncident(actor, incident);
+    }
+
+    private String rejectIncident(UUID actor, UUID incident, String reason) throws SQLException {
+        UnrecoverableResolution.Case data = database.unrecoverableCase(actor, incident);
+        contracts.requireRecoveryQuiescent(data.contract());
+        Contracts.Job job = database.contractBoard().jobs().stream().filter(value -> value.id().equals(data.contract())).findFirst().orElseThrow();
+        return database.rejectUnrecoverable(actor, incident, reason, observe(job)) + " " + exportIncident(actor, incident);
     }
 
     private String review(UUID actor, UUID contract) throws SQLException {
@@ -101,8 +149,15 @@ public final class RecoveryCommands {
 
     private String export(UUID actor, UUID review) throws SQLException {
         String report = database.recoveryReport(actor, review);
-        Path directory = plugin.getDataFolder().toPath().resolve("recovery/reviews");
-        Path path = directory.resolve(review + "-" + UUID.randomUUID() + ".txt");
+        return writeReport(actor, review, report, plugin.getDataFolder().toPath().resolve("recovery/reviews"));
+    }
+
+    private String exportIncident(UUID actor, UUID incident) throws SQLException {
+        return writeReport(actor, incident, database.unrecoverableReport(actor, incident), plugin.getDataFolder().toPath().resolve("recovery/cases"));
+    }
+
+    private String writeReport(UUID actor, UUID reference, String report, Path directory) throws SQLException {
+        Path path = directory.resolve(reference + "-" + UUID.randomUUID() + ".txt");
         try {
             Files.createDirectories(directory);
             try (FileChannel channel = FileChannel.open(path, StandardOpenOption.CREATE_NEW, StandardOpenOption.WRITE)) {
@@ -110,8 +165,8 @@ public final class RecoveryCommands {
                 while (bytes.hasRemaining()) channel.write(bytes);
                 channel.force(true);
             }
-        } catch (IOException failure) { throw new SQLException("Review vẫn lưu trong DB; không ghi được hồ sơ tại " + path + ". Dùng show để xuất lại.", "58030", failure); }
-        plugin.getSLF4JLogger().atInfo().addKeyValue("actor", actor).addKeyValue("review", review).addKeyValue("report", path).log("recovery_review_exported");
+        } catch (IOException failure) { throw new SQLException("Hồ sơ vẫn lưu trong DB; không ghi được file tại " + path + ". Dùng show/case để xuất lại.", "58030", failure); }
+        plugin.getSLF4JLogger().atInfo().addKeyValue("actor", actor).addKeyValue("reference", reference).addKeyValue("report", path).log("recovery_evidence_exported");
         return "Hồ sơ: " + path;
     }
 }

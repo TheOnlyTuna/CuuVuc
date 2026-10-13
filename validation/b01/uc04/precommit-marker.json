@@ -1,0 +1,1 @@
+{"pid" : 19396, "query" : "DELETE FROM contract_recovery_fences WHERE contract_id=$1", "wait_event" : "PgSleep"}

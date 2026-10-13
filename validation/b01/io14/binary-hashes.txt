@@ -1,0 +1,25 @@
+
+Algorithm : SHA256
+Hash      : A54A30F01407D3D46B64837C35D841C310A62D0B6299E7B53D76E858B23B5991
+Path      : D:\CuuVucCore\CuuVuc-GitHub\target\CuuVucCore-0.8.0-SNAPSHOT.jar
+
+Algorithm : SHA256
+Hash      : B19448E987F57D37DF6A6D9CC007B1DDF1E39C8F78296674486E0E7B3D14F290
+Path      : D:\CuuVucCore\CuuVuc-GitHub\target\CrashProbe-io.jar
+
+Algorithm : SHA256
+Hash      : E50F751E664E046E669C6231E0B28E90438FA6CF24F9445340F6A9DECBDD6336
+Path      : D:\CuuVucCore\CuuVuc-GitHub\validation\b01\io-agent\target\b01-io-agent-1.0.jar
+
+Algorithm : SHA256
+Hash      : 5455792E3268C5799E03D12E5065D9D0326B422D5EF30070132C0F0165C82991
+Path      : D:\CuuVucCore\CuuVuc-GitHub\validation\b01\io-agent\target\b01-io-agent-1.0-hooks.jar
+
+Algorithm : SHA256
+Hash      : DBAAE37E10E30E44AD1FF65CF00992240C3E79D33E150F9C4E833ED0338E8CCD
+Path      : D:\CuuVucCore\CuuVuc-GitHub\run-b01-io14-headerafter\paper.jar
+
+Algorithm : SHA256
+Hash      : 5399DE460A5FE59683202545C1E4C75ACC3FDC491CD803AF1829B652A7E80231
+Path      : D:\CuuVucCore\CuuVuc-GitHub\run-b01-io14-headerafter\versions\26.3\paper-26.3.jar
+

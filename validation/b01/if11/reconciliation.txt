@@ -1,0 +1,8 @@
+beforeplace INTERFERENCE_PASS state=ABORTED proofs=0 fences=0 world=AIR tables=39 assets_unchanged=true startup_unchanged=true
+beforebreak INTERFERENCE_PASS state=INTENT proofs=0 fences=1 world=STONE tables=39 assets_unchanged=true startup_unchanged=true
+afterplace INTERFERENCE_PASS state=INTENT proofs=0 fences=1 world=STONE tables=39 assets_unchanged=true startup_unchanged=true
+afterbreak INTERFERENCE_PASS state=INTENT proofs=0 fences=1 world=STONE tables=39 assets_unchanged=true startup_unchanged=true
+preplace INTERFERENCE_PASS state=INTENT proofs=0 fences=1 world=STONE tables=39 assets_unchanged=true startup_unchanged=true
+prebreak INTERFERENCE_PASS state=INTENT proofs=0 fences=1 world=STONE tables=39 assets_unchanged=true startup_unchanged=true
+controlplace INTERFERENCE_PASS state=APPLIED proofs=1 fences=0 world=COBBLESTONE tables=39 assets_unchanged=true startup_unchanged=true
+controlbreak INTERFERENCE_PASS state=APPLIED proofs=1 fences=0 world=AIR tables=39 assets_unchanged=true startup_unchanged=true

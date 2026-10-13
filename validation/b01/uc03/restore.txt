@@ -1,0 +1,7 @@
+RESTORE_COMPLETE files=347 database=cv_b01_uc03_intent server=D:\CuuVucCore\CuuVuc-GitHub\run-b01-uc03-intent
+RESTORE_COMPLETE files=347 database=cv_b01_uc03_applied0 server=D:\CuuVucCore\CuuVuc-GitHub\run-b01-uc03-applied0
+RESTORE_COMPLETE files=347 database=cv_b01_uc03_applied1 server=D:\CuuVucCore\CuuVuc-GitHub\run-b01-uc03-applied1
+RESTORE_COMPLETE files=347 database=cv_b01_uc03_sequence0 server=D:\CuuVucCore\CuuVuc-GitHub\run-b01-uc03-sequence0
+RESTORE_COMPLETE files=347 database=cv_b01_uc03_sequence1 server=D:\CuuVucCore\CuuVuc-GitHub\run-b01-uc03-sequence1
+RESTORE_COMPLETE files=347 database=cv_b01_uc03_savecallback server=D:\CuuVucCore\CuuVuc-GitHub\run-b01-uc03-savecallback
+RESTORE_COMPLETE files=347 database=cv_b01_uc03_missingproof server=D:\CuuVucCore\CuuVuc-GitHub\run-b01-uc03-missingproof

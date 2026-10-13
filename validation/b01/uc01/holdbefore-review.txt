@@ -1,0 +1,1 @@
+Review 72ae4dbb-3969-44ec-b619-af3b38117059: chỉ quan sát, fence vẫn giữ. Đọc hồ sơ trước khi hold/resolve với lý do. Hồ sơ: plugins\CuuVucCore\recovery\reviews\72ae4dbb-3969-44ec-b619-af3b38117059-67f3fcb5-36c5-44b2-b872-f13d596d09ff.txt

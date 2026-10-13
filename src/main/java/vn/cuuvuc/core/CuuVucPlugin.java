@@ -140,6 +140,7 @@ public final class CuuVucPlugin extends JavaPlugin implements Listener {
         if (arguments.length == 0) { menu.request(player); return true; }
         if (arguments[0].equals("help")) {
             player.sendPlainMessage("/cv recovery review <contract> | show <review> | hold/resolve <review> <lý do> (quản trị phục hồi)");
+            player.sendPlainMessage("UNRECOVERABLE: incident-hold <review> <lý do> | incident-settle <review> <LT bồi thường từ escrow> <lý do>; người khác dùng case/approve-case/reject-case <case>.");
             player.sendPlainMessage("/cv treasury | contribute/withdraw/hire <số> | grant/revoke <UUID> (dùng /cv treasury)");
             player.sendPlainMessage("/cv sect | sect create <tên> | invite/kick <UUID> | accept/cancel <UUID-lời-mời> | role <UUID> <ELDER/MEMBER> | leave (các thao tác dùng /cv sect)");
             player.sendPlainMessage("/cv menu | prison | home | visit/invite/revoke <UUID> | start | profile | kho | catalog | craft <recipe> <1..1000> | buy/sell <resource> <1..1000> | pay <UUID> <1..1000> | transfer <UUID> <resource> <1..1000> | materials | ledger | receipt <UUID> | economy (OP)");

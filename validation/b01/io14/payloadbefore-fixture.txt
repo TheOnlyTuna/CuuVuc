@@ -1,0 +1,1 @@
+INJECTED_JOURNAL_APPLIED event=b346fa70-fbc8-4d1c-aaa5-a6c44a5a12da

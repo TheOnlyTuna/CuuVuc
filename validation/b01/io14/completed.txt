@@ -1,0 +1,4 @@
+payloadbefore HARD_KILL_PASS phase=PAYLOAD_BEFORE_WRITE classification=MISMATCH other_contract_unfenced=true action=OBSERVE world=AIR
+payloadafter HARD_KILL_PASS phase=PAYLOAD_AFTER_WRITE classification=MISMATCH other_contract_unfenced=true action=OBSERVE world=AIR
+headerbefore HARD_KILL_PASS phase=HEADER_BEFORE_WRITE classification=MISMATCH other_contract_unfenced=true action=OBSERVE world=AIR
+headerafter HARD_KILL_PASS phase=HEADER_AFTER_WRITE classification=CONFIRMED other_contract_unfenced=true action=OBSERVE world=COBBLESTONE

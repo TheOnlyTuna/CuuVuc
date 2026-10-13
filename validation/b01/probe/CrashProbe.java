@@ -14,6 +14,7 @@ import vn.cuuvuc.core.BlockJournal;
 import vn.cuuvuc.core.ContractWorld;
 import vn.cuuvuc.core.GameDatabase;
 import vn.cuuvuc.core.RecoveryCommands;
+import vn.cuuvuc.core.UnrecoverableResolution;
 
 import java.io.IOException;
 import java.lang.reflect.Field;
@@ -34,6 +35,7 @@ public final class CrashProbe extends JavaPlugin implements Listener {
     private static final UUID CONTRACT = UUID.fromString("279bbdf9-0fe9-4eec-8bb6-46a9df8c72a3");
     private static final UUID BUILDER = UUID.fromString("3bb5ddbc-5b75-377f-8647-6f25c51f252a");
     private static final UUID OWNER = UUID.fromString("f3d83b55-4452-39bc-85f4-29f8cebdcc4f");
+    private static final UUID APPROVER = UUID.fromString("f648412e-501a-4f44-b7de-05159e3f9cc7");
     private JavaPlugin core;
     private final AtomicBoolean busy = new AtomicBoolean(false);
     private final AtomicBoolean pauseSave = new AtomicBoolean(false);
@@ -68,6 +70,41 @@ public final class CrashProbe extends JavaPlugin implements Listener {
         ContractWorld contracts = (ContractWorld) field("contracts");
         Field refreshing = ContractWorld.class.getDeclaredField("refreshing"); refreshing.setAccessible(true);
         switch (action) {
+            case "UNREC_AUTH" -> {
+                database.register(APPROVER, "B01Approver");
+                database.recoveryAuthority(OWNER, true, "Isolated incident proposer grant");
+                database.recoveryAuthority(APPROVER, true, "Independent isolated incident approver grant");
+                done(id, "TWO_DISTINCT_INCIDENT_AUTHORITIES_GRANTED");
+            }
+            case "UNREC_REVOKE" -> { database.recoveryAuthority(APPROVER, false, "Isolated approval revocation check"); done(id, "APPROVER_REVOKED"); }
+            case "UNREC_REGRANT" -> { database.recoveryAuthority(APPROVER, true, "Independent approver regrant after rejection"); done(id, "APPROVER_REGRANTED"); }
+            case "UNREC_HOLD", "UNREC_SETTLE" -> {
+                UUID review = UUID.fromString(Files.readString(getDataFolder().toPath().resolve("review-id.txt")).strip());
+                RecoveryCommands connector = (RecoveryCommands) field("recoveryCommands");
+                Method method = RecoveryCommands.class.getDeclaredMethod("proposeIncident", UUID.class, UUID.class, UnrecoverableResolution.Plan.class, long.class, String.class); method.setAccessible(true);
+                UnrecoverableResolution.Plan plan = action.equals("UNREC_HOLD") ? UnrecoverableResolution.Plan.KEEP_QUARANTINED : UnrecoverableResolution.Plan.SETTLE_HELD_ESCROW;
+                done(id, (String) method.invoke(connector, OWNER, review, plan, action.equals("UNREC_HOLD") ? 0L : 1L, "Original block receipt cannot be proved; reconcile held escrow and reserve"));
+            }
+            case "UNREC_APPROVE", "UNREC_SELF_DENIED", "UNREC_REVOKED_DENIED" -> {
+                UUID incident = UUID.fromString(Files.readString(getDataFolder().toPath().resolve("case-id.txt")).strip());
+                RecoveryCommands connector = (RecoveryCommands) field("recoveryCommands");
+                Method method = RecoveryCommands.class.getDeclaredMethod("approveIncident", UUID.class, UUID.class, String.class); method.setAccessible(true);
+                UUID actor = action.equals("UNREC_SELF_DENIED") ? OWNER : APPROVER;
+                try {
+                    String result = (String) method.invoke(connector, actor, incident, "Independent approval of immutable case and verified asset disposition");
+                    if (!action.equals("UNREC_APPROVE")) throw new IllegalStateException("Lẽ ra phải từ chối phê duyệt hồ sơ");
+                    done(id, result);
+                } catch (InvocationTargetException failure) {
+                    if (action.equals("UNREC_APPROVE") || !(failure.getCause() instanceof IllegalArgumentException)) throw failure;
+                    done(id, "INCIDENT_APPROVAL_REJECTED " + failure.getCause().getMessage());
+                }
+            }
+            case "UNREC_SHOW" -> {
+                UUID incident = UUID.fromString(Files.readString(getDataFolder().toPath().resolve("case-id.txt")).strip());
+                RecoveryCommands connector = (RecoveryCommands) field("recoveryCommands");
+                Method method = RecoveryCommands.class.getDeclaredMethod("exportIncident", UUID.class, UUID.class); method.setAccessible(true);
+                done(id, (String) method.invoke(connector, APPROVER, incident));
+            }
             case "BASELINE_FLUSH" -> Bukkit.getGlobalRegionScheduler().execute(this, () -> {
                 World world = java.util.Objects.requireNonNull(Bukkit.getWorld("cv_sky"));
                 world.setAutoSave(false);

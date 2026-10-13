@@ -1,0 +1,15 @@
+ fsync 
+-------
+ on
+(1 row)
+
+ full_page_writes 
+------------------
+ on
+(1 row)
+
+ synchronous_commit 
+--------------------
+ on
+(1 row)
+

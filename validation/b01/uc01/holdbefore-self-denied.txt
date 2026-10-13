@@ -1,0 +1,1 @@
+INCIDENT_APPROVAL_REJECTED Người lập hồ sơ không được tự phê duyệt hoặc từ chối hồ sơ của mình.

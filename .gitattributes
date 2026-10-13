@@ -2,3 +2,10 @@
 *.cmd text eol=crlf
 *.jar binary
 *.zip binary
+/validation/b01/uc01/** -text
+/validation/b01/uc02/** -text
+/validation/b01/uc03/** -text
+/validation/b01/uc04/** -text
+/validation/b01/io14/** -text
+/validation/b01/if11/** -text
+/validation/b01/unrecoverable-environment/** -text

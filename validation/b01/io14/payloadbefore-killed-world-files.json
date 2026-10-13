@@ -1,0 +1,22 @@
+[
+  {
+    "path": "world\\dimensions\\minecraft\\cv_sky\\region\\r.-1.-1.mca",
+    "length": 1114112,
+    "sha256": "C473FB648124ACEBACE074C00838A10FACA3A917CC0924DDBC5C4EF72DFED793"
+  },
+  {
+    "path": "world\\dimensions\\minecraft\\cv_sky\\region\\r.-1.0.mca",
+    "length": 1179648,
+    "sha256": "D4281E50A512C5BADE829AE3CA1E741C13619856C3150BECCCF6ECDE2763D936"
+  },
+  {
+    "path": "world\\dimensions\\minecraft\\cv_sky\\region\\r.0.-1.mca",
+    "length": 1544192,
+    "sha256": "2358F6BAA00667573EF31D009B2FF52708C556D52BDD115129F226C84EBFF17A"
+  },
+  {
+    "path": "world\\dimensions\\minecraft\\cv_sky\\region\\r.0.0.mca",
+    "length": 1634304,
+    "sha256": "7806E380E38FF4E983AF205D75976369580326F23E099BDBEA91ED722CEC50A6"
+  }
+]

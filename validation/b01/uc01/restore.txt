@@ -1,0 +1,4 @@
+RESTORE_COMPLETE files=347 database=cv_b01_uc01_holdbefore server=D:\CuuVucCore\CuuVuc-GitHub\run-b01-uc01-holdbefore
+RESTORE_COMPLETE files=347 database=cv_b01_uc01_holdafter server=D:\CuuVucCore\CuuVuc-GitHub\run-b01-uc01-holdafter
+RESTORE_COMPLETE files=347 database=cv_b01_uc01_settlebefore server=D:\CuuVucCore\CuuVuc-GitHub\run-b01-uc01-settlebefore
+RESTORE_COMPLETE files=347 database=cv_b01_uc01_settleafter server=D:\CuuVucCore\CuuVuc-GitHub\run-b01-uc01-settleafter

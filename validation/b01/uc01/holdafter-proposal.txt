@@ -1,0 +1,1 @@
+Hồ sơ 807b7eed-e5c8-4dcc-969a-973d641cbab4 / KEEP_QUARANTINED; bồi thường 0 LT từ escrow. Chưa chuyển tài sản; cần người khác phê duyệt, fence giữ nguyên. Hồ sơ: plugins\CuuVucCore\recovery\cases\807b7eed-e5c8-4dcc-969a-973d641cbab4-3530860a-f525-4604-afbd-8099395c8b84.txt

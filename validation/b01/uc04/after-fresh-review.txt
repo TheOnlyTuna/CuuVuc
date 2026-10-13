@@ -1,0 +1,1 @@
+Review b5be4f06-3c69-4c76-ad99-8ec8f8060a44: chỉ quan sát, fence vẫn giữ. Đọc hồ sơ trước khi hold/resolve với lý do. Hồ sơ: plugins\CuuVucCore\recovery\reviews\b5be4f06-3c69-4c76-ad99-8ec8f8060a44-3c520e3a-108a-4289-9bdc-41fa59a17416.txt

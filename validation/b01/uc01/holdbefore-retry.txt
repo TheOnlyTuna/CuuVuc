@@ -1,0 +1,2 @@
+Đã ghi quyết định APPROVED cho hồ sơ 022e7fe6-7447-4f2c-b7b9-7ec49429ffbf. World/journal/fence giữ nguyên; đây không phải nghiệm thu công trình.
+Mã giao dịch: bb14a5b9-4122-3f1d-bc20-8d7334fc23fb Hồ sơ: plugins\CuuVucCore\recovery\cases\022e7fe6-7447-4f2c-b7b9-7ec49429ffbf-465c3731-49e3-4a76-8167-fbf5d25fe768.txt
