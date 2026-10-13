@@ -1,9 +1,11 @@
 package vn.cuuvuc.core;
 
+import java.sql.SQLException;
 import java.util.UUID;
 
 /** Ý định không phải sự kiện; APPLIED chỉ được ghi cùng audit sau callback và quan sát tick kế. */
 public interface BlockJournal {
+    @FunctionalInterface interface Observation { String material() throws SQLException; }
     enum State { INTENT, APPLIED, ABORTED, REVIEWED_UNCONFIRMED }
     enum Classification { CONFIRMED, INCOMPLETE, MISMATCH, UNRECOVERABLE }
     record Entry(UUID id, UUID contract, UUID actor, String event, String position, String before, String after, State state) { }

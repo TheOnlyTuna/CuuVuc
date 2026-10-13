@@ -129,7 +129,9 @@ public final class CrashProbe extends JavaPlugin implements Listener {
                 catch (IllegalArgumentException rejected) { if (!rejected.getMessage().contains("RECOVERY_REQUIRED")) throw rejected; }
                 try { database.abandonContract(CONTRACT, BUILDER); throw new IllegalStateException("Fence không chặn ABANDON"); }
                 catch (IllegalArgumentException rejected) { if (!rejected.getMessage().contains("RECOVERY_REQUIRED")) throw rejected; }
-                done(id, "RECOVERY_REQUIRED_SUBMIT_AND_REFUND_BLOCKED");
+                try { database.completeContract(CONTRACT, OWNER); throw new IllegalStateException("Fence không chặn COMPLETE"); }
+                catch (IllegalArgumentException rejected) { if (!rejected.getMessage().contains("RECOVERY_REQUIRED")) throw rejected; }
+                done(id, "RECOVERY_REQUIRED_SUBMIT_REFUND_AND_OWNER_PAYMENT_BLOCKED");
             }
             case "JPLACE", "JBREAK" -> {
                 String event = action.equals("JPLACE") ? "PLACE" : "BREAK";

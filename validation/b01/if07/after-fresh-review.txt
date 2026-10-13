@@ -1,0 +1,1 @@
+Review 0e18b33a-5801-4fbc-a108-9bdc74a6aa5d: chỉ quan sát, fence vẫn giữ. Đọc hồ sơ trước khi hold/resolve với lý do. Hồ sơ: plugins\CuuVucCore\recovery\reviews\0e18b33a-5801-4fbc-a108-9bdc74a6aa5d-097b1c67-f8f0-4551-ad75-81d473255584.txt

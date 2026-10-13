@@ -1,0 +1,3 @@
+utc=2026-10-13T10:27:21.227570100Z pid=30572 phase=PLACE_DISPATCH_RETURNED_CANCELLED_true thread=Server thread position=67:100:5 world=AIR
+utc=2026-10-13T10:27:23.586614500Z pid=30572 phase=BEFORE_PLACE_AUTHORIZATION thread=Server thread position=67:100:5 world=STONE
+utc=2026-10-13T10:27:23.589546900Z pid=30572 phase=PLACE_DISPATCH_RETURNED_CANCELLED_true thread=Server thread position=67:100:5 world=AIR

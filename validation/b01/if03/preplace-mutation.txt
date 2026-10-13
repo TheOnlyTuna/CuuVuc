@@ -1,0 +1,1 @@
+backend_pid=36672 query=UPDATE operations SET result=$1 WHERE request_id=$2 observedUtc=2026-10-13T10:29:41.458763600Z world=STONE

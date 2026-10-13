@@ -1025,6 +1025,32 @@ final class GameDatabaseIT {
         assertEquals(1, database.blockJournal().stream().filter(row -> !row.proof()).count());
     }
 
+    @Test void observedApplyRollsBackJournalAuditAndReceiptWhenWorldCannotBeConfirmed() throws SQLException {
+        UUID owner = UUID.randomUUID(); UUID builder = UUID.randomUUID(); UUID contract = contractFixture(owner, 2);
+        database.register(builder, "Builder"); database.acceptContract(contract, builder);
+        BlockJournal.Entry entry = new BlockJournal.Entry(UUID.randomUUID(), contract, builder, "PLACE", "71:100:7", "AIR", "COBBLESTONE", BlockJournal.State.INTENT);
+        database.prepareBlock(entry);
+        assertTrue(assertThrows(IllegalArgumentException.class, () -> database.applyObservedBlock(entry, () -> "STONE")).getMessage().contains("actual=STONE"));
+        assertThrows(SQLException.class, () -> database.applyObservedBlock(entry, () -> { throw new SQLException("World observation timed out", "57014"); }));
+        assertEquals(BlockJournal.State.INTENT, database.blockJournal().getFirst().entry().state());
+        assertEquals(0, scalar("SELECT count(*) FROM operations WHERE request_id=?", entry.id()));
+        assertEquals(0, number("SELECT count(*) FROM building_history WHERE event_type='PLACE'"));
+        assertEquals(0, balance(builder)); assertEquals(2, number("SELECT sum(balance) FROM contract_escrow_accounts"));
+    }
+
+    @Test void observedApplyCommitsMatchingWorldAndReplayKeepsOneProof() throws SQLException {
+        UUID owner = UUID.randomUUID(); UUID builder = UUID.randomUUID(); UUID contract = contractFixture(owner, 2);
+        database.register(builder, "Builder"); database.acceptContract(contract, builder);
+        BlockJournal.Entry entry = new BlockJournal.Entry(UUID.randomUUID(), contract, builder, "BREAK", "71:100:7", "COBBLESTONE", "AIR", BlockJournal.State.INTENT);
+        database.prepareBlock(entry);
+        String receipt = database.applyObservedBlock(entry, () -> "AIR");
+        assertEquals(receipt, database.applyObservedBlock(entry, () -> "AIR"));
+        assertTrue(database.blockJournal().getFirst().proof());
+        assertEquals(1, scalar("SELECT count(*) FROM operations WHERE request_id=?", entry.id()));
+        assertEquals(1, number("SELECT count(*) FROM building_history WHERE event_type='BREAK'"));
+        assertEquals(0, balance(builder)); assertEquals(2, number("SELECT sum(balance) FROM contract_escrow_accounts"));
+    }
+
     @Test void failedAppliedCommitLeavesOnlyDurableIntentAndCanRetry() throws SQLException {
         UUID owner = UUID.randomUUID(); UUID builder = UUID.randomUUID(); UUID contract = contractFixture(owner, 2);
         database.register(builder, "Builder"); database.acceptContract(contract, builder);

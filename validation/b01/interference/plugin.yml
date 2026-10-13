@@ -1,0 +1,5 @@
+name: InterferenceProbe
+version: '1'
+main: vn.cuuvuc.validation.InterferenceProbe
+api-version: '26.3'
+depend: [CuuVucCore]

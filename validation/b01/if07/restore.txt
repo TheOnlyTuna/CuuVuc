@@ -1,0 +1,2 @@
+RESTORE_COMPLETE files=347 database=cv_b01_if07_before server=D:\CuuVucCore\CuuVuc-GitHub\run-b01-if07-before
+RESTORE_COMPLETE files=347 database=cv_b01_if07_after server=D:\CuuVucCore\CuuVuc-GitHub\run-b01-if07-after

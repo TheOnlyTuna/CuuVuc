@@ -1,0 +1,3 @@
+2fa61260-65dd-47df-ba08-f69d8f7e8f3e|279bbdf9-0fe9-4eec-8bb6-46a9df8c72a3|PLACE|67:100:5|APPLIED|5
+dd71c118-2cad-4ffb-8661-abcfee7b3ad2|279bbdf9-0fe9-4eec-8bb6-46a9df8c72a3|BREAK|67:100:5|APPLIED|6
+72c4b3ff-1f22-4b45-addf-1ff5ffa4c924|279bbdf9-0fe9-4eec-8bb6-46a9df8c72a3|PLACE|67:100:5|APPLIED|7

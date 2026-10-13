@@ -262,28 +262,30 @@ public final class GameDatabase implements AutoCloseable {
     }
 
     private String operation(UUID request, UUID player, String fingerprint, SqlWork<String> work) throws SQLException {
-        return retry(fingerprint + " request=" + request, connection -> {
-            try (PreparedStatement statement = connection.prepareStatement("SELECT pg_advisory_xact_lock(hashtextextended(?,0))")) {
-                statement.setString(1, request.toString()); statement.execute();
-            }
-            try (PreparedStatement statement = connection.prepareStatement("SELECT fingerprint,result FROM operations WHERE request_id=?")) {
-                statement.setObject(1, request);
-                try (ResultSet result = statement.executeQuery()) {
-                    if (result.next()) {
-                        if (!fingerprint.equals(result.getString(1))) throw new IllegalArgumentException("Request ID đã được dùng với nội dung khác: " + request);
-                        return result.getString(2);
-                    }
+        return retry(fingerprint + " request=" + request, connection -> recordOperation(connection, request, player, fingerprint, work));
+    }
+
+    private String recordOperation(Connection connection, UUID request, UUID player, String fingerprint, SqlWork<String> work) throws SQLException {
+        try (PreparedStatement statement = connection.prepareStatement("SELECT pg_advisory_xact_lock(hashtextextended(?,0))")) {
+            statement.setString(1, request.toString()); statement.execute();
+        }
+        try (PreparedStatement statement = connection.prepareStatement("SELECT fingerprint,result FROM operations WHERE request_id=?")) {
+            statement.setObject(1, request);
+            try (ResultSet result = statement.executeQuery()) {
+                if (result.next()) {
+                    if (!fingerprint.equals(result.getString(1))) throw new IllegalArgumentException("Request ID đã được dùng với nội dung khác: " + request);
+                    return result.getString(2);
                 }
             }
-            try (PreparedStatement statement = connection.prepareStatement("INSERT INTO operations(request_id,fingerprint,result,actor_id) VALUES (?,?,'pending',?)")) {
-                statement.setObject(1, request); statement.setString(2, fingerprint); statement.setObject(3, player); statement.executeUpdate();
-            }
-            String result = work.apply(connection) + "\nMã giao dịch: " + request;
-            try (PreparedStatement statement = connection.prepareStatement("UPDATE operations SET result=? WHERE request_id=?")) {
-                statement.setString(1, result); statement.setObject(2, request); statement.executeUpdate();
-            }
-            return result;
-        });
+        }
+        try (PreparedStatement statement = connection.prepareStatement("INSERT INTO operations(request_id,fingerprint,result,actor_id) VALUES (?,?,'pending',?)")) {
+            statement.setObject(1, request); statement.setString(2, fingerprint); statement.setObject(3, player); statement.executeUpdate();
+        }
+        String result = work.apply(connection) + "\nMã giao dịch: " + request;
+        try (PreparedStatement statement = connection.prepareStatement("UPDATE operations SET result=? WHERE request_id=?")) {
+            statement.setString(1, result); statement.setObject(2, request); statement.executeUpdate();
+        }
+        return result;
     }
 
     private <T> T retry(String context, SqlWork<T> work) throws SQLException {
@@ -765,17 +767,34 @@ public final class GameDatabase implements AutoCloseable {
 
     /** Callback không bị hủy và tick sau đúng vật liệu: journal/audit/receipt commit cùng nhau. */
     public String applyBlock(BlockJournal.Entry entry) throws SQLException {
-        return operation(entry.id(), entry.actor(), "contract:block:" + entry.contract() + ":" + entry.actor() + ":" + entry.event() + ":" + entry.position(), connection -> {
-            Contracts.Job job = lockContract(connection, entry.contract());
-            requireContractStatus(connection, job, Contracts.Status.ACTIVE); requireBuilder(job, entry.actor());
-            if (!readJournal(connection, entry.id()).equals(entry)) throw new IllegalArgumentException("Journal không còn là ý định đã chuẩn bị: " + entry.id());
-            long audit = contractEvent(connection, entry.contract(), entry.actor(), entry.event(), entry.position());
-            try (PreparedStatement statement = connection.prepareStatement("UPDATE contract_block_journal SET state='APPLIED',resolved_at=clock_timestamp(),audit_event_id=? WHERE event_id=? AND state='INTENT'")) {
-                statement.setLong(1, audit); statement.setObject(2, entry.id());
-                if (statement.executeUpdate() != 1) throw new SQLException("Không áp dụng journal: " + entry.id(), "55000");
-            }
-            return "Đã xác nhận callback và trạng thái block: " + entry.id();
+        return operation(entry.id(), entry.actor(), blockFingerprint(entry), connection -> applyPreparedBlock(connection, entry));
+    }
+
+    /** Đọc lại world sau mọi SQL ghi receipt, ngay trước commit; lệch vật liệu rollback cả audit và APPLIED. */
+    public String applyObservedBlock(BlockJournal.Entry entry, BlockJournal.Observation observation) throws SQLException {
+        return retry(blockFingerprint(entry) + " request=" + entry.id(), connection -> {
+            String result = recordOperation(connection, entry.id(), entry.actor(), blockFingerprint(entry), work -> applyPreparedBlock(work, entry));
+            String actual = observation.material();
+            if (!entry.after().equals(actual)) throw new IllegalArgumentException("World thay đổi trước commit APPLIED: contract=" + entry.contract()
+                    + " event=" + entry.id() + " position=" + entry.position() + " expected=" + entry.after() + " actual=" + actual);
+            return result;
         });
+    }
+
+    private static String blockFingerprint(BlockJournal.Entry entry) {
+        return "contract:block:" + entry.contract() + ":" + entry.actor() + ":" + entry.event() + ":" + entry.position();
+    }
+
+    private String applyPreparedBlock(Connection connection, BlockJournal.Entry entry) throws SQLException {
+        Contracts.Job job = lockContract(connection, entry.contract());
+        requireContractStatus(connection, job, Contracts.Status.ACTIVE); requireBuilder(job, entry.actor());
+        if (!readJournal(connection, entry.id()).equals(entry)) throw new IllegalArgumentException("Journal không còn là ý định đã chuẩn bị: " + entry.id());
+        long audit = contractEvent(connection, entry.contract(), entry.actor(), entry.event(), entry.position());
+        try (PreparedStatement statement = connection.prepareStatement("UPDATE contract_block_journal SET state='APPLIED',resolved_at=clock_timestamp(),audit_event_id=? WHERE event_id=? AND state='INTENT'")) {
+            statement.setLong(1, audit); statement.setObject(2, entry.id());
+            if (statement.executeUpdate() != 1) throw new SQLException("Không áp dụng journal: " + entry.id(), "55000");
+        }
+        return "Đã xác nhận callback và trạng thái block: " + entry.id();
     }
 
     public void abortBlock(UUID event) throws SQLException {

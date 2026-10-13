@@ -1,0 +1,1 @@
+{"backend_pid" : 22268, "wait" : "PgSleep", "query" : "UPDATE operations SET result=$1 WHERE request_id=$2"}

@@ -1,0 +1,5 @@
+{"review_id":"0e18b33a-5801-4fbc-a108-9bdc74a6aa5d","actor_id":"f3d83b55-4452-39bc-85f4-29f8cebdcc4f","decision":"RESOLVE_INTENTS_AND_REOPEN","reason":"World unchanged and intent unconfirmed; reviewed fixture evidence","checked_world":"67:100:3=COBBLESTONE\n67:100:4=COBBLESTONE\n67:100:5=AIR\n68:100:3=COBBLESTONE\n68:100:4=COBBLESTONE\n68:100:5=COBBLESTONE\n69:100:3=COBBLESTONE\n69:100:4=COBBLESTONE\n69:100:5=COBBLESTONE","created_at":"2026-10-13T17:32:46.142041+07:00"}
+3fee419a-576d-42bb-9ce9-c6570ef23b31|REVIEWED_UNCONFIRMED|
+{"entry_id":1,"player_id":"f3d83b55-4452-39bc-85f4-29f8cebdcc4f","enabled":true,"revision":1,"reason":"Controlled isolated Paper recovery validation","created_at":"2026-10-13T17:32:28.640202+07:00"}
+{"entry_id":2,"player_id":"f3d83b55-4452-39bc-85f4-29f8cebdcc4f","enabled":false,"revision":2,"reason":"Controlled isolated Paper recovery validation","created_at":"2026-10-13T17:32:35.130314+07:00"}
+{"entry_id":3,"player_id":"f3d83b55-4452-39bc-85f4-29f8cebdcc4f","enabled":true,"revision":3,"reason":"Controlled isolated Paper recovery validation","created_at":"2026-10-13T17:32:37.430005+07:00"}

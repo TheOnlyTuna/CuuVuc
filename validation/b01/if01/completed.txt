@@ -1,0 +1,8 @@
+beforeplace OBSERVED live_fence=0 other_contract_unfenced=true assets_unchanged=true world=AIR
+beforebreak OBSERVED live_fence=0 other_contract_unfenced=true assets_unchanged=true world=STONE
+afterplace OBSERVED live_fence=1 other_contract_unfenced=true assets_unchanged=true world=STONE
+afterbreak OBSERVED live_fence=1 other_contract_unfenced=true assets_unchanged=true world=STONE
+preplace OBSERVED live_fence=1 other_contract_unfenced=true assets_unchanged=true world=STONE
+prebreak OBSERVED live_fence=1 other_contract_unfenced=true assets_unchanged=true world=STONE
+controlplace OBSERVED live_fence=0 other_contract_unfenced=true assets_unchanged=true world=COBBLESTONE
+controlbreak OBSERVED live_fence=0 other_contract_unfenced=true assets_unchanged=true world=AIR
