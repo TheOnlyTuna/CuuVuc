@@ -1,0 +1,306 @@
+[
+  {
+    "path": "validation\\b01\\client-final01\\active-baseline.jsonl",
+    "sha256": "4C7E3D496E8312306770CA0C860270CE3083CFC96975CE89CAC31B033BE4FBF8"
+  },
+  {
+    "path": "validation\\b01\\client-final01\\binary-hashes.txt",
+    "sha256": "C8C830DCE4453E4DC4A50898077954541244FFB087924E3BF2F344525D9C276E"
+  },
+  {
+    "path": "validation\\b01\\client-final01\\builder-break.png",
+    "sha256": "7D4F12251545FEA99EF2B2309DC97ED96AEEC2A7FEF15FFB159447BDFA6B7F1F"
+  },
+  {
+    "path": "validation\\b01\\client-final01\\client-all-rights-revoked.png",
+    "sha256": "A977E30AA5F8A2F439E2BADFBFB45BFCA773C14BB49749FEE73040A310AFEB31"
+  },
+  {
+    "path": "validation\\b01\\client-final01\\client-hold-approved.png",
+    "sha256": "639FBF8BB0562558C32C1F2543FCC7AB1A0E053FF22EC9196D8A2F5A8BBFCE6D"
+  },
+  {
+    "path": "validation\\b01\\client-final01\\client-hold-proposed.png",
+    "sha256": "10808323BC9FD96206B4BA6AD5022A38E39B6BDD7BB7B9247CB90A7CFE77DD81"
+  },
+  {
+    "path": "validation\\b01\\client-final01\\client-hold-replayed.png",
+    "sha256": "BA95515CCAC91D0162A762653CF86DBD2B88A81283442C43F5B914A81FE59180"
+  },
+  {
+    "path": "validation\\b01\\client-final01\\client-place-break.jsonl",
+    "sha256": "F9A2A813A0C41B3C176B3A01C1C1DF2EFDDF3B416AB661A5F06B746ED4D6E0B8"
+  },
+  {
+    "path": "validation\\b01\\client-final01\\client-review-hold.png",
+    "sha256": "31758810F911D526A78C0AE8859BCCE0434A823CCF08179C448BB75D5B58F767"
+  },
+  {
+    "path": "validation\\b01\\client-final01\\client-review-settle.png",
+    "sha256": "EFE985BB10E90283B3FEE8EEC0F31BB022E23505F973763F4A1972772574315B"
+  },
+  {
+    "path": "validation\\b01\\client-final01\\client-reviews.txt",
+    "sha256": "837C0DB635097454B3B2122867A18B9B875B052DBA159E29CEEA023093F1AAD9"
+  },
+  {
+    "path": "validation\\b01\\client-final01\\client-revoked-approval-denied.png",
+    "sha256": "A16578A35E34BDA0638F75AB27D44CD6D8846BF3684F317ECD868C74DBC5F163"
+  },
+  {
+    "path": "validation\\b01\\client-final01\\client-self-approval-denied.png",
+    "sha256": "D35336D5AC490D5EB5637AE6928D78E85D2B569E4444A5CAEE9872CA49E6BB5D"
+  },
+  {
+    "path": "validation\\b01\\client-final01\\client-settle-approved.png",
+    "sha256": "6EFC1CCABDAB5A8F2FFCF34D136684845BCC6E8534802B13D149273128033A93"
+  },
+  {
+    "path": "validation\\b01\\client-final01\\client-settle-proposed.png",
+    "sha256": "B354BE1BEA9849A37379F8E6B87307071B90FEB66E1B2FCC06A038AF8FA77D7F"
+  },
+  {
+    "path": "validation\\b01\\client-final01\\client-settle-replayed.png",
+    "sha256": "7087519B2DB0B01D28DA772042BC2F74482858E9EA065C4D64D1C293DDDDAA87"
+  },
+  {
+    "path": "validation\\b01\\client-final01\\client-submit-denied.png",
+    "sha256": "F2A92EBA7452E319901880DBD30D443958E599E431057533E8F283CB914EE2FF"
+  },
+  {
+    "path": "validation\\b01\\client-final01\\expiry-fixture.txt",
+    "sha256": "265EF10BC2CC31B842F489AB667B513F8E9D5B1670A8E665C95E3969C40C96D1"
+  },
+  {
+    "path": "validation\\b01\\client-final01\\fault-injected.jsonl",
+    "sha256": "E38D5E855698CE317106CBC4193814631D18EB04660928CDE3A171F519E446CC"
+  },
+  {
+    "path": "validation\\b01\\client-final01\\fenced-after-builder.jsonl",
+    "sha256": "723232D1DCC37CDF92C7586C7A059BB1596A77643901F04017139E09EA0D6950"
+  },
+  {
+    "path": "validation\\b01\\client-final01\\fenced-baseline.jsonl",
+    "sha256": "08654215E53434830A55C5CBCB12B427C9D3E1D33EF8FA1FC5715A6BF97145E4"
+  },
+  {
+    "path": "validation\\b01\\client-final01\\fenced-before-client.jsonl",
+    "sha256": "723232D1DCC37CDF92C7586C7A059BB1596A77643901F04017139E09EA0D6950"
+  },
+  {
+    "path": "validation\\b01\\client-final01\\fenced-break-denied.png",
+    "sha256": "26B637DB4625756486B2D00AE73BA55E6DD6F95229745B0E9C8A3A33327FA784"
+  },
+  {
+    "path": "validation\\b01\\client-final01\\fenced-classification.txt",
+    "sha256": "A9AE9193786049FFB7132A7B167D6DFF19B91162A9353B0FA1A889633B476C61"
+  },
+  {
+    "path": "validation\\b01\\client-final01\\fenced-place-denied.png",
+    "sha256": "9F60CDA35D728BF612CDD54A6B217DDB489AD27ECE79A44D0C801B1C78E8052D"
+  },
+  {
+    "path": "validation\\b01\\client-final01\\final-after-stop.jsonl",
+    "sha256": "7CEDF33F787D867B6F6F1BFB45972F3D0A6DDA5E40EA2EAAC42514CE3160BE8C"
+  },
+  {
+    "path": "validation\\b01\\client-final01\\final-backup-manifest.json",
+    "sha256": "A9F4C3F236609304FDF228AFE617F18344B81CE146EF514EAAA4D64E466A0E03"
+  },
+  {
+    "path": "validation\\b01\\client-final01\\final-backup.txt",
+    "sha256": "006AEDD012B083881F116A3DD545B69F1841460727A21EC764BC5E963771DBA4"
+  },
+  {
+    "path": "validation\\b01\\client-final01\\final-before-restart.jsonl",
+    "sha256": "7CEDF33F787D867B6F6F1BFB45972F3D0A6DDA5E40EA2EAAC42514CE3160BE8C"
+  },
+  {
+    "path": "validation\\b01\\client-final01\\final-binary-hash.txt",
+    "sha256": "7D72DE1DBD30F9BA4D3D5D83CA77C750CB56BD4C25B617C7C034920369F3A8F5"
+  },
+  {
+    "path": "validation\\b01\\client-final01\\final-restart-session.log",
+    "sha256": "509315AB5E1365DBD84EC4D6900A7682EC36361759D28D215686CF8BE02F493D"
+  },
+  {
+    "path": "validation\\b01\\client-final01\\final-restarted.jsonl",
+    "sha256": "7CEDF33F787D867B6F6F1BFB45972F3D0A6DDA5E40EA2EAAC42514CE3160BE8C"
+  },
+  {
+    "path": "validation\\b01\\client-final01\\final-stopped.jsonl",
+    "sha256": "7CEDF33F787D867B6F6F1BFB45972F3D0A6DDA5E40EA2EAAC42514CE3160BE8C"
+  },
+  {
+    "path": "validation\\b01\\client-final01\\hold-after-revoked-denial.jsonl",
+    "sha256": "711B3FE9EB8EAFC25F1EFDC69FF6D35C193055EE2E0BB20A95FCA6638386FEC3"
+  },
+  {
+    "path": "validation\\b01\\client-final01\\hold-approved.jsonl",
+    "sha256": "0A1AAE7040A25AEB8151C3C4558B9265AA1B6CB4CE3CE2F27F9B8E3C39334D1F"
+  },
+  {
+    "path": "validation\\b01\\client-final01\\hold-before-approval.jsonl",
+    "sha256": "711B3FE9EB8EAFC25F1EFDC69FF6D35C193055EE2E0BB20A95FCA6638386FEC3"
+  },
+  {
+    "path": "validation\\b01\\client-final01\\hold-ready.jsonl",
+    "sha256": "41FA431485236F5D6FEAC02EE31B441959A87CDF108024772B0735D6695C7C3E"
+  },
+  {
+    "path": "validation\\b01\\client-final01\\hold-replayed.jsonl",
+    "sha256": "0A1AAE7040A25AEB8151C3C4558B9265AA1B6CB4CE3CE2F27F9B8E3C39334D1F"
+  },
+  {
+    "path": "validation\\b01\\client-final01\\missing-receipt-fixture.txt",
+    "sha256": "537FB89E820F2782434BA38E84DA7FAD81D3EF5B1429ED56F4A21846BEE779D2"
+  },
+  {
+    "path": "validation\\b01\\client-final01\\native-backup-manifest.json",
+    "sha256": "85AA00C44A67653348535E91F627CD763503EACE36281FFA569D1419E6E7F4A5"
+  },
+  {
+    "path": "validation\\b01\\client-final01\\native-backup.txt",
+    "sha256": "7B47EEA44E8B235ABE27EA76FF7ADD38F19F5AF0A3AA91D848B0955ED783AD05"
+  },
+  {
+    "path": "validation\\b01\\client-final01\\native-before-stop.png",
+    "sha256": "D0470CAD99A75C3DED9971F0C21873789269F60E007E8D7C1532EACC6912C8FA"
+  },
+  {
+    "path": "validation\\b01\\client-final01\\native-intact-proof.txt",
+    "sha256": "C5570B5A598B07D70F513ABB18568C2C0EA54BAAE9C632D0340B04339A496BAE"
+  },
+  {
+    "path": "validation\\b01\\client-final01\\native-intact.jsonl",
+    "sha256": "73CF70934E3C833DD43A3C29133B859C09B0F1D90A979198BF501DF45A2B4D5A"
+  },
+  {
+    "path": "validation\\b01\\client-final01\\native-session.log",
+    "sha256": "69931A593003623F5C838B42ED5092C44A888EB0F6A429E1C5BF6E26D2C9B605"
+  },
+  {
+    "path": "validation\\b01\\client-final01\\ops-revoked.json",
+    "sha256": "4F53CDA18C2BAA0C0354BB5F9A3ECBE5ED12AB4D8E11BA873C2F11161202B945"
+  },
+  {
+    "path": "validation\\b01\\client-final01\\outside-break-denied.png",
+    "sha256": "138A05F310C6B38DF8E0FFE064C9745D88A76054D98FEA1878C99E2231206956"
+  },
+  {
+    "path": "validation\\b01\\client-final01\\outside-denied.jsonl",
+    "sha256": "6F086DC1EA8909BB90D6D51BC1E271564E8E9889CD0C3F92339DD591CD22BDE0"
+  },
+  {
+    "path": "validation\\b01\\client-final01\\outside-place-denied.png",
+    "sha256": "345781DCCE12D5CFCE1CEAD93C2706CE71091A965C0B80909B79E3827EE3353C"
+  },
+  {
+    "path": "validation\\b01\\client-final01\\owner-fenced-no-payment-button.png",
+    "sha256": "AB13D98776328CAB9A1237AC9D19BF22D4860FBFA28F1CE87F938304F0D3F408"
+  },
+  {
+    "path": "validation\\b01\\client-final01\\post-restart-client-denied.jsonl",
+    "sha256": "7CEDF33F787D867B6F6F1BFB45972F3D0A6DDA5E40EA2EAAC42514CE3160BE8C"
+  },
+  {
+    "path": "validation\\b01\\client-final01\\post-restart-client-place-denied.png",
+    "sha256": "733C343DE8792B39C2BE5B8882E4470C5094243A906C3202E67A8FF44E4E772C"
+  },
+  {
+    "path": "validation\\b01\\client-final01\\postgres-final-settings.txt",
+    "sha256": "3A374F1C76442A3D4665294E8D56000BFD2FE2B640F90F9BFE73AF3744C00EED"
+  },
+  {
+    "path": "validation\\b01\\client-final01\\postgres-shutdown.txt",
+    "sha256": "3589D2BD01F8295CC7C9EC3F5E07625FCD347CCB6F33F2D80EDAFE5F5217C1FB"
+  },
+  {
+    "path": "validation\\b01\\client-final01\\probe-command-files.json",
+    "sha256": "A5338D955B09046EC0B16F3A9625B7955C763AAE07DC722E474E6078745F932F"
+  },
+  {
+    "path": "validation\\b01\\client-final01\\reconciliation.txt",
+    "sha256": "E1B2CB4F01D215FFD765B0AD6C1825BA25C81BB72B860841BB047A2269B9115C"
+  },
+  {
+    "path": "validation\\b01\\client-final01\\recovery-client-session.log",
+    "sha256": "FDDDB3808842912F1C611BA34D739F37BC43BC60C9388D2E60CF9246B57789FB"
+  },
+  {
+    "path": "validation\\b01\\client-final01\\recovery-reports\\11a5de70-c05d-4b0f-a162-98bd21febd04.tsv",
+    "sha256": "035314F2F6D56304C7337254743C5E685DDF04B0E3DD0DD5351409A17E544E53"
+  },
+  {
+    "path": "validation\\b01\\client-final01\\recovery-reports\\160dce6a-40a1-4575-b6da-fbb258a78658.tsv",
+    "sha256": "CE6A9A2D56BF08265F6B985080F896D9220942552F7BDCB6CD4AE58569943B26"
+  },
+  {
+    "path": "validation\\b01\\client-final01\\recovery-reports\\cases\\adb176eb-40cd-4399-ad06-68fc64030236-0fceb089-d42a-4923-8249-ca22ab55385e.txt",
+    "sha256": "9FD8BE438A15AB8B3C0AB2BC4B2C2272399C19C8E872635A340C396C3B0124C6"
+  },
+  {
+    "path": "validation\\b01\\client-final01\\recovery-reports\\cases\\adb176eb-40cd-4399-ad06-68fc64030236-79654eb0-b873-4238-92ce-c40be2a5cee9.txt",
+    "sha256": "62A3EE788DFF79D5CED2AB837DEB8925367FDBB00D000AB2A19ED03E8743E7A7"
+  },
+  {
+    "path": "validation\\b01\\client-final01\\recovery-reports\\cases\\adb176eb-40cd-4399-ad06-68fc64030236-98d18fa2-3eb0-41a9-8de5-6c8af3ea1d0a.txt",
+    "sha256": "62A3EE788DFF79D5CED2AB837DEB8925367FDBB00D000AB2A19ED03E8743E7A7"
+  },
+  {
+    "path": "validation\\b01\\client-final01\\recovery-reports\\cases\\adb176eb-40cd-4399-ad06-68fc64030236-f4f2434f-ff9d-4c94-b950-f75726992cbb.txt",
+    "sha256": "9FD8BE438A15AB8B3C0AB2BC4B2C2272399C19C8E872635A340C396C3B0124C6"
+  },
+  {
+    "path": "validation\\b01\\client-final01\\recovery-reports\\cases\\ca2b5b59-957d-4b20-bbf3-d379d15e4e70-22accb82-f055-4d93-836f-4198095ac005.txt",
+    "sha256": "CCD45F4B44FB9515568C9FFCEAE7E10ED3265067B9F5FCDB399A86C4F820ED97"
+  },
+  {
+    "path": "validation\\b01\\client-final01\\recovery-reports\\cases\\ca2b5b59-957d-4b20-bbf3-d379d15e4e70-33acbc21-5311-4708-8a11-31a2c9fd03e7.txt",
+    "sha256": "CCD45F4B44FB9515568C9FFCEAE7E10ED3265067B9F5FCDB399A86C4F820ED97"
+  },
+  {
+    "path": "validation\\b01\\client-final01\\recovery-reports\\cases\\ca2b5b59-957d-4b20-bbf3-d379d15e4e70-34390180-df74-4472-a250-cf96de8c3813.txt",
+    "sha256": "692EE0E5C1BE72F96C054E364A53CAEB31B06384250CFD43A65A360CDC9C9AD0"
+  },
+  {
+    "path": "validation\\b01\\client-final01\\recovery-reports\\cases\\ca2b5b59-957d-4b20-bbf3-d379d15e4e70-fa148e37-b13d-4cfa-aea0-69d137fe4915.txt",
+    "sha256": "692EE0E5C1BE72F96C054E364A53CAEB31B06384250CFD43A65A360CDC9C9AD0"
+  },
+  {
+    "path": "validation\\b01\\client-final01\\recovery-reports\\reviews\\458809ab-90cc-42c7-b583-f6579a30d231-12217f31-1596-4de2-857f-bafcfba6c0a3.txt",
+    "sha256": "D8CD9584B61337615E8204CB0AC5F0450CFCF145260419692093A9BC8FE5FDE3"
+  },
+  {
+    "path": "validation\\b01\\client-final01\\recovery-reports\\reviews\\efccc939-70ea-4703-bc94-a6e2b24b2e1d-06b030c7-bbd8-414e-a110-ea9c5336a408.txt",
+    "sha256": "6005237B0463AD662C1F3602EA225520639D51C6EDA5832D5CC6D72277567FBC"
+  },
+  {
+    "path": "validation\\b01\\client-final01\\restart-process.json",
+    "sha256": "BF6D70D5CD3B46530FBA484FB59242E42030E4E192C3E5D5318413E21EDB8DB8"
+  },
+  {
+    "path": "validation\\b01\\client-final01\\settle-approved.jsonl",
+    "sha256": "83B53DB9DD798825647B6DE3C802E0BDDDBF09FCDCB50179342A8DD8A3857965"
+  },
+  {
+    "path": "validation\\b01\\client-final01\\settle-before-approval.jsonl",
+    "sha256": "063986323DBAB50FE13430942767D0DC25FC745253872ADAF019361E5221BE6E"
+  },
+  {
+    "path": "validation\\b01\\client-final01\\settle-replayed.jsonl",
+    "sha256": "83B53DB9DD798825647B6DE3C802E0BDDDBF09FCDCB50179342A8DD8A3857965"
+  },
+  {
+    "path": "validation\\b01\\client-final01\\shutdown-before-restart.properties",
+    "sha256": "F132F5B5DE8FDFC366D90A490D039DD1CE8B492379508FBE4EB51616F85BF866"
+  },
+  {
+    "path": "validation\\b01\\client-final01\\shutdown-final.properties",
+    "sha256": "72A39A696256FFAD306FC99597DA7F823EFF7CAEF7E67A47FE87AD8B106ABD2F"
+  },
+  {
+    "path": "validation\\b01\\client-final01\\source-manifest.json",
+    "sha256": "F9503C1E9640B0434A72922799244A75EF1CD462609241D7C78C069E6A13ABEC"
+  }
+]

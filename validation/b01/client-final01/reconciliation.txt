@@ -1,0 +1,9 @@
+SNAPSHOT_PASS before=fenced-before-client after=fenced-after-builder tables=39
+SNAPSHOT_PASS before=hold-before-approval after=hold-after-revoked-denial tables=39
+SNAPSHOT_PASS before=hold-approved after=hold-replayed tables=39
+SNAPSHOT_PASS before=settle-approved after=settle-replayed tables=39
+SNAPSHOT_PASS before=final-before-restart after=final-stopped tables=39
+SNAPSHOT_PASS before=final-stopped after=final-restarted tables=39
+SNAPSHOT_PASS before=final-restarted after=post-restart-client-denied tables=39
+SNAPSHOT_PASS before=final-restarted after=final-after-stop tables=39
+FINAL_CLIENT_RECONCILIATION_PASS native_place=1 native_break=1 aborted_intents=3 money=4 admin_receipts=2 settlement=1 immutable_journal=true resources_conserved=true authorities_revoked=true scoped_fence=true

@@ -1,0 +1,3 @@
+2338c597-186b-49cc-968b-b40dcf612719|3bb5ddbc-5b75-377f-8647-6f25c51f252a|contract:block:279bbdf9-0fe9-4eec-8bb6-46a9df8c72a3:3bb5ddbc-5b75-377f-8647-6f25c51f252a:PLACE:67:100:5|Đã xác nhận callback và trạng thái block: 2338c597-186b-49cc-968b-b40dcf612719
+Mã giao dịch: 2338c597-186b-49cc-968b-b40dcf612719
+DELETE 1

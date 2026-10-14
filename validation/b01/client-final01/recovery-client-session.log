@@ -1,0 +1,205 @@
+[18:59:49] [ServerMain/INFO]: [bootstrap] Running Java 25 (OpenJDK 64-Bit Server VM 25.0.4.1+10-LTS; Amazon.com Inc. Corretto-25.0.4.10.1) on Windows 11 10.0 (amd64)
+[18:59:49] [ServerMain/INFO]: [bootstrap] Loading Paper 26.3-166-main@cc7b98a (2026-10-09T00:54:07Z) for Minecraft 26.3
+[18:59:49] [ServerMain/INFO]: [PluginInitializerManager] Initializing plugins...
+[18:59:49] [ServerMain/INFO]: [PluginInitializerManager] Initialized 2 plugins
+[18:59:49] [ServerMain/INFO]: [PluginInitializerManager] Bukkit plugins (2):
+ - CrashProbe (1), CuuVucCore (0.8.0-SNAPSHOT)
+[18:59:50] [CrashReport preload thread/ERROR]: [oshi.driver.windows.registry.HkeyPerformanceDataUtil] Unable to locate English counter names in registry Perflib 009. Counters may need to be rebuilt: 
+com.sun.jna.platform.win32.Win32Exception: The parameter is incorrect.
+	at com.sun.jna.platform.win32.Advapi32Util.registryGetStringArray(Advapi32Util.java:921) ~[jna-platform-5.17.0.jar:5.17.0 (b0)]
+	at com.sun.jna.platform.win32.Advapi32Util.registryGetStringArray(Advapi32Util.java:898) ~[jna-platform-5.17.0.jar:5.17.0 (b0)]
+	at oshi.driver.windows.registry.HkeyPerformanceDataUtil.mapCounterIndicesFromRegistry(HkeyPerformanceDataUtil.java:274) ~[oshi-core-6.9.0.jar:6.9.0]
+	at oshi.driver.windows.registry.HkeyPerformanceDataUtil.<clinit>(HkeyPerformanceDataUtil.java:51) ~[oshi-core-6.9.0.jar:6.9.0]
+	at oshi.driver.windows.registry.ProcessPerformanceData.buildProcessMapFromRegistry(ProcessPerformanceData.java:45) ~[oshi-core-6.9.0.jar:6.9.0]
+	at oshi.software.os.windows.WindowsOperatingSystem.queryProcessMapFromRegistry(WindowsOperatingSystem.java:328) ~[oshi-core-6.9.0.jar:6.9.0]
+	at oshi.util.Memoizer$1.get(Memoizer.java:65) ~[oshi-core-6.9.0.jar:6.9.0]
+	at oshi.software.os.windows.WindowsOperatingSystem.processMapToList(WindowsOperatingSystem.java:298) ~[oshi-core-6.9.0.jar:6.9.0]
+	at oshi.software.os.windows.WindowsOperatingSystem.getProcess(WindowsOperatingSystem.java:292) ~[oshi-core-6.9.0.jar:6.9.0]
+	at oshi.software.os.OperatingSystem.getCurrentProcess(OperatingSystem.java:246) ~[oshi-core-6.9.0.jar:6.9.0]
+	at net.minecraft.SystemReport.lambda$putSoftware$0(SystemReport.java:115) ~[paper-26.3.jar:26.3-166-cc7b98a]
+	at net.minecraft.SystemReport.ignoreErrors(SystemReport.java:120) ~[paper-26.3.jar:26.3-166-cc7b98a]
+	at net.minecraft.SystemReport.putSoftware(SystemReport.java:115) ~[paper-26.3.jar:26.3-166-cc7b98a]
+	at net.minecraft.SystemReport.lambda$new$7(SystemReport.java:68) ~[paper-26.3.jar:26.3-166-cc7b98a]
+	at net.minecraft.SystemReport.ignoreErrors(SystemReport.java:120) ~[paper-26.3.jar:26.3-166-cc7b98a]
+	at net.minecraft.SystemReport.<init>(SystemReport.java:68) ~[paper-26.3.jar:26.3-166-cc7b98a]
+	at net.minecraft.CrashReport.<init>(CrashReport.java:32) ~[paper-26.3.jar:26.3-166-cc7b98a]
+	at net.minecraft.CrashReport.preload(CrashReport.java:240) ~[paper-26.3.jar:26.3-166-cc7b98a]
+	at java.base/java.lang.Thread.run(Thread.java:1474) ~[?:?]
+[18:59:50] [CrashReport preload thread/WARN]: [oshi.util.platform.windows.PerfCounterQuery] Unable to locate English counter names in registry Perflib 009. Assuming English counters. Error 0x80070057. See https://support.microsoft.com/en-us/help/300956/how-to-manually-rebuild-performance-counter-library-values
+[18:59:51] [DataConverter MCTypeRegistry init thread/INFO]: [ca.spottedleaf.dataconverter.minecraft.datatypes.MCTypeRegistry] Initialising converters for DataConverter...
+[18:59:51] [ServerMain/INFO]: [com.destroystokyo.paper.profile.PaperServicesDiscoveryService] Environment: Environment[discoveryUrl=https://discovery.minecraftservices.com/minecraft/client, name=PROD]
+[18:59:52] [DataConverter MCTypeRegistry init thread/INFO]: [ca.spottedleaf.dataconverter.minecraft.datatypes.MCTypeRegistry] Finished initialising converters for DataConverter in 191.3ms
+[18:59:52] [Worker-Main-5/INFO]: Loaded 1866 advancements
+[18:59:52] [Server thread/INFO]: Starting minecraft server version 26.3
+[18:59:52] [Server thread/INFO]: Loading properties
+[18:59:52] [Server thread/INFO]: This server is running Paper version 26.3-166-main@cc7b98a (2026-10-09T00:54:07Z) (Implementing API version 26.3.build.166-beta)
+[18:59:52] [Server thread/INFO]: [spark] This server bundles the spark profiler. For more information please visit https://docs.papermc.io/paper/profiling
+[18:59:53] [Server thread/INFO]: Server Ping Player Sample Count: 12
+[18:59:53] [Server thread/INFO]: Using 4 threads for Netty based IO
+[18:59:53] [Server thread/INFO]: [MoonriseCommon] Paper is using 6 worker threads, 1 I/O threads
+[18:59:53] [Server thread/INFO]: Default game type: SURVIVAL
+[18:59:53] [Server thread/INFO]: Generating keypair
+[18:59:53] [Server thread/INFO]: Starting Minecraft server on 127.0.0.1:25596
+[18:59:53] [Server thread/INFO]: Paper: Using Java compression from Velocity.
+[18:59:53] [Server thread/INFO]: Paper: Using Java cipher from Velocity.
+[18:59:53] [Server thread/INFO]: [CuuVucCore] Loading server plugin CuuVucCore v0.8.0-SNAPSHOT
+[18:59:53] [Server thread/INFO]: [CrashProbe] Loading server plugin CrashProbe v1
+[18:59:53] [Server thread/WARN]: **** SERVER IS RUNNING IN OFFLINE/INSECURE MODE!
+[18:59:53] [Server thread/WARN]: The server will make no attempt to authenticate usernames. Beware.
+[18:59:53] [Server thread/WARN]: While this makes the game possible to play without internet access, it also opens up the ability for hackers to connect with any username they choose.
+[18:59:53] [Server thread/WARN]: To change this, set "online-mode" to "true" in the server.properties file.
+[18:59:53] [Server thread/INFO]: Preparing level "world"
+[18:59:53] [Server thread/INFO]: Loading 0 persistent chunks for level 'minecraft:overworld'...
+[18:59:53] [Server thread/INFO]: Prepared spawn area in 1 ms
+[18:59:53] [Server thread/INFO]: Loading 0 persistent chunks for level 'minecraft:the_nether'...
+[18:59:53] [Server thread/INFO]: Prepared spawn area in 2 ms
+[18:59:53] [Server thread/INFO]: Loading 0 persistent chunks for level 'minecraft:the_end'...
+[18:59:53] [Server thread/INFO]: Prepared spawn area in 2 ms
+[18:59:53] [Server thread/INFO]: Done preparing level "world" (0.181s)
+[18:59:53] [Server thread/INFO]: [CuuVucCore] Enabling CuuVucCore v0.8.0-SNAPSHOT
+[18:59:53] [Server thread/INFO]: [vn.cuuvuc.internal.hikari.HikariDataSource] HikariPool-1 - Starting...
+[18:59:53] [Server thread/INFO]: [vn.cuuvuc.internal.hikari.HikariDataSource] HikariPool-1 - Start completed.
+[18:59:53] [Server thread/INFO]: Loading 0 persistent chunks for level 'minecraft:cv_prison'...
+[18:59:53] [Server thread/INFO]: Prepared spawn area in 3 ms
+[18:59:53] [Server thread/INFO]: Loading 36 persistent chunks for level 'minecraft:cv_sky'...
+[18:59:53] [Server thread/INFO]: Preparing spawn area: 21%
+[18:59:53] [Server thread/INFO]: Prepared spawn area in 137 ms
+[18:59:53] [Server thread/INFO]: [CrashProbe] Enabling CrashProbe v1
+[18:59:53] [Server thread/INFO]: [spark] Starting background profiler...
+[18:59:53] [Server thread/INFO]: [spark] The async-profiler engine is not supported for your os/arch (windows11/amd64), so the built-in Java engine will be used instead.
+[18:59:54] [Server thread/INFO]: Saving chunks for level 'ServerLevel[world]'/minecraft:overworld
+[18:59:54] [Server thread/INFO]: Saving chunks for level 'ServerLevel[world]'/minecraft:the_nether
+[18:59:54] [Server thread/INFO]: Saving chunks for level 'ServerLevel[world]'/minecraft:the_end
+[18:59:54] [Server thread/INFO]: Saving chunks for level 'ServerLevel[world]'/minecraft:cv_prison
+[18:59:54] [Server thread/INFO]: Saving chunks for level 'ServerLevel[world]'/minecraft:cv_sky
+[18:59:54] [Server thread/INFO]: Running delayed init tasks
+[18:59:54] [Server thread/INFO]: Done (4.705s)! For help, type "help"
+[18:59:54] [Folia Async Scheduler Thread #0/WARN]: [CuuVucCore] contract_recovery_observation_requires_review_not_history_repair
+[18:59:54] [Folia Async Scheduler Thread #0/INFO]: [CuuVucCore] cuuvuc_database_ready
+[18:59:54] [Paper Async Task Handler Thread - 1/INFO]: *** Currently you are 15 builds behind ***
+[18:59:54] [Paper Async Task Handler Thread - 1/INFO]: *** It is highly recommended to download the latest build from https://papermc.io/downloads/paper ***
+[19:00:21] [User Authenticator #0/INFO]: UUID of player TyninWorld is 3bb5ddbc-5b75-377f-8647-6f25c51f252a
+[19:00:21] [Server thread/INFO]: [CuuVucCore] player_request_accepted
+[19:00:21] [Server thread/INFO]: System chat: TyninWorld joined the game
+[19:00:21] [Server thread/INFO]: TyninWorld[/127.0.0.1:55423] logged in with entity id 1 at ([minecraft:cv_sky]67.5, 100.0, 6.5)
+[19:00:21] [Server thread/INFO]: System chat: Changed the block at 67, 100, 5
+[19:01:17] [User Authenticator #1/INFO]: UUID of player CuuVucNPC2 is f3d83b55-4452-39bc-85f4-29f8cebdcc4f
+[19:01:17] [Server thread/INFO]: [CuuVucCore] player_request_accepted
+[19:01:17] [Server thread/INFO]: System chat: CuuVucNPC2 joined the game
+[19:01:17] [Server thread/INFO]: CuuVucNPC2[/127.0.0.1:55441] logged in with entity id 2 at ([minecraft:cv_sky]72.5, 100.0, 8.5)
+[19:01:45] [User Authenticator #2/INFO]: UUID of player CuuVucNPC1 is 1194cfbc-1195-338c-9eb1-0c49dd118ae3
+[19:01:45] [Server thread/INFO]: [CuuVucCore] player_request_accepted
+[19:01:45] [Server thread/INFO]: System chat: CuuVucNPC1 joined the game
+[19:01:45] [Server thread/INFO]: CuuVucNPC1[/127.0.0.1:55451] logged in with entity id 76 at ([minecraft:overworld]3.6042663720898642, -60.0, 7.607096421897782)
+[19:01:46] [Server thread/INFO]: System chat: Made CuuVucNPC2 a server operator
+[19:01:46] [Server thread/INFO]: System chat: Made CuuVucNPC1 a server operator
+[19:01:46] [Server thread/INFO]: System chat: There are 3 of a max of 8 players online: TyninWorld, CuuVucNPC2, CuuVucNPC1
+[19:01:46] [Server thread/INFO]: Quyền phục hồi DB: f3d83b55-4452-39bc-85f4-29f8cebdcc4f enabled=true
+[19:01:46] [Server thread/INFO]: Quyền phục hồi DB: 1194cfbc-1195-338c-9eb1-0c49dd118ae3 enabled=true
+[19:02:28] [Server thread/INFO]: System chat: Teleported TyninWorld to 67.500000, 100.000000, 5.500000
+[19:02:28] [Server thread/INFO]: [Not Secure] [Server] FENCED_BREAK_DENIED_WORLD_UNCHANGED
+[19:02:50] [Server thread/INFO]: [Not Secure] [Server] FENCED_PLACE_DENIED_WORLD_UNCHANGED
+[19:03:23] [Server thread/INFO]: TyninWorld issued server command: /cv
+[19:03:23] [Server thread/INFO]: [CuuVucCore] player_request_accepted
+[19:03:49] [Server thread/INFO]: [CuuVucCore] player_request_accepted
+[19:05:22] [Server thread/INFO]: CuuVucNPC2 issued server command: /cv
+[19:05:22] [Server thread/INFO]: [CuuVucCore] player_request_accepted
+[19:05:49] [Server thread/INFO]: [CuuVucCore] player_request_accepted
+[19:06:45] [Server thread/INFO]: CuuVucNPC2 issued server command: /cv recovery review 279bbdf9-0fe9-4eec-8bb6-46a9df8c72a3
+[19:06:45] [Server thread/INFO]: [CuuVucCore] player_request_accepted
+[19:06:45] [Folia Async Scheduler Thread #10/INFO]: [CuuVucCore] recovery_evidence_exported
+[19:07:22] [Server thread/INFO]: CuuVucNPC2 issued server command: /cv recovery incident-hold 458809ab-90cc-42c7-b583-f6579a30d231 Missing original receipt from controlled Client fixture; keep site quarantined
+[19:07:22] [Server thread/INFO]: [CuuVucCore] player_request_accepted
+[19:07:22] [Folia Async Scheduler Thread #11/INFO]: [CuuVucCore] recovery_evidence_exported
+[19:07:57] [Server thread/INFO]: CuuVucNPC2 issued server command: /cv recovery approve-case ca2b5b59-957d-4b20-bbf3-d379d15e4e70 Self approval must be rejected in Client validation
+[19:07:57] [Server thread/INFO]: [CuuVucCore] player_request_accepted
+[19:07:59] [Server thread/INFO]: Quyền phục hồi DB: 1194cfbc-1195-338c-9eb1-0c49dd118ae3 enabled=false
+[19:09:00] [Server thread/INFO]: CuuVucNPC1 issued server command: /cv recovery approve-case ca2b5b59-957d-4b20-bbf3-d379d15e4e70 Independent Client approval to retain quarantine and original proof
+[19:09:00] [Server thread/INFO]: [CuuVucCore] player_request_accepted
+[19:09:15] [Server thread/INFO]: Quyền phục hồi DB: 1194cfbc-1195-338c-9eb1-0c49dd118ae3 enabled=true
+[19:09:38] [Server thread/INFO]: CuuVucNPC1 issued server command: /cv recovery case ca2b5b59-957d-4b20-bbf3-d379d15e4e70
+[19:09:38] [Server thread/INFO]: [CuuVucCore] player_request_accepted
+[19:09:38] [Folia Async Scheduler Thread #11/INFO]: [CuuVucCore] recovery_evidence_exported
+[19:10:11] [Server thread/INFO]: CuuVucNPC1 issued server command: /cv recovery approve-case ca2b5b59-957d-4b20-bbf3-d379d15e4e70 Independent Client approval to retain quarantine and original proof
+[19:10:11] [Server thread/INFO]: [CuuVucCore] player_request_accepted
+[19:10:11] [Folia Async Scheduler Thread #11/INFO]: [CuuVucCore] recovery_evidence_exported
+[19:10:59] [Server thread/INFO]: CuuVucNPC1 issued server command: /cv recovery approve-case ca2b5b59-957d-4b20-bbf3-d379d15e4e70 Independent Client approval to retain quarantine and original proof
+[19:10:59] [Server thread/INFO]: [CuuVucCore] player_request_accepted
+[19:10:59] [Folia Async Scheduler Thread #11/INFO]: [CuuVucCore] recovery_evidence_exported
+[19:11:57] [Server thread/INFO]: CuuVucNPC2 issued server command: /cv recovery review 279bbdf9-0fe9-4eec-8bb6-46a9df8c72a3
+[19:11:57] [Server thread/INFO]: [CuuVucCore] player_request_accepted
+[19:11:57] [Folia Async Scheduler Thread #10/INFO]: [CuuVucCore] recovery_evidence_exported
+[19:12:38] [Server thread/INFO]: CuuVucNPC2 issued server command: /cv recovery incident-settle efccc939-70ea-4703-bc94-a6e2b24b2e1d 1 Reconcile intact escrow; return one LT and compensate one LT; keep site quarantined
+[19:12:38] [Server thread/INFO]: [CuuVucCore] player_request_accepted
+[19:12:38] [Folia Async Scheduler Thread #10/INFO]: [CuuVucCore] recovery_evidence_exported
+[19:13:33] [Server thread/INFO]: CuuVucNPC1 issued server command: /cv recovery case adb176eb-40cd-4399-ad06-68fc64030236
+[19:13:33] [Server thread/INFO]: [CuuVucCore] player_request_accepted
+[19:13:33] [Folia Async Scheduler Thread #10/INFO]: [CuuVucCore] recovery_evidence_exported
+[19:14:07] [Server thread/INFO]: CuuVucNPC1 issued server command: /cv recovery approve-case adb176eb-40cd-4399-ad06-68fc64030236 Independent Client approval of proven escrow allocation; no work payment or unlock
+[19:14:07] [Server thread/INFO]: [CuuVucCore] player_request_accepted
+[19:14:08] [Folia Async Scheduler Thread #11/INFO]: [CuuVucCore] recovery_evidence_exported
+[19:14:46] [Server thread/INFO]: CuuVucNPC1 issued server command: /cv recovery approve-case adb176eb-40cd-4399-ad06-68fc64030236 Independent Client approval of proven escrow allocation; no work payment or unlock
+[19:14:46] [Server thread/INFO]: [CuuVucCore] player_request_accepted
+[19:14:46] [Folia Async Scheduler Thread #10/INFO]: [CuuVucCore] recovery_evidence_exported
+[19:15:30] [Server thread/INFO]: System chat: Made CuuVucNPC2 no longer a server operator
+[19:15:30] [Server thread/INFO]: System chat: Made CuuVucNPC1 no longer a server operator
+[19:15:30] [Server thread/INFO]: System chat: Target doesn't have the requested effect
+[19:15:30] [Server thread/INFO]: [Not Secure] [Server] BEFORE_RESTART_FIXTURE_BLOCK_RETAINED
+[19:15:30] [Server thread/INFO]: [Not Secure] [Server] BEFORE_RESTART_FENCED_TARGET_AIR
+[19:15:30] [Server thread/INFO]: Quyền phục hồi DB: f3d83b55-4452-39bc-85f4-29f8cebdcc4f enabled=false
+[19:15:30] [Server thread/INFO]: Quyền phục hồi DB: 1194cfbc-1195-338c-9eb1-0c49dd118ae3 enabled=false
+[19:16:08] [Server thread/INFO]: CuuVucNPC1 issued server command: /cv recovery case adb176eb-40cd-4399-ad06-68fc64030236
+[19:16:26] [Server thread/INFO]: System chat: Stopping the server
+[19:16:26] [Server thread/INFO]: Stopping server
+[19:16:26] [Server thread/INFO]: [CrashProbe] Disabling CrashProbe v1
+[19:16:26] [Server thread/INFO]: [CuuVucCore] Disabling CuuVucCore v0.8.0-SNAPSHOT
+[19:16:26] [Server thread/INFO]: [vn.cuuvuc.internal.hikari.HikariDataSource] HikariPool-1 - Shutdown initiated...
+[19:16:26] [Server thread/INFO]: [vn.cuuvuc.internal.hikari.HikariDataSource] HikariPool-1 - Shutdown completed.
+[19:16:26] [Server thread/INFO]: [vn.cuuvuc.core.GameDatabase] database_drain_complete
+[19:16:26] [Server thread/INFO]: Saving players
+[19:16:26] [Server thread/INFO]: TyninWorld lost connection: Server closed
+[19:16:26] [Server thread/INFO]: System chat: TyninWorld left the game
+[19:16:26] [Server thread/INFO]: CuuVucNPC2 lost connection: Server closed
+[19:16:26] [Server thread/INFO]: System chat: CuuVucNPC2 left the game
+[19:16:26] [Server thread/INFO]: CuuVucNPC1 lost connection: Server closed
+[19:16:26] [Server thread/INFO]: System chat: CuuVucNPC1 left the game
+[19:16:26] [Server thread/INFO]: Saving worlds
+[19:16:26] [Server thread/INFO]: Saving chunks for level 'ServerLevel[world]'/minecraft:overworld
+[19:16:26] [Server thread/INFO]: [ChunkHolderManager] Waiting 60s for chunk system to halt for world 'minecraft:overworld'
+[19:16:26] [Server thread/INFO]: [ChunkHolderManager] Halted chunk system for world 'minecraft:overworld'
+[19:16:26] [Server thread/INFO]: [ChunkHolderManager] Saving all chunkholders for world 'minecraft:overworld'
+[19:16:26] [Server thread/INFO]: [ChunkHolderManager] Saved 0 block chunks, 60 entity chunks, 0 poi chunks in world 'minecraft:overworld' in 0.02s
+[19:16:26] [Server thread/INFO]: [ChunkHolderManager] Waiting 60s for chunk I/O to halt for world 'minecraft:overworld'
+[19:16:26] [Server thread/INFO]: [ChunkHolderManager] Halted I/O scheduler for world 'minecraft:overworld'
+[19:16:26] [Server thread/INFO]: Saving chunks for level 'ServerLevel[world]'/minecraft:the_nether
+[19:16:26] [Server thread/INFO]: [ChunkHolderManager] Waiting 60s for chunk system to halt for world 'minecraft:the_nether'
+[19:16:26] [Server thread/INFO]: [ChunkHolderManager] Halted chunk system for world 'minecraft:the_nether'
+[19:16:26] [Server thread/INFO]: [ChunkHolderManager] Saving all chunkholders for world 'minecraft:the_nether'
+[19:16:26] [Server thread/INFO]: [ChunkHolderManager] Saved 0 block chunks, 0 entity chunks, 0 poi chunks in world 'minecraft:the_nether' in 0.00s
+[19:16:26] [Server thread/INFO]: [ChunkHolderManager] Waiting 60s for chunk I/O to halt for world 'minecraft:the_nether'
+[19:16:26] [Server thread/INFO]: [ChunkHolderManager] Halted I/O scheduler for world 'minecraft:the_nether'
+[19:16:26] [Server thread/INFO]: Saving chunks for level 'ServerLevel[world]'/minecraft:the_end
+[19:16:26] [Server thread/INFO]: [ChunkHolderManager] Waiting 60s for chunk system to halt for world 'minecraft:the_end'
+[19:16:26] [Server thread/INFO]: [ChunkHolderManager] Halted chunk system for world 'minecraft:the_end'
+[19:16:26] [Server thread/INFO]: [ChunkHolderManager] Saving all chunkholders for world 'minecraft:the_end'
+[19:16:26] [Server thread/INFO]: [ChunkHolderManager] Saved 0 block chunks, 0 entity chunks, 0 poi chunks in world 'minecraft:the_end' in 0.00s
+[19:16:26] [Server thread/INFO]: [ChunkHolderManager] Waiting 60s for chunk I/O to halt for world 'minecraft:the_end'
+[19:16:26] [Server thread/INFO]: [ChunkHolderManager] Halted I/O scheduler for world 'minecraft:the_end'
+[19:16:26] [Server thread/INFO]: Saving chunks for level 'ServerLevel[world]'/minecraft:cv_prison
+[19:16:26] [Server thread/INFO]: [ChunkHolderManager] Waiting 60s for chunk system to halt for world 'minecraft:cv_prison'
+[19:16:26] [Server thread/INFO]: [ChunkHolderManager] Halted chunk system for world 'minecraft:cv_prison'
+[19:16:26] [Server thread/INFO]: [ChunkHolderManager] Saving all chunkholders for world 'minecraft:cv_prison'
+[19:16:26] [Server thread/INFO]: [ChunkHolderManager] Saved 0 block chunks, 0 entity chunks, 0 poi chunks in world 'minecraft:cv_prison' in 0.00s
+[19:16:26] [Server thread/INFO]: [ChunkHolderManager] Waiting 60s for chunk I/O to halt for world 'minecraft:cv_prison'
+[19:16:26] [Server thread/INFO]: [ChunkHolderManager] Halted I/O scheduler for world 'minecraft:cv_prison'
+[19:16:26] [Server thread/INFO]: Saving chunks for level 'ServerLevel[world]'/minecraft:cv_sky
+[19:16:26] [Server thread/INFO]: [ChunkHolderManager] Waiting 60s for chunk system to halt for world 'minecraft:cv_sky'
+[19:16:26] [Server thread/INFO]: [ChunkHolderManager] Halted chunk system for world 'minecraft:cv_sky'
+[19:16:26] [Server thread/INFO]: [ChunkHolderManager] Saving all chunkholders for world 'minecraft:cv_sky'
+[19:16:26] [Server thread/INFO]: [ChunkHolderManager] Saved 0 block chunks, 0 entity chunks, 0 poi chunks in world 'minecraft:cv_sky' in 0.01s
+[19:16:26] [Server thread/INFO]: [ChunkHolderManager] Waiting 60s for chunk I/O to halt for world 'minecraft:cv_sky'
+[19:16:26] [Server thread/INFO]: [ChunkHolderManager] Halted I/O scheduler for world 'minecraft:cv_sky'
+[19:16:26] [Server thread/INFO]: Waiting for all RegionFile I/O tasks to complete...
+[19:16:26] [Server thread/INFO]: All RegionFile I/O tasks to complete
+[19:16:26] [Server thread/INFO]: [MoonriseCommon] Awaiting termination of worker pool for up to 60s...
+[19:16:26] [Server thread/INFO]: [MoonriseCommon] Awaiting termination of I/O pool for up to 60s...

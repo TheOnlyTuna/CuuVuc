@@ -1,6 +1,6 @@
 # B01.3 — UNRECOVERABLE Workflow
 
-Trạng thái: triển khai và Technical Validation; chờ người dùng đánh giá. B01 vẫn OPEN, B02 NOT STARTED. B01.2 ACCEPTED có giới hạn tại `fd64170` được giữ nguyên. Không nâng nghiệm thu V0.8.
+Trạng thái: **ACCEPTED WITH SCOPE LIMIT — Technical + Controlled Paper Fixture Validation**, theo quyết định người dùng ngày 14/10/2026 tại `e175c43`. B01 vẫn OPEN, B02 NOT STARTED. B01.2 ACCEPTED có giới hạn tại `fd64170` được giữ nguyên. Không nâng nghiệm thu V0.8.
 
 ## Binary và môi trường
 
@@ -72,8 +72,8 @@ Hồi quy trên cùng JAR cuối: **22/22 hard-kill cũ + 4/4 B01.3 mới + 8/8 
 
 Region I/O dùng marker thực tế `PAYLOAD_BEFORE_WRITE/PAYLOAD_AFTER_WRITE/HEADER_BEFORE_WRITE/HEADER_AFTER_WRITE` của agent B01.1. Ba ca đầu quan sát AIR và MISMATCH, ca sau header quan sát COBBLESTONE và CONFIRMED; hợp đồng khác không bị fence. Không thay thế bằng kill trong WorldSaveEvent trước ghi chunk. Các giới hạn crash và Client của báo cáo B01.1/B01.2 vẫn áp dụng.
 
-Chưa thực hiện vòng Minecraft Client thật trên JAR cuối này. Fixture gọi connector/RecoveryCommands với danh tính thử nghiệm và đọc world thật trong Paper; thao tác phê duyệt tự động không tương đương người quản trị nhập lệnh từ Client. PLACE/BREAK event-fixture qua PluginManager trong hồi quy B01.2 không tương đương thao tác mạng người chơi.
+Các kết quả fixture trong báo cáo này không phải Minecraft Client E2E. Fixture gọi connector/RecoveryCommands với danh tính thử nghiệm và đọc world thật trong Paper; thao tác phê duyệt tự động không tương đương người quản trị nhập lệnh từ Client. PLACE/BREAK event-fixture qua PluginManager trong hồi quy B01.2 không tương đương thao tác mạng người chơi. Vòng Client thật bổ sung trên cùng JAR được ghi riêng tại [FINAL-CLIENT-RESULTS.md](FINAL-CLIENT-RESULTS.md).
 
 Không mở rộng bảo đảm cho thay đổi ngay sau kiểm tra cuối, thay đổi rồi khôi phục trước quan sát, plugin cố ý vượt quyền/ghi trực tiếp DB/journal, DB superuser/OS administrator phá bằng chứng, Folia, nhiều người/chunk đồng thời, mọi inventory/drop vanilla, mất điện/hỏng ổ đĩa/crash PostgreSQL. Fence được giữ qua quyết định; không có Force Unlock hoặc thao tác sửa world để tạo proof.
 
-B01.3 chỉ được đề nghị đánh giá trong phạm vi bằng chứng này. B01 Full Crash Recovery vẫn OPEN; tiếp theo là hồi quy Minecraft Client thật trên JAR cuối rồi mới xem xét đóng B01, sau đó B02 Benchmark và đánh giá Pre-Alpha.
+B01.3 đã được chấp nhận trong phạm vi bằng chứng này. B01 Full Crash Recovery vẫn OPEN; kết quả Final Minecraft Client được trình riêng để xem xét đóng B01 có scope limit, sau đó mới B02 Benchmark và đánh giá Pre-Alpha.

@@ -1,0 +1,4 @@
+{
+  "ProcessId": 43552,
+  "CommandLine": "\"D:\\CuuVucCore\\CuuVuc-GitHub\\.tools\\jdk25\\jdk25.0.4_10\\bin\\java.exe\" -Dterminal.jline=false -Dterminal.ansi=false -Xms256M -Xmx1024M -jar paper.jar --nogui"
+}
