@@ -1,6 +1,6 @@
 # B01.3 — UNRECOVERABLE Workflow
 
-Trạng thái: **ACCEPTED WITH SCOPE LIMIT — Technical + Controlled Paper Fixture Validation**, theo quyết định người dùng ngày 14/10/2026 tại `e175c43`. B01 vẫn OPEN, B02 NOT STARTED. B01.2 ACCEPTED có giới hạn tại `fd64170` được giữ nguyên. Không nâng nghiệm thu V0.8.
+Trạng thái: **ACCEPTED WITH SCOPE LIMIT — Technical + Controlled Paper Fixture Validation**, theo quyết định người dùng ngày 14/10/2026 tại `e175c43`. B01 tổng thể đã **CLOSED WITH SCOPE LIMIT tại `c062adf`** sau [Final Minecraft Client](FINAL-CLIENT-RESULTS.md); **B02 NEXT**. B01.2 ACCEPTED có giới hạn tại `fd64170` được giữ nguyên. Không nâng nghiệm thu V0.8.
 
 ## Binary và môi trường
 
@@ -76,4 +76,4 @@ Các kết quả fixture trong báo cáo này không phải Minecraft Client E2E
 
 Không mở rộng bảo đảm cho thay đổi ngay sau kiểm tra cuối, thay đổi rồi khôi phục trước quan sát, plugin cố ý vượt quyền/ghi trực tiếp DB/journal, DB superuser/OS administrator phá bằng chứng, Folia, nhiều người/chunk đồng thời, mọi inventory/drop vanilla, mất điện/hỏng ổ đĩa/crash PostgreSQL. Fence được giữ qua quyết định; không có Force Unlock hoặc thao tác sửa world để tạo proof.
 
-B01.3 đã được chấp nhận trong phạm vi bằng chứng này. B01 Full Crash Recovery vẫn OPEN; kết quả Final Minecraft Client được trình riêng để xem xét đóng B01 có scope limit, sau đó mới B02 Benchmark và đánh giá Pre-Alpha.
+B01.3 đã được chấp nhận trong phạm vi bằng chứng này. B01 Full Crash Recovery đã CLOSED WITH SCOPE LIMIT sau Final Minecraft Client tại `c062adf`; các rủi ro ngoài phạm vi giữ OPEN trong [BACKLOG.md](../../BACKLOG.md). Tiếp theo là baseline B02 trước khi tối ưu và đánh giá Pre-Alpha.

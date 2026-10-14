@@ -1,6 +1,6 @@
 # B01 — Final Minecraft Client Validation
 
-**PASS trong phạm vi phiên kiểm thử này; chờ người dùng đánh giá đóng B01.** B01 tổng thể vẫn OPEN, B02 NOT STARTED, V0.8 ACCEPTED WITH SCOPE LIMIT. B01.1/B01.2/B01.3 đều đã được người dùng ACCEPTED WITH SCOPE LIMIT; B01.3 được chấp nhận ở mức Technical + Controlled Paper Fixture Validation tại `e175c43`.
+**ACCEPTED — B01 CLOSED WITH SCOPE LIMIT**, theo quyết định người dùng ngày 14/10/2026 tại `c062adf`. **B02 NEXT**, baseline chưa đo; V0.8 giữ ACCEPTED WITH SCOPE LIMIT. B01.1/B01.2/B01.3 và Final Minecraft Client được chấp nhận trong phạm vi có bằng chứng; không mở rộng các kết quả dưới đây. Rủi ro ngoài phạm vi tiếp tục OPEN tại [BACKLOG.md](../../BACKLOG.md); bước tiếp theo là [baseline B02](../b02/BASELINE-PLAN.md).
 
 Phiên ngày **14/10/2026, 18:53–19:21 Asia/Bangkok**. Không sửa Java, migration, cấu hình build hoặc rebuild JAR. SHA-256 core giữ đúng **`A54A30F01407D3D46B64837C35D841C310A62D0B6299E7B53D76E858B23B5991`** ở target và runtime trước/sau phiên. Giữ nhánh `v0.8-khai-son-lap-phai`, không merge `main`, không bật CI hoặc bắt đầu B02.
 
@@ -52,4 +52,4 @@ Các kết quả **101/101 Maven tests, 22/22 hard-kill hồi quy, 4/4 hard-kill
 
 Owner không có nút nghiệm thu trong trạng thái fence; phiên không phát sinh một request COMPLETE mạng thành công để thử precommit. Replay được kiểm trước restart; sau restart quyền quản trị đã bị thu hồi, không cấp lại chỉ để thử replay nữa. Không thử thay đổi ngay sau lần đọc cuối/thay đổi rồi khôi phục trước quan sát, plugin cố ý vượt DB/journal, mất điện, hỏng đĩa hoặc crash PostgreSQL. Không sửa world để khôi phục proof, không Force Unlock, không bồi thường vượt escrow.
 
-Kết quả này hoàn tất vòng Final Minecraft Client trong phạm vi đã ghi. Có cơ sở để người dùng **đánh giá đóng B01 với scope limit**; chưa tự đánh dấu B01 CLOSED hoặc bắt đầu B02 Benchmark.
+Kết quả này hoàn tất vòng Final Minecraft Client trong phạm vi đã ghi và đã được người dùng chấp nhận để **đóng B01 với scope limit tại `c062adf`**. B02 là công việc tiếp theo: đo baseline trước khi sửa mã; phiên này không có số đo benchmark B02.
