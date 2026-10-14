@@ -27,7 +27,7 @@ public interface Domain {
     }
     record ItemToken(UUID id, UUID owner, String resource) { }
     record PlayerView(UUID player, long revision, long xp, long balance, Map<String, Long> stock,
-                      List<ItemToken> items, String message) {
+                      List<ItemToken> items, String message, Cultivation.State cultivation) {
         public PlayerView { stock = Map.copyOf(stock); items = List.copyOf(items); }
     }
     record Island(UUID owner, int slot, boolean ready, List<UUID> builders) {

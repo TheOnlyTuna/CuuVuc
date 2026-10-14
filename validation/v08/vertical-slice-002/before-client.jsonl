@@ -1,0 +1,43 @@
+{"rows": [], "table": "building_contracts"}
+{"rows": [], "table": "building_history"}
+{"rows": [], "table": "contract_block_journal"}
+{"rows": [], "table": "contract_escrow_accounts"}
+{"rows": [], "table": "contract_escrow_ledger"}
+{"rows": [], "table": "contract_recovery_fences"}
+{"rows": [{"revision": 0, "singleton": true}], "table": "contract_state"}
+{"rows": [], "table": "cultivation_history"}
+{"rows": [{"singleton": true, "rules_sha256": "25e45dd761bf7a5994d3b1723ab516c46b5d35892ba7c1479dbf15cd016b5027"}], "table": "cultivation_policy"}
+{"rows": [], "table": "cultivation_progress"}
+{"rows": [], "table": "cultivation_trials"}
+{"rows": [], "table": "economy_daily"}
+{"rows": [{"singleton": true, "currency_id": "linh_te", "catalog_sha256": "0c2de138802c70b5e4eed9c1688eafe03332d540001572b48b99e70614b1cec4", "player_daily_mint": 500, "server_daily_mint": 10000}], "table": "economy_policy"}
+{"rows": [], "table": "inventory"}
+{"rows": [], "table": "island_builders"}
+{"rows": [], "table": "islands"}
+{"rows": [], "table": "item_tokens"}
+{"rows": [], "table": "ledger"}
+{"rows": [{"version": 1, "applied_at": "2026-10-14T22:40:19.512017+00:00", "schema_sha256": "a1a88ef5fe926a1405cb1592f7390cfe6a8526713b6d8e4475f332fb3afacd2d", "script_sha256": "f07b26e0261d8b744975cf057d5c6ecaff8112cbb080d0f6b57a7a12349e89b0"}, {"version": 10, "applied_at": "2026-10-14T22:40:19.691196+00:00", "schema_sha256": "2dadaf8d9a80df38545b5c79c3afc56b55effe5ef62c1775f7430411d0c4220d", "script_sha256": "f34c91d49ea0b0c04ab2fcc10fe1868a05b2566a0868ae511feb99bbfaaa7be4"}, {"version": 11, "applied_at": "2026-10-14T22:40:19.701362+00:00", "schema_sha256": "3fc8d4dcec35933b2afc11ba9bf79ae45a3da6d38a39045445b7ad93dae6b2df", "script_sha256": "087755bb12f0b974990354dfac8f409720161ce9a078ae692e058a456e3b63c4"}, {"version": 12, "applied_at": "2026-10-14T22:40:19.716019+00:00", "schema_sha256": "29225dd942437288231ea08843f16ccd7d5e2dee82ace23ccde0aa4f05a3a99b", "script_sha256": "7e932d4368f3e55afc9065288605cb45d570b8bfe9aea3b32560c9c8f73700f0"}, {"version": 2, "applied_at": "2026-10-14T22:40:19.524902+00:00", "schema_sha256": "c34804fe4c16c30a1377323eb30ca09927d3e5cfc54ee08ab29a726ebe85de40", "script_sha256": "292d777f548f4ee0383f7d32cec6ca88f4de15ca3ecae015975cae8df6e163a0"}, {"version": 3, "applied_at": "2026-10-14T22:40:19.533849+00:00", "schema_sha256": "c91cba50b21b5c457f1fb9c7be15c2e50bab5e111a32cbdd8fff72aa9fc926db", "script_sha256": "b60e26826ebb5ed98e3ee00d343fe711df9b5026d6a8fec46c575f81a7fca8ff"}, {"version": 4, "applied_at": "2026-10-14T22:40:19.565067+00:00", "schema_sha256": "1be41f652997ecc93314c79b56daf0868f0cef3b51fb2c2574570aa125aca5e2", "script_sha256": "e268f09903a24337e47442b4b96b2c6e7bbbe677ee33b6b0918fcaa707c3dbaf"}, {"version": 5, "applied_at": "2026-10-14T22:40:19.575292+00:00", "schema_sha256": "a3bab97de0e0bda918064cefcfbfbdc0a48c4c38adbef3c9ed2a66c2d709a3e0", "script_sha256": "310758f7c5bfe45bf779b07c49046e90606ef5181bc7864c12e4ff818745386e"}, {"version": 6, "applied_at": "2026-10-14T22:40:19.626138+00:00", "schema_sha256": "dad9aa378229647a466cd0f7abf4bd7d5ea97e6d3a8cb85b68291ad375e9548d", "script_sha256": "0b602b16f1b82a2a2e9ae8d4c2c113854921bcf6ec8b96744ff28179a9fee883"}, {"version": 7, "applied_at": "2026-10-14T22:40:19.634371+00:00", "schema_sha256": "48132bb58c9bc133dc3f4dbb8e2659a2900616208974091b615d39b158140a89", "script_sha256": "1d899806827de8d68d37bbc569005c5db00bf95e62320e89ee17236b10b761c4"}, {"version": 8, "applied_at": "2026-10-14T22:40:19.667569+00:00", "schema_sha256": "3ec58bcc0536a6951aa73cb838ee3aac863f1a5660fff3a057fdb53be136bc78", "script_sha256": "68f0f8606056417b1e9ca94c8b46b9484ea62cc8a9efa63f25cf860ae5338bfc"}, {"version": 9, "applied_at": "2026-10-14T22:40:19.678053+00:00", "schema_sha256": "bb808a357427094e81a510e1958e10da3f4d63191830600dfe97036a762e9c18", "script_sha256": "1f5b8db757d853600b236a7eb564610db46ba766e4ddb332e8aa195b1062ab75"}], "table": "migration_history"}
+{"rows": [], "table": "mine_nodes"}
+{"rows": [], "table": "operations"}
+{"rows": [], "table": "player_mint_daily"}
+{"rows": [], "table": "profiles"}
+{"rows": [], "table": "project_history"}
+{"rows": [], "table": "project_inventory"}
+{"rows": [], "table": "project_stage_costs"}
+{"rows": [], "table": "project_stages"}
+{"rows": [], "table": "projects"}
+{"rows": [], "table": "recovery_authorities"}
+{"rows": [], "table": "recovery_authority_history"}
+{"rows": [], "table": "recovery_decisions"}
+{"rows": [], "table": "recovery_reviews"}
+{"rows": [], "table": "resource_ledger"}
+{"rows": [{"version": 12}], "table": "schema_version"}
+{"rows": [], "table": "sect_accounts"}
+{"rows": [], "table": "sect_history"}
+{"rows": [], "table": "sect_invitations"}
+{"rows": [], "table": "sect_members"}
+{"rows": [], "table": "sects"}
+{"rows": [], "table": "stage_inventory"}
+{"rows": [], "table": "unrecoverable_cases"}
+{"rows": [], "table": "unrecoverable_decisions"}
+{"rows": [{"revision": 0, "singleton": true}], "table": "world_state"}

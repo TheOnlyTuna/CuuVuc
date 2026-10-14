@@ -1,0 +1,8 @@
+1390
+huyen_thiet|2
+linh_thach|0
+linh_thach_tho|17
+FAILED|0|Chọn sai phù ấn 1
+INTERRUPTED|0|Người chơi đăng xuất
+FAILED|4|Hết thời gian
+FAILED|3|Hết thời gian

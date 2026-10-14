@@ -1,0 +1,48 @@
+database:
+  url: jdbc:postgresql://127.0.0.1:55439/cv_vs002_client01
+  user: cuuvuc_test
+  password-environment: CUUVUC_DB_PASSWORD
+  schema: public
+economy:
+  server-daily-mint: 10000
+  player-daily-mint: 500
+shutdown:
+  drain-timeout-ms: 15000
+mine:
+  world: cv_prison
+  cooldown-seconds: 3
+  nodes:
+    - '4,100,8,linh_thach_tho'
+    - '4,100,9,linh_thach_tho'
+    - '4,100,10,linh_thach_tho'
+    - '4,100,11,linh_thach_tho'
+    - '5,100,8,linh_thach_tho'
+    - '5,100,9,linh_thach_tho'
+    - '5,100,10,linh_thach_tho'
+    - '5,100,11,linh_thach_tho'
+    - '6,100,8,linh_thach_tho'
+    - '6,100,9,linh_thach_tho'
+    - '6,100,10,linh_thach_tho'
+    - '6,100,11,linh_thach_tho'
+    - '7,100,8,linh_thach_tho'
+    - '7,100,9,linh_thach_tho'
+    - '7,100,10,linh_thach_tho'
+    - '7,100,11,linh_thach_tho'
+    - '8,100,8,huyen_thiet'
+    - '8,100,9,huyen_thiet'
+    - '8,100,10,huyen_thiet'
+    - '8,100,11,huyen_thiet'
+    - '9,100,8,huyen_thiet'
+    - '9,100,9,huyen_thiet'
+    - '9,100,10,huyen_thiet'
+    - '9,100,11,huyen_thiet'
+    - '10,100,8,huyen_thiet'
+    - '10,100,9,huyen_thiet'
+    - '10,100,10,huyen_thiet'
+    - '10,100,11,huyen_thiet'
+    - '11,100,8,huyen_thiet'
+    - '11,100,9,huyen_thiet'
+    - '11,100,10,huyen_thiet'
+    - '11,100,11,huyen_thiet'
+  max-pending: 32
+

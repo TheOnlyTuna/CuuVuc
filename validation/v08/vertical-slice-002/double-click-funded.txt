@@ -1,0 +1,5 @@
+600|0|1|1
+huyen_thiet|4
+linh_thach|5
+linh_thach_tho|25
+TRAIN|1

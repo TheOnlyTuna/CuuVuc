@@ -1,0 +1,1 @@
+RESTORE_COMPLETE files=369 database=cv_vs002_upgrade server=D:\CuuVucCore\CuuVuc-GitHub\run-vs002-upgrade

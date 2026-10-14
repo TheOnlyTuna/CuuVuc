@@ -31,9 +31,10 @@ public final class PlayableMenu implements Listener {
     private final Domain.Catalog catalog;
     private final PlayableWorld world;
     private final ContractMenu contracts;
+    private final CultivationMenu cultivation;
 
-    public PlayableMenu(GameDatabase database, PlayerTasks tasks, PhysicalItems items, Domain.Catalog catalog, PlayableWorld world, ContractMenu contracts) {
-        this.database = database; this.tasks = tasks; this.items = items; this.catalog = catalog; this.world = world; this.contracts = contracts;
+    public PlayableMenu(GameDatabase database, PlayerTasks tasks, PhysicalItems items, Domain.Catalog catalog, PlayableWorld world, ContractMenu contracts, CultivationMenu cultivation) {
+        this.database = database; this.tasks = tasks; this.items = items; this.catalog = catalog; this.world = world; this.contracts = contracts; this.cultivation = cultivation;
     }
 
     public void request(Player player) {
@@ -47,7 +48,8 @@ public final class PlayableMenu implements Listener {
     public void open(Player player, Domain.PlayerView view) {
         Holder holder = new Holder(player.getUniqueId());
         Inventory inventory = holder.getInventory();
-        inventory.setItem(4, icon(Material.NETHER_STAR, Domain.stage(view.xp(), catalog.stages()).name(), List.of("Tu vi: " + view.xp() + " XP", "Linh tệ: " + view.balance())));
+        inventory.setItem(4, icon(Material.NETHER_STAR, Cultivation.title(view.cultivation()), List.of("Tu vi: " + view.xp() + " XP", "Linh tệ: " + view.balance(), "Đủ XP chưa tự tiến tầng; mở Tu Luyện")));
+        inventory.setItem(6, icon(Material.ENCHANTED_BOOK, "Tu Luyện • Con Đường Tu Tiên", List.of("Phàm Nhân → Luyện Khí 1–9 → Trúc Cơ", "Điều kiện, thử thách và lợi ích tại động phủ")));
         inventory.setItem(10, icon(Material.IRON_PICKAXE, "Đến Prison", List.of("Khai thác mạch quặng, nhận nguyên liệu")));
         inventory.setItem(12, icon(Material.OAK_SAPLING, "Động phủ của bạn", List.of("Đảo đầu tiên, nơi bắt đầu xây dựng")));
         inventory.setItem(14, icon(Material.CRAFTING_TABLE, "Kết tinh linh thạch", List.of("5 linh thạch thô → 1 linh thạch", "Bấm để chế tạo một lần")));
@@ -62,7 +64,7 @@ public final class PlayableMenu implements Listener {
         player.openInventory(inventory);
     }
 
-    private static ItemStack icon(Material material, String name, List<String> lore) {
+    static ItemStack icon(Material material, String name, List<String> lore) {
         ItemStack item = new ItemStack(material);
         ItemMeta meta = item.getItemMeta();
         meta.displayName(Component.text(name)); meta.lore(lore.stream().map(Component::text).toList()); item.setItemMeta(meta);
@@ -75,6 +77,7 @@ public final class PlayableMenu implements Listener {
         if (!(event.getWhoClicked() instanceof Player player) || !holder.owner.equals(player.getUniqueId())) return;
         if (!player.hasPermission("cuuvuc.play")) return;
         int slot = event.getRawSlot();
+        if (slot == 6 || slot == 4) { cultivation.request(player); return; }
         if (slot == 10) { world.enterPrisonFromMenu(player); return; }
         if (slot == 12) { world.enterHomeFromMenu(player); return; }
         if (slot == 16) { request(player); return; }

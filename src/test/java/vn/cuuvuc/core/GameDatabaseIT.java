@@ -269,7 +269,7 @@ final class GameDatabaseIT {
             connection.commit();
         }
         database = new GameDatabase(url, user, password, schema, catalog, new Domain.EconomyPolicy(10000, 500)); database.initialize(); database.initialize();
-        assertEquals(11, number("SELECT version FROM schema_version")); assertEquals(8, balance(leader)); assertEquals(3, treasuryBalance(sect));
+        assertEquals(12, number("SELECT version FROM schema_version")); assertEquals(8, balance(leader)); assertEquals(3, treasuryBalance(sect));
         assertEquals(2, stock(leader)); assertEquals(1, number("SELECT count(*) FROM item_tokens")); assertEquals(1, number("SELECT count(*) FROM resource_ledger"));
         assertEquals(0, number("SELECT count(*) FROM projects")); Contracts.Job job = database.contractBoard().jobs().getFirst();
         assertEquals("LEGACY_FLOOR_V1", job.templateId()); assertTrue(job.projectStage().isEmpty()); assertEquals(0, job.worksite());
@@ -437,7 +437,7 @@ final class GameDatabaseIT {
             connection.commit();
         }
         database.initialize(); database.initialize();
-        assertEquals(11, number("SELECT version FROM schema_version")); assertEquals(12, number("SELECT sum(balance) FROM profiles"));
+        assertEquals(12, number("SELECT version FROM schema_version")); assertEquals(12, number("SELECT sum(balance) FROM profiles"));
         assertEquals(0, number("SELECT sum(balance) FROM sect_accounts")); assertEquals(12, number("SELECT sum(delta) FROM ledger"));
         assertEquals(0, number("SELECT count(*) FROM ledger WHERE sect_id IS NOT NULL")); assertEquals(1, number("SELECT count(*) FROM sect_members"));
         assertEquals(8, number("SELECT sum(balance) FROM contract_escrow_accounts"));
@@ -578,13 +578,15 @@ final class GameDatabaseIT {
             Migrations.apply(connection, Migrations.load().subList(0, 5), Migrations.resource("/db/schema-fingerprint.sql")); connection.commit();
         }
         execute("INSERT INTO economy_policy VALUES (true,'linh_te',10000,500,'" + CatalogFile.signature(catalog) + "')");
-        UUID sender = UUID.randomUUID(); UUID recipient = UUID.randomUUID(); fund(sender, 4); database.register(recipient, "Recipient");
-        mine(sender, 2); long revision = database.view(sender, "before").revision(); UUID transfer = UUID.randomUUID();
-        String receipt = database.transferMaterials(transfer, sender, recipient, "linh_thach_tho", 2, revision);
-        Domain.PlayerView before = database.view(recipient, "before");
+        // Fixture V005 dùng SQL định dạng đã phát hành; API hiện tại chỉ chạy sau migration.
+        UUID sender = UUID.randomUUID(); UUID recipient = UUID.randomUUID(); UUID transfer = UUID.randomUUID();
+        UUID sale = UUID.randomUUID(); UUID firstToken = UUID.randomUUID(); UUID secondToken = UUID.randomUUID(); long revision = 7;
+        String receipt = "legacy_transfer_success";
+        execute("INSERT INTO profiles(player_id,player_name,cultivation_xp,balance,inventory_revision) VALUES ('" + sender + "','Sender',60,8,8),('" + recipient + "','Recipient',0,0,1); INSERT INTO inventory VALUES ('" + sender + "','linh_thach_tho',0),('" + recipient + "','linh_thach_tho',2); INSERT INTO operations(request_id,actor_id,fingerprint,result) VALUES ('" + transfer + "','" + sender + "','materials:" + sender + ":" + recipient + ":linh_thach_tho:2:7','" + receipt + "'),('" + sale + "','" + sender + "','sell:" + sender + ":linh_thach_tho:4','legacy_sell'); INSERT INTO resource_ledger(request_id,player_id,counterparty_id,resource_id,delta,balance_after) VALUES ('" + transfer + "','" + sender + "','" + recipient + "','linh_thach_tho',-2,0),('" + transfer + "','" + recipient + "','" + sender + "','linh_thach_tho',2,2); INSERT INTO item_tokens(token_id,player_id,resource_id,ordinal) VALUES ('" + firstToken + "','" + recipient + "','linh_thach_tho',1),('" + secondToken + "','" + recipient + "','linh_thach_tho',2); INSERT INTO ledger(request_id,player_id,delta,balance_after,reason) VALUES ('" + sale + "','" + sender + "',8,8,'NPC_SELL:linh_thach_tho'); INSERT INTO economy_daily VALUES ((clock_timestamp() AT TIME ZONE 'UTC')::date,8,0); INSERT INTO player_mint_daily VALUES ((clock_timestamp() AT TIME ZONE 'UTC')::date,'" + sender + "',8)");
+        List<Domain.ItemToken> expected = List.of(new Domain.ItemToken(firstToken, recipient, "linh_thach_tho"), new Domain.ItemToken(secondToken, recipient, "linh_thach_tho"));
         database.initialize(); database.initialize();
-        assertEquals(11, number("SELECT version FROM schema_version")); assertEquals(11, number("SELECT count(*) FROM migration_history"));
-        assertEquals(before.items(), database.view(recipient, "after").items()); assertEquals(8, balance(sender));
+        assertEquals(12, number("SELECT version FROM schema_version")); assertEquals(12, number("SELECT count(*) FROM migration_history"));
+        assertEquals(expected, database.view(recipient, "after").items()); assertEquals(8, balance(sender));
         assertEquals(receipt, database.transferMaterials(transfer, sender, recipient, "linh_thach_tho", 2, revision));
         assertEquals(2, number("SELECT count(*) FROM resource_ledger")); assertEquals(0, number("SELECT count(*) FROM sects"));
     }
@@ -608,7 +610,8 @@ final class GameDatabaseIT {
         database.buy(UUID.randomUUID(), player, "Cultivator", "huyen_thiet", 1);
         database.pay(UUID.randomUUID(), player, "Cultivator", target, 6);
         assertEquals(20, balance(player)); assertEquals(6, balance(target)); assertEquals(1, stock(player));
-        assertTrue(database.profile(player).contains("Luyện Khí"));
+        assertTrue(database.profile(player).contains("Phàm Nhân"));
+        assertEquals(0, database.view(player, "").cultivation().rank());
         assertEquals(balance(player), scalar("SELECT sum(delta) FROM ledger WHERE player_id=?", player));
         assertEquals(balance(target), scalar("SELECT sum(delta) FROM ledger WHERE player_id=?", target));
     }
@@ -851,8 +854,8 @@ final class GameDatabaseIT {
         execute("INSERT INTO ledger(request_id,player_id,delta,balance_after,reason) VALUES ('" + request + "','" + player + "',600,600,'NPC_SELL:linh_thach_tho')");
         database.initialize(); database.initialize();
         assertEquals(600, balance(player)); assertEquals(3, stock(player));
-        assertEquals(11, number("SELECT version FROM schema_version"));
-        assertEquals(11, number("SELECT count(*) FROM migration_history"));
+        assertEquals(12, number("SELECT version FROM schema_version"));
+        assertEquals(12, number("SELECT count(*) FROM migration_history"));
         assertEquals(600, number("SELECT sum(minted) FROM player_mint_daily"));
         assertTrue(database.receipt(player, request).contains("legacy_success"));
         assertThrows(IllegalArgumentException.class, () -> database.sell(UUID.randomUUID(), player, "Legacy", "linh_thach_tho", 1));
@@ -937,7 +940,7 @@ final class GameDatabaseIT {
         execute("INSERT INTO profiles(player_id,player_name,balance,cultivation_xp) VALUES ('" + player + "','Legacy',18,50)");
         execute("INSERT INTO inventory VALUES ('" + player + "','linh_thach',1)");
         database.initialize();
-        assertEquals(11, number("SELECT version FROM schema_version"));
+        assertEquals(12, number("SELECT version FROM schema_version"));
         Domain.PlayerView view = database.view(player, "upgraded");
         assertEquals(18, view.balance()); assertEquals(50, view.xp()); assertEquals(1, view.items().size());
         assertEquals(0, number("SELECT count(*) FROM operations"));
@@ -1091,7 +1094,7 @@ final class GameDatabaseIT {
         }
         execute("INSERT INTO profiles(player_id,player_name,balance) VALUES ('" + owner + "','Owner V9',18),('" + builder + "','Builder V9',0); INSERT INTO islands(player_id,slot,ready) OVERRIDING SYSTEM VALUE VALUES ('" + owner + "',1,true); INSERT INTO operations(request_id,actor_id,fingerprint,result) VALUES ('" + contract + "','" + owner + "','legacy contract creation','committed'); INSERT INTO building_contracts(contract_id,owner_id,builder_id,island_slot,reward,status,expires_at) VALUES ('" + contract + "','" + owner + "','" + builder + "',1,2,'ACTIVE',clock_timestamp()+interval '1 hour'); INSERT INTO contract_escrow_accounts VALUES ('" + contract + "','linh_te',2); INSERT INTO contract_block_journal(event_id,contract_id,actor_id,event_type,position,before_material,after_material,state) VALUES ('" + event + "','" + contract + "','" + builder + "','PLACE','71:100:7','AIR','COBBLESTONE','INTENT'); INSERT INTO contract_recovery_fences(contract_id,classification,reason) VALUES ('" + contract + "','INCOMPLETE','V9 durable intent'); INSERT INTO economy_daily VALUES (current_date,20,0)");
         database = new GameDatabase(url, user, password, schema, catalog, new Domain.EconomyPolicy(10000, 500)); database.initialize(); database.initialize();
-        assertEquals(11, number("SELECT version FROM schema_version")); assertEquals(11, number("SELECT count(*) FROM migration_history"));
+        assertEquals(12, number("SELECT version FROM schema_version")); assertEquals(12, number("SELECT count(*) FROM migration_history"));
         assertEquals(BlockJournal.State.INTENT, database.blockJournal().getFirst().entry().state());
         assertEquals(event, database.blockJournal().getFirst().entry().id()); assertEquals(1, number("SELECT count(*) FROM contract_recovery_fences"));
         assertEquals(18, balance(owner)); assertEquals(2, number("SELECT sum(balance) FROM contract_escrow_accounts"));
@@ -1491,12 +1494,13 @@ final class GameDatabaseIT {
         }
         UUID owner = UUID.randomUUID(); UUID builder = UUID.randomUUID();
         execute("INSERT INTO economy_policy VALUES (true,'linh_te',10000,500,'" + CatalogFile.signature(catalog) + "')");
-        database.register(builder, "Builder"); fund(owner, 4); database.reserveIsland(owner, "Owner");
-        database.islandReady(owner); Domain.Claims claims = database.inviteBuilder(owner, builder);
-        mine(owner, 1); Domain.PlayerView before = database.view(owner, "before");
+        // Fixture V003 chứa ví đã mint hợp lệ, quyền đảo và token cũ, không gọi API V012 trên schema cũ.
+        UUID sale = UUID.randomUUID(); UUID token = UUID.randomUUID();
+        execute("INSERT INTO profiles(player_id,player_name,cultivation_xp,balance,inventory_revision) VALUES ('" + owner + "','Owner',50,8,6),('" + builder + "','Builder',0,0,0); INSERT INTO inventory VALUES ('" + owner + "','linh_thach_tho',1); INSERT INTO islands(player_id,ready) VALUES ('" + owner + "',true); INSERT INTO island_builders VALUES ('" + owner + "','" + builder + "'); UPDATE world_state SET revision=3; INSERT INTO item_tokens(token_id,player_id,resource_id,ordinal) VALUES ('" + token + "','" + owner + "','linh_thach_tho',1); INSERT INTO operations(request_id,actor_id,fingerprint,result) VALUES ('" + sale + "','" + owner + "','sell:" + owner + ":linh_thach_tho:4','legacy_sell'); INSERT INTO ledger(request_id,player_id,delta,balance_after,reason) VALUES ('" + sale + "','" + owner + "',8,8,'NPC_SELL:linh_thach_tho'); INSERT INTO economy_daily VALUES ((clock_timestamp() AT TIME ZONE 'UTC')::date,8,0); INSERT INTO player_mint_daily VALUES ((clock_timestamp() AT TIME ZONE 'UTC')::date,'" + owner + "',8)");
+        Domain.Claims claims = database.islands(); List<Domain.ItemToken> expected = List.of(new Domain.ItemToken(token, owner, "linh_thach_tho"));
         database.initialize(); database.initialize();
-        assertEquals(11, number("SELECT version FROM schema_version")); assertEquals(11, number("SELECT count(*) FROM migration_history"));
-        assertEquals(claims, database.islands()); assertEquals(before.items(), database.view(owner, "after").items());
+        assertEquals(12, number("SELECT version FROM schema_version")); assertEquals(12, number("SELECT count(*) FROM migration_history"));
+        assertEquals(claims, database.islands()); assertEquals(expected, database.view(owner, "after").items());
         assertEquals(8, balance(owner)); assertEquals(0, number("SELECT count(*) FROM building_contracts"));
     }
 
@@ -1709,7 +1713,7 @@ final class GameDatabaseIT {
         UUID sender = UUID.randomUUID(); UUID token = UUID.randomUUID(); UUID request = UUID.randomUUID();
         execute("INSERT INTO profiles(player_id,player_name,balance) VALUES ('" + sender + "','Legacy',10); INSERT INTO inventory VALUES ('" + sender + "','linh_thach_tho',5); INSERT INTO item_tokens(token_id,player_id,resource_id,ordinal) VALUES ('" + token + "','" + sender + "','linh_thach_tho',1); INSERT INTO operations(request_id,fingerprint,result,actor_id) VALUES ('" + request + "','legacy','preserved','" + sender + "')");
         database = new GameDatabase(url, user, password, schema, catalog, new Domain.EconomyPolicy(10000, 500)); database.initialize();
-        assertEquals(11, number("SELECT version FROM schema_version")); assertEquals(5, stock(sender)); assertEquals(10, balance(sender));
+        assertEquals(12, number("SELECT version FROM schema_version")); assertEquals(5, stock(sender)); assertEquals(10, balance(sender));
         assertEquals(1, scalar("SELECT count(*) FROM item_tokens WHERE token_id=?", token)); assertTrue(database.receipt(sender, request).contains("preserved"));
         assertEquals(0, number("SELECT count(*) FROM resource_ledger"));
         database.initialize();
@@ -1723,4 +1727,132 @@ final class GameDatabaseIT {
         assertEquals(3, number("SELECT last_value FROM fault_attempt")); assertEquals(1, stock(player));
         assertEquals(0, balance(player)); assertEquals(0, number("SELECT count(*) FROM economy_daily"));
     }
+    private UUID cultivationNine() throws SQLException {
+        UUID player = UUID.randomUUID(); mine(player, 80);
+        assertEquals(0, database.view(player, "").cultivation().rank());
+        database.craft(UUID.randomUUID(), player, "Cultivator", "ket_tinh", 5);
+        for (int rank = 0; rank < 9; rank++) {
+            Cultivation.State state = database.view(player, "").cultivation();
+            UUID request = UUID.randomUUID();
+            String first = database.trainCultivation(request, player, rank, state.revision());
+            assertEquals(first, database.trainCultivation(request, player, rank, state.revision()));
+        }
+        for (int count = 0; count < 2; count++) database.mine(UUID.randomUUID(), player, "Cultivator", UUID.randomUUID().toString(), "huyen_thiet", 3);
+        return player;
+    }
+
+    @Test void cultivationJourneyHasExplicitRanksIdempotentCostsAndUsableBenefit() throws SQLException, InterruptedException, IOException {
+        UUID player = cultivationNine(); Cultivation.Snapshot before = database.cultivationView(player, "");
+        assertEquals(9, before.view().cultivation().rank()); assertEquals(37L, before.view().stock().get("linh_thach_tho"));
+        assertThrows(IllegalArgumentException.class, () -> database.craft(UUID.randomUUID(), player, "Cultivator", "ket_tinh_truc_co", 1));
+        UUID trial = UUID.randomUUID(); long revision = before.view().cultivation().revision();
+        String start = database.startCultivationTrial(trial, player, revision);
+        assertEquals(start, database.startCultivationTrial(trial, player, revision));
+        Cultivation.Trial challenge = database.cultivationView(player, "").trial().orElseThrow();
+        assertEquals(0L, scalar("SELECT coalesce(sum(quantity),0) FROM inventory WHERE player_id=? AND resource_id='linh_thach'", player));
+        assertThrows(IllegalArgumentException.class, () -> database.answerCultivationTrial(UUID.randomUUID(), player, trial, 0, challenge.sequence().getFirst()));
+        Thread.sleep(database.cultivationRules().previewSeconds() * 1000L + 100);
+        for (int step = 0; step < 5; step++) {
+            UUID request = UUID.randomUUID(); int choice = challenge.sequence().get(step);
+            String answer = database.answerCultivationTrial(request, player, trial, step, choice);
+            assertEquals(answer, database.answerCultivationTrial(request, player, trial, step, choice));
+        }
+        database.initialize();
+        assertEquals(10, database.view(player, "").cultivation().rank());
+        assertEquals("SUCCESS", database.cultivationView(player, "").trial().orElseThrow().status());
+        assertEquals(1, number("SELECT count(*) FROM cultivation_history WHERE kind='SUCCESS'"));
+        assertEquals(9, number("SELECT count(*) FROM cultivation_history WHERE kind='TRAIN'"));
+        assertEquals(1, number("SELECT count(*) FROM cultivation_history WHERE kind='START'"));
+        assertEquals(14, number("SELECT count(*) FROM resource_ledger WHERE kind='CONSUME'"));
+        assertEquals(0, number("SELECT count(*) FROM building_history")); assertMoneyConserved(0);
+        UUID craft = UUID.randomUUID(); String benefit = database.craft(craft, player, "Cultivator", "ket_tinh_truc_co", 1);
+        assertEquals(benefit, database.craft(craft, player, "Cultivator", "ket_tinh_truc_co", 1));
+        assertEquals(2L, database.view(player, "").stock().get("linh_thach"));
+        long xp = database.view(player, "").xp(); mine(player, 1);
+        assertEquals(xp + 20, database.view(player, "").xp());
+        assertThrows(SQLException.class, () -> execute("UPDATE cultivation_history SET detail='tampered'"));
+    }
+
+    @Test void cultivationResourceAndTokenChangesRollbackWithFailedProgressUpdate() throws SQLException {
+        UUID player = UUID.randomUUID(); mine(player, 2); Domain.PlayerView before = database.view(player, "");
+        execute("CREATE FUNCTION fail_training() RETURNS trigger LANGUAGE plpgsql AS $$ BEGIN RAISE EXCEPTION 'fault training update' USING ERRCODE='XX001'; END $$; CREATE TRIGGER fail_training BEFORE UPDATE ON cultivation_progress FOR EACH ROW EXECUTE FUNCTION fail_training()");
+        UUID request = UUID.randomUUID();
+        assertEquals("XX001", assertThrows(SQLException.class, () -> database.trainCultivation(request, player, 0, 0)).getSQLState());
+        assertEquals(before, database.view(player, "")); assertEquals(0, number("SELECT count(*) FROM resource_ledger"));
+        assertEquals(0, scalar("SELECT count(*) FROM operations WHERE request_id=?", request));
+        assertEquals(0, number("SELECT count(*) FROM cultivation_history"));
+    }
+
+    @Test void cultivationWrongAnswerFailsWithoutRefundAndRejectsForeignActorAndStaleTurn() throws SQLException, InterruptedException {
+        UUID player = cultivationNine(); UUID foreign = UUID.randomUUID(); database.register(foreign, "Visitor");
+        UUID trial = UUID.randomUUID(); database.startCultivationTrial(trial, player, database.view(player, "").cultivation().revision());
+        Cultivation.Trial challenge = database.cultivationView(player, "").trial().orElseThrow();
+        assertThrows(IllegalArgumentException.class, () -> database.answerCultivationTrial(UUID.randomUUID(), foreign, trial, 0, 0));
+        Thread.sleep(database.cultivationRules().previewSeconds() * 1000L + 100);
+        UUID wrong = UUID.randomUUID(); int choice = (challenge.sequence().getFirst() + 1) % 5;
+        String result = database.answerCultivationTrial(wrong, player, trial, 0, choice);
+        assertEquals(result, database.answerCultivationTrial(wrong, player, trial, 0, choice));
+        Cultivation.Snapshot failed = database.cultivationView(player, "");
+        assertEquals(9, failed.view().cultivation().rank()); assertEquals("FAILED", failed.trial().orElseThrow().status());
+        assertEquals(0L, scalar("SELECT coalesce(sum(quantity),0) FROM inventory WHERE player_id=? AND resource_id='linh_thach'", player));
+        assertThrows(IllegalArgumentException.class, () -> database.startCultivationTrial(UUID.randomUUID(), player, failed.view().cultivation().revision()));
+        assertThrows(IllegalArgumentException.class, () -> database.answerCultivationTrial(UUID.randomUUID(), player, trial, 0, choice));
+        assertEquals(1, number("SELECT count(*) FROM cultivation_history WHERE kind='FAILED'")); assertMoneyConserved(0);
+    }
+
+    @Test void cultivationInterruptedStartCannotReplayFeeOrWinAfterReconnectOrRestart() throws SQLException, IOException {
+        UUID player = cultivationNine(); long revision = database.view(player, "").cultivation().revision(); UUID trial = UUID.randomUUID();
+        String receipt = database.startCultivationTrial(trial, player, revision);
+        database.register(player, "Cultivator");
+        assertEquals("INTERRUPTED", database.cultivationView(player, "").trial().orElseThrow().status());
+        database.initialize();
+        assertEquals(receipt, database.startCultivationTrial(trial, player, revision));
+        assertEquals(9, database.view(player, "").cultivation().rank());
+        assertThrows(IllegalArgumentException.class, () -> database.answerCultivationTrial(UUID.randomUUID(), player, trial, 0, 0));
+        assertEquals(1, number("SELECT count(*) FROM cultivation_history WHERE kind='INTERRUPTED'"));
+        assertEquals(1, number("SELECT count(*) FROM cultivation_trials")); assertMoneyConserved(0);
+    }
+
+    @Test void cultivationDeadlineAndRestartEndActiveTrialsWithoutReward() throws SQLException, IOException {
+        UUID player = cultivationNine(); UUID trial = UUID.randomUUID();
+        database.startCultivationTrial(trial, player, database.view(player, "").cultivation().revision());
+        // Dịch đồng hồ fixture trong schema test; không dùng đường này trong phiên Client.
+        execute("UPDATE cultivation_trials SET preview_until=clock_timestamp()-interval '2 seconds',deadline=clock_timestamp()-interval '1 second' WHERE trial_id='" + trial + "'");
+        assertEquals("FAILED", database.cultivationView(player, "").trial().orElseThrow().status());
+        assertEquals(9, database.view(player, "").cultivation().rank());
+        UUID second = cultivationNine(); UUID restart = UUID.randomUUID();
+        database.startCultivationTrial(restart, second, database.view(second, "").cultivation().revision());
+        database.initialize();
+        assertEquals("INTERRUPTED", database.cultivationView(second, "").trial().orElseThrow().status());
+        assertEquals(9, database.view(second, "").cultivation().rank()); assertMoneyConserved(0);
+    }
+
+    @Test void cultivationMissingStateFailsClosedRatherThanRecreatingRank() throws SQLException {
+        UUID player = UUID.randomUUID(); mine(player, 1);
+        execute("DELETE FROM cultivation_progress WHERE player_id='" + player + "'");
+        assertEquals("55000", assertThrows(SQLException.class, () -> database.register(player, "Cultivator")).getSQLState());
+        assertEquals(0, number("SELECT count(*) FROM cultivation_progress"));
+        assertEquals(10, scalar("SELECT cultivation_xp FROM profiles WHERE player_id=?", player)); assertEquals(1, stock(player));
+    }
+
+    @Test void v011MigrationPreservesXpLegacyTitlesAssetsAndExistingChecksums() throws SQLException, IOException {
+        database.close(); execute("DROP SCHEMA " + schema + " CASCADE; CREATE SCHEMA " + schema);
+        UUID ancient = UUID.randomUUID(); UUID trainee = UUID.randomUUID();
+        try (Connection connection = DriverManager.getConnection(url, user, password)) {
+            connection.setSchema(schema); connection.setAutoCommit(false);
+            Migrations.apply(connection, Migrations.load().subList(0, 11), Migrations.resource("/db/schema-fingerprint.sql"));
+            try (Statement statement = connection.createStatement()) {
+                statement.execute("INSERT INTO profiles(player_id,player_name,cultivation_xp,balance) VALUES ('" + ancient + "','Ancient',11000,0),('" + trainee + "','Trainee',300,0); INSERT INTO inventory VALUES ('" + ancient + "','huyen_thiet',7)");
+            }
+            connection.commit();
+        }
+        database = new GameDatabase(url, user, password, schema, catalog, new Domain.EconomyPolicy(10000, 500)); database.initialize();
+        assertEquals(11000, database.view(ancient, "").xp()); assertEquals(7, stock(ancient));
+        assertEquals("Nguyên Anh (kế thừa, chưa mở nội dung mới)", Cultivation.title(database.view(ancient, "").cultivation()));
+        assertEquals(10, database.view(ancient, "").cultivation().rank());
+        assertEquals(1, database.view(trainee, "").cultivation().rank()); assertEquals(300, database.view(trainee, "").xp());
+        assertEquals(2, number("SELECT count(*) FROM cultivation_history WHERE kind='MIGRATED'"));
+        database.initialize(); assertEquals(2, number("SELECT count(*) FROM cultivation_history WHERE kind='MIGRATED'"));
+    }
+
 }

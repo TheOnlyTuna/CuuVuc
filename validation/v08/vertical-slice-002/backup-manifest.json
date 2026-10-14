@@ -1,0 +1,936 @@
+{
+  "format": 1,
+  "createdUtc": "2026-10-14T22:59:53.3933731Z",
+  "database": "cv_vs002_client03",
+  "jdbcUrl": "jdbc:postgresql://127.0.0.1:55439/cv_vs002_client03",
+  "files": [
+    {
+      "path": "database.dump",
+      "sha256": "e6dbbd074c38019e2f4283b12e0a3df81beeac0b770472cec5c3813cbd66e1dc"
+    },
+    {
+      "path": "server\\.paper\\version_history.json",
+      "sha256": "37ae4b72b554dc1260924cb2218fc29aae8f34d5297bd23b1b9de9893f9fb6a5"
+    },
+    {
+      "path": "server\\banned-ips.json",
+      "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+    },
+    {
+      "path": "server\\banned-players.json",
+      "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+    },
+    {
+      "path": "server\\bukkit.yml",
+      "sha256": "a72396bbd1b69636b63f990995ed1ce31df7183af275868b4d638071fd4c866a"
+    },
+    {
+      "path": "server\\cache\\mojang_26.3.jar",
+      "sha256": "d052f14d7a173734fba553711e5b570162e2f2a313267ee31a21b975a679be64"
+    },
+    {
+      "path": "server\\commands.yml",
+      "sha256": "44afdf9b41eea9f2d8b9ae41d3c07443ec78a4962c6b7ae33fb3097d6c94e3b9"
+    },
+    {
+      "path": "server\\config\\paper-global.yml",
+      "sha256": "e9943756e62f7c6037c494247555d3ca264208bb6b733fa0d7fba6ba3abc8eea"
+    },
+    {
+      "path": "server\\config\\paper-world-defaults.yml",
+      "sha256": "97735c874f52c88fd32f7962a1ca9d0e563def17588c8bc1e5055e6869e85624"
+    },
+    {
+      "path": "server\\eula.txt",
+      "sha256": "e4db182aa77b5e31657f4b83f8973c79a8c65217a4383200f9f59f7c94752fad"
+    },
+    {
+      "path": "server\\libraries\\at\\yawk\\lz4\\lz4-java\\1.10.1\\lz4-java-1.10.1.jar",
+      "sha256": "a58a84c4271e50df4c96ed916ccb7e48a869f8ed9cdcda1ad5d3d4c33b0214a3"
+    },
+    {
+      "path": "server\\libraries\\ca\\spottedleaf\\leafpile\\common\\1.2.4\\common-1.2.4.jar",
+      "sha256": "92ac1a729087be81d0dda130d070068dfed60a087b25e1ba596099d134a14322"
+    },
+    {
+      "path": "server\\libraries\\ca\\spottedleaf\\leafpile\\concurrentutil\\1.2.4\\concurrentutil-1.2.4.jar",
+      "sha256": "710ce10ce3057e6f62488944efae5f3452b851a8254ec35a1fa6e9025e95f620"
+    },
+    {
+      "path": "server\\libraries\\ca\\spottedleaf\\leafpile\\converter\\1.2.4\\converter-1.2.4.jar",
+      "sha256": "f2f0dcf16f445f7cd0d3f7ae937f0c3996f11abc347480a5a182a1a24d6ad29f"
+    },
+    {
+      "path": "server\\libraries\\com\\azure\\azure-json\\1.4.0\\azure-json-1.4.0.jar",
+      "sha256": "c50bc998cd1a6c689f8644b51c206217bf2da09d5b949e777490a60290cc3a0d"
+    },
+    {
+      "path": "server\\libraries\\com\\github\\oshi\\oshi-core\\6.9.0\\oshi-core-6.9.0.jar",
+      "sha256": "b29ba9bce041e6ea822203d5b5a692660c87551241510ebc76eedffe684844c7"
+    },
+    {
+      "path": "server\\libraries\\com\\google\\code\\gson\\gson\\2.14.0\\gson-2.14.0.jar",
+      "sha256": "2cbd119bf1961c28788310963dc80ba65f58cdeec1dd139c8bdb1240faa2c36f"
+    },
+    {
+      "path": "server\\libraries\\com\\google\\errorprone\\error_prone_annotations\\2.48.0\\error_prone_annotations-2.48.0.jar",
+      "sha256": "b49c5c958316ed67a09c699dda9aa749caf434d51d863dea599ef36a49b9c855"
+    },
+    {
+      "path": "server\\libraries\\com\\google\\guava\\failureaccess\\1.0.3\\failureaccess-1.0.3.jar",
+      "sha256": "cbfc3906b19b8f55dd7cfd6dfe0aa4532e834250d7f080bd8d211a3e246b59cb"
+    },
+    {
+      "path": "server\\libraries\\com\\google\\guava\\guava\\33.6.0-jre\\guava-33.6.0-jre.jar",
+      "sha256": "dc573e1fca4fd5454f4a5fd3d7da2df03002876a4175bafc14a95980dd7713b3"
+    },
+    {
+      "path": "server\\libraries\\com\\google\\guava\\listenablefuture\\9999.0-empty-to-avoid-conflict-with-guava\\listenablefuture-9999.0-empty-to-avoid-conflict-with-guava.jar",
+      "sha256": "b372a037d4230aa57fbeffdef30fd6123f9c0c2db85d0aced00c91b974f33f99"
+    },
+    {
+      "path": "server\\libraries\\com\\google\\j2objc\\j2objc-annotations\\3.1\\j2objc-annotations-3.1.jar",
+      "sha256": "84d3a150518485f8140ea99b8a985656749629f6433c92b80c75b36aba3b099b"
+    },
+    {
+      "path": "server\\libraries\\com\\google\\protobuf\\protobuf-java\\4.29.0\\protobuf-java-4.29.0.jar",
+      "sha256": "16901851ebe5e89fe88aaad3c26866373695bc2e30627bb8932847e2f5fc2e76"
+    },
+    {
+      "path": "server\\libraries\\com\\googlecode\\json-simple\\json-simple\\1.1.1\\json-simple-1.1.1.jar",
+      "sha256": "4e69696892b88b41c55d49ab2fdcc21eead92bf54acc588c0050596c3b75199c"
+    },
+    {
+      "path": "server\\libraries\\com\\lmax\\disruptor\\3.4.4\\disruptor-3.4.4.jar",
+      "sha256": "1524ed31f13bcabee1b6146e67be30c6317cb94fcd0c7c2f7c7a1f3e82087c51"
+    },
+    {
+      "path": "server\\libraries\\com\\microsoft\\azure\\msal4j\\1.24.1\\msal4j-1.24.1.jar",
+      "sha256": "12e62f79d1a71d176a41c168c0587f8167f0add99b78f006f39595bd7242aebe"
+    },
+    {
+      "path": "server\\libraries\\com\\mojang\\authlib\\10.0.77\\authlib-10.0.77.jar",
+      "sha256": "521672866582633a412c82171d3cfa416ecaccdf05a43baf809c16f9aec07068"
+    },
+    {
+      "path": "server\\libraries\\com\\mojang\\brigadier\\1.3.11\\brigadier-1.3.11.jar",
+      "sha256": "9d09cf4819de83dfcd38bcb212d5f2227131791cef3abbfca3321d6fb2b9a64d"
+    },
+    {
+      "path": "server\\libraries\\com\\mojang\\datafixerupper\\10.0.21\\datafixerupper-10.0.21.jar",
+      "sha256": "3547cb1da8993fb7ebd42494d0e78997d2cfbe90c421f5efd022863e6909941e"
+    },
+    {
+      "path": "server\\libraries\\com\\mojang\\jtracy\\1.14.38\\jtracy-1.14.38.jar",
+      "sha256": "721bff502a9664d689d781ab7bfed19330606c2e1ef6b8e4d59fba67e7e765da"
+    },
+    {
+      "path": "server\\libraries\\com\\mojang\\logging\\1.7.12\\logging-1.7.12.jar",
+      "sha256": "3c7ac9742fa98c773275379eb1046c048b5d2ee989152a8c69e7ba696c3f8538"
+    },
+    {
+      "path": "server\\libraries\\com\\mysql\\mysql-connector-j\\9.2.0\\mysql-connector-j-9.2.0.jar",
+      "sha256": "7e9941bbdcca244d878ea95bfff788fd9ba6a65af757f24be6c632930d61c7ed"
+    },
+    {
+      "path": "server\\libraries\\com\\velocitypowered\\velocity-native\\4.1.0\\velocity-native-4.1.0.jar",
+      "sha256": "3ee3671d057f8ac53acc59c3915cc2d9fe1661942b440a6935df88de7e6e103e"
+    },
+    {
+      "path": "server\\libraries\\commons-codec\\commons-codec\\1.16.0\\commons-codec-1.16.0.jar",
+      "sha256": "56595fb20b0b85bc91d0d503dad50bb7f1b9afc0eed5dffa6cbb25929000484d"
+    },
+    {
+      "path": "server\\libraries\\commons-io\\commons-io\\2.20.0\\commons-io-2.20.0.jar",
+      "sha256": "df90bba0fe3cb586b7f164e78fe8f8f4da3f2dd5c27fa645f888100ccc25dd72"
+    },
+    {
+      "path": "server\\libraries\\commons-lang\\commons-lang\\2.6\\commons-lang-2.6.jar",
+      "sha256": "50f11b09f877c294d56f24463f47d28f929cf5044f648661c0f0cfbae9a2f49c"
+    },
+    {
+      "path": "server\\libraries\\io\\leangen\\geantyref\\geantyref\\1.3.16\\geantyref-1.3.16.jar",
+      "sha256": "7f1d591092d5142b6aaa7cf59f94c4c74d57dbeef03b2f8262949f8f36bac6e3"
+    },
+    {
+      "path": "server\\libraries\\io\\netty\\netty-buffer\\4.2.16.Final\\netty-buffer-4.2.16.Final.jar",
+      "sha256": "cc36ae9fbd0b03fe755eb4eb4424ca53b59cfd297d7fd47d49e5b1059beded6c"
+    },
+    {
+      "path": "server\\libraries\\io\\netty\\netty-codec-base\\4.2.16.Final\\netty-codec-base-4.2.16.Final.jar",
+      "sha256": "feb410225938d9970de6b624a0c031d079804fa5cc5e1ec6e9298f16db5998a7"
+    },
+    {
+      "path": "server\\libraries\\io\\netty\\netty-codec-compression\\4.2.16.Final\\netty-codec-compression-4.2.16.Final.jar",
+      "sha256": "13c8565414dd2115281303ef4ad1f7cc69bd7771d8d12c7d2fb31307dff26d11"
+    },
+    {
+      "path": "server\\libraries\\io\\netty\\netty-codec-haproxy\\4.2.16.Final\\netty-codec-haproxy-4.2.16.Final.jar",
+      "sha256": "bada016d30eb0adcb0703bc5f34391482ed044675d111f830263d6f3e300675d"
+    },
+    {
+      "path": "server\\libraries\\io\\netty\\netty-codec-http\\4.2.16.Final\\netty-codec-http-4.2.16.Final.jar",
+      "sha256": "0d16f981de8d0d304a2ab1a81f0a674892089fbaa8a583100aebb4a5b00456ec"
+    },
+    {
+      "path": "server\\libraries\\io\\netty\\netty-common\\4.2.16.Final\\netty-common-4.2.16.Final.jar",
+      "sha256": "9825ee68a0dc4cd2b53e2f532502401b2211bad9b77e8b04882d9e64487283ff"
+    },
+    {
+      "path": "server\\libraries\\io\\netty\\netty-handler\\4.2.16.Final\\netty-handler-4.2.16.Final.jar",
+      "sha256": "a259ca496da05ac1981f95cd856211f894a328056a6129e9cd70dbbd5df401f7"
+    },
+    {
+      "path": "server\\libraries\\io\\netty\\netty-resolver\\4.2.16.Final\\netty-resolver-4.2.16.Final.jar",
+      "sha256": "c9eca6a99036485cf1d186b4a6a595b0a54c53808319ee03924270eae04c32bb"
+    },
+    {
+      "path": "server\\libraries\\io\\netty\\netty-transport-classes-epoll\\4.2.16.Final\\netty-transport-classes-epoll-4.2.16.Final.jar",
+      "sha256": "9f2b53210db9c8d24e787ed43f3896aaf30d686ed270c7afbb29ab6330c6aa23"
+    },
+    {
+      "path": "server\\libraries\\io\\netty\\netty-transport-classes-kqueue\\4.2.16.Final\\netty-transport-classes-kqueue-4.2.16.Final.jar",
+      "sha256": "6599b495f69420cb240ab0a1aa60a19a2df3bc72791729170e0993727637a689"
+    },
+    {
+      "path": "server\\libraries\\io\\netty\\netty-transport-native-epoll\\4.2.16.Final\\netty-transport-native-epoll-4.2.16.Final-linux-aarch_64.jar",
+      "sha256": "212cc7d81390e31b580a1fb91b6c8d963b43e762ed072c555e2b09ad4476e928"
+    },
+    {
+      "path": "server\\libraries\\io\\netty\\netty-transport-native-epoll\\4.2.16.Final\\netty-transport-native-epoll-4.2.16.Final-linux-x86_64.jar",
+      "sha256": "2e00548e731948881d0c73ee79d2ead759254e750929406a1d595484758f0267"
+    },
+    {
+      "path": "server\\libraries\\io\\netty\\netty-transport-native-kqueue\\4.2.16.Final\\netty-transport-native-kqueue-4.2.16.Final-osx-aarch_64.jar",
+      "sha256": "796c503f7a80217177bd315f6448263134ee0f9042627d5fd698c760bcf99c8c"
+    },
+    {
+      "path": "server\\libraries\\io\\netty\\netty-transport-native-kqueue\\4.2.16.Final\\netty-transport-native-kqueue-4.2.16.Final-osx-x86_64.jar",
+      "sha256": "05a09a4ab51f488f0c22f42ccce6c06935afbfac51173fae44170465aa072828"
+    },
+    {
+      "path": "server\\libraries\\io\\netty\\netty-transport-native-unix-common\\4.2.16.Final\\netty-transport-native-unix-common-4.2.16.Final.jar",
+      "sha256": "41ca8fe192083d17917be7ddcecded4da4fc1db1d1656d03d0bcb14e2f431155"
+    },
+    {
+      "path": "server\\libraries\\io\\netty\\netty-transport\\4.2.16.Final\\netty-transport-4.2.16.Final.jar",
+      "sha256": "cfa3f654caff906653385f4b7ddaa539d795b78f5711a622482b17d2b73484c0"
+    },
+    {
+      "path": "server\\libraries\\io\\papermc\\paper\\paper-api\\26.3.build.166-beta\\paper-api-26.3.build.166-beta.jar",
+      "sha256": "0ea5f7111efc75d3d2fb469554bd169ba4671e0c2099864fa9391141587acf01"
+    },
+    {
+      "path": "server\\libraries\\it\\unimi\\dsi\\fastutil\\8.5.18\\fastutil-8.5.18.jar",
+      "sha256": "9094ae67d01d0ad246f886f11ad557fc2e79c72cbf3feed83e1512a8ae90a74a"
+    },
+    {
+      "path": "server\\libraries\\javax\\inject\\javax.inject\\1\\javax.inject-1.jar",
+      "sha256": "91c77044a50c481636c32d916fd89c9118a72195390452c81065080f957de7ff"
+    },
+    {
+      "path": "server\\libraries\\me\\lucko\\spark-api\\0.1-20240720.200737-2\\spark-api-0.1-20240720.200737-2.jar",
+      "sha256": "f99a3ba0cd3df1aee7b8f285fe7967a28d9c0cea37fa6621b643da919dcfb819"
+    },
+    {
+      "path": "server\\libraries\\me\\lucko\\spark-paper\\1.10.180\\spark-paper-1.10.180.jar",
+      "sha256": "214a0e392073f981562afdc5e0d0e820d9e1c088f70189774467fe52e342f81d"
+    },
+    {
+      "path": "server\\libraries\\net\\java\\dev\\jna\\jna-platform\\5.17.0\\jna-platform-5.17.0.jar",
+      "sha256": "b7e3d46c87bad2eb409b0e704916bcd81206168e357312dfddd0e253679cd9e0"
+    },
+    {
+      "path": "server\\libraries\\net\\java\\dev\\jna\\jna\\5.17.0\\jna-5.17.0.jar",
+      "sha256": "b3a9408e7c51e08ef0e3bfcc08f443f6ec0f6191ba8cd7c18d53d2b22e5bdbc0"
+    },
+    {
+      "path": "server\\libraries\\net\\kyori\\adventure-api\\5.2.0\\adventure-api-5.2.0.jar",
+      "sha256": "7e52fe7190be3e87b3b3f71712cfa12315fcd27109f302a7b440c12f01fae827"
+    },
+    {
+      "path": "server\\libraries\\net\\kyori\\adventure-key\\5.2.0\\adventure-key-5.2.0.jar",
+      "sha256": "0184d173200e2eef8fbc791f622d1d58fd459f8930c616b5a4fe79e83eda6c55"
+    },
+    {
+      "path": "server\\libraries\\net\\kyori\\adventure-text-logger-slf4j\\5.2.0\\adventure-text-logger-slf4j-5.2.0.jar",
+      "sha256": "ae79b7f3846c5d973b37c7eec03190bd44e182918d1346e7705c5991a1b5dfb3"
+    },
+    {
+      "path": "server\\libraries\\net\\kyori\\adventure-text-minimessage\\5.2.0\\adventure-text-minimessage-5.2.0.jar",
+      "sha256": "e1871aba1511dbe49cff211c10f85682886014161e5d629318aa69583c31a2c0"
+    },
+    {
+      "path": "server\\libraries\\net\\kyori\\adventure-text-serializer-ansi\\5.2.0\\adventure-text-serializer-ansi-5.2.0.jar",
+      "sha256": "9229d090832e288018f3df69027602dcda253118358585dc2728f84597e9ca9d"
+    },
+    {
+      "path": "server\\libraries\\net\\kyori\\adventure-text-serializer-commons\\5.2.0\\adventure-text-serializer-commons-5.2.0.jar",
+      "sha256": "64b3e45d93aa57f4da9b257d16c8f2172612d9e3312b061f4892fd426922d2c3"
+    },
+    {
+      "path": "server\\libraries\\net\\kyori\\adventure-text-serializer-gson\\5.2.0\\adventure-text-serializer-gson-5.2.0.jar",
+      "sha256": "5b2ad1c8a65e7fa0811279b51a45d5fc574b6a6354097b545e4fdb5b68aaed73"
+    },
+    {
+      "path": "server\\libraries\\net\\kyori\\adventure-text-serializer-json\\5.2.0\\adventure-text-serializer-json-5.2.0.jar",
+      "sha256": "adb5410006175b9aa6343bfadd0bd11c4a6955ee2abc1a58abe2a3fa6cbd9ab5"
+    },
+    {
+      "path": "server\\libraries\\net\\kyori\\adventure-text-serializer-legacy\\5.2.0\\adventure-text-serializer-legacy-5.2.0.jar",
+      "sha256": "1231a0de417de66c59e2f2a3892ecca6b8d48621df6f1d9a2f81b01f57e328b7"
+    },
+    {
+      "path": "server\\libraries\\net\\kyori\\adventure-text-serializer-plain\\5.2.0\\adventure-text-serializer-plain-5.2.0.jar",
+      "sha256": "f6424cc038a631b79cc4b74b6b353d5d007c99b38f9be482e0c2448a00eecd21"
+    },
+    {
+      "path": "server\\libraries\\net\\kyori\\ansi\\1.1.1\\ansi-1.1.1.jar",
+      "sha256": "b6c569e1a0925b9eeb349e12db35e2237556107e3336657e0b2ebde261d8afd7"
+    },
+    {
+      "path": "server\\libraries\\net\\kyori\\option\\1.1.0\\option-1.1.0.jar",
+      "sha256": "97b69b4b17dfe02217c9131ad342564cbc9aebd04c75eb689639b5f78fd4b11c"
+    },
+    {
+      "path": "server\\libraries\\net\\md-5\\bungeecord-chat\\1.21-R0.2-deprecated+build.21\\bungeecord-chat-1.21-R0.2-deprecated+build.21.jar",
+      "sha256": "ce930b3ee048520a0ab538eb8d1627b301367fc1b300837235387aded6d89ba1"
+    },
+    {
+      "path": "server\\libraries\\net\\minecrell\\terminalconsoleappender\\1.3.0\\terminalconsoleappender-1.3.0.jar",
+      "sha256": "1afea1bca095068f7f4483f061feed94753be34233ddb0df9ec380fc14d5a985"
+    },
+    {
+      "path": "server\\libraries\\net\\sf\\jopt-simple\\jopt-simple\\5.0.4\\jopt-simple-5.0.4.jar",
+      "sha256": "df26cc58f235f477db07f753ba5a3ab243ebe5789d9f89ecf68dd62ea9a66c28"
+    },
+    {
+      "path": "server\\libraries\\org\\apache\\commons\\commons-lang3\\3.20.0\\commons-lang3-3.20.0.jar",
+      "sha256": "69e5c9fa35da7a51a5fd2099dfe56a2d8d32cf233e2f6d770e796146440263f4"
+    },
+    {
+      "path": "server\\libraries\\org\\apache\\httpcomponents\\httpclient\\4.5.14\\httpclient-4.5.14.jar",
+      "sha256": "c8bc7e1c51a6d4ce72f40d2ebbabf1c4b68bfe76e732104b04381b493478e9d6"
+    },
+    {
+      "path": "server\\libraries\\org\\apache\\httpcomponents\\httpcore\\4.4.16\\httpcore-4.4.16.jar",
+      "sha256": "6c9b3dd142a09dc468e23ad39aad6f75a0f2b85125104469f026e52a474e464f"
+    },
+    {
+      "path": "server\\libraries\\org\\apache\\logging\\log4j\\log4j-api\\2.26.0\\log4j-api-2.26.0.jar",
+      "sha256": "820de7bbaf430eaf2e3e5ccb92f23e2085797c5ac4d4f7fc6c8b660fbefa1dbc"
+    },
+    {
+      "path": "server\\libraries\\org\\apache\\logging\\log4j\\log4j-core\\2.26.0\\log4j-core-2.26.0.jar",
+      "sha256": "406bb3132c47a5d322e5c571feb0787ca84496469f346eb51f1ef2ee45499902"
+    },
+    {
+      "path": "server\\libraries\\org\\apache\\logging\\log4j\\log4j-iostreams\\2.26.0\\log4j-iostreams-2.26.0.jar",
+      "sha256": "1c4e14ebecfd6a0e100a08f9eccfb639784a441e7591e887752440bb4c941fe8"
+    },
+    {
+      "path": "server\\libraries\\org\\apache\\logging\\log4j\\log4j-slf4j2-impl\\2.26.0\\log4j-slf4j2-impl-2.26.0.jar",
+      "sha256": "cfc1bddbd39e684b698ae968291d8a3b3a55ee0ec2ef3d3ea5c2336a9e151598"
+    },
+    {
+      "path": "server\\libraries\\org\\apache\\maven\\maven-artifact\\3.9.6\\maven-artifact-3.9.6.jar",
+      "sha256": "ad7a0fb408f8e47585ccc0d0011e0b501d93bfc9888d369bbd4a043d19475073"
+    },
+    {
+      "path": "server\\libraries\\org\\apache\\maven\\maven-builder-support\\3.9.6\\maven-builder-support-3.9.6.jar",
+      "sha256": "e1f4d2784459ce8a34b9dae1829a1999b569e483e21ee9faa7368691e729296e"
+    },
+    {
+      "path": "server\\libraries\\org\\apache\\maven\\maven-model-builder\\3.9.6\\maven-model-builder-3.9.6.jar",
+      "sha256": "5f96dafbc411ee4b1e8426368d0d31d05ab5a4dace69808143142a0017598721"
+    },
+    {
+      "path": "server\\libraries\\org\\apache\\maven\\maven-model\\3.9.6\\maven-model-3.9.6.jar",
+      "sha256": "4f8f07fdb6b8701fa89a23a2edf830808fd65892d90cce40c0e6df7c8f2fcb62"
+    },
+    {
+      "path": "server\\libraries\\org\\apache\\maven\\maven-repository-metadata\\3.9.6\\maven-repository-metadata-3.9.6.jar",
+      "sha256": "e047a67b204c434994253e2ab5bdff5fe8cb7ada9316ac3e754c39f900ea847b"
+    },
+    {
+      "path": "server\\libraries\\org\\apache\\maven\\maven-resolver-provider\\3.9.6\\maven-resolver-provider-3.9.6.jar",
+      "sha256": "73b00b244b7b9e285654a45e765892bf5d369da77d42b5b4b5429122ed198a33"
+    },
+    {
+      "path": "server\\libraries\\org\\apache\\maven\\resolver\\maven-resolver-api\\1.9.18\\maven-resolver-api-1.9.18.jar",
+      "sha256": "ebfb9e1dfeea3c2017905184581e007874b4eaac9d28bfffcfe5133d70ac6339"
+    },
+    {
+      "path": "server\\libraries\\org\\apache\\maven\\resolver\\maven-resolver-connector-basic\\1.9.18\\maven-resolver-connector-basic-1.9.18.jar",
+      "sha256": "f88d97d0f18571a675e73b45d6a9384b00322c9fae514ad6761d65b729a4e82a"
+    },
+    {
+      "path": "server\\libraries\\org\\apache\\maven\\resolver\\maven-resolver-impl\\1.9.18\\maven-resolver-impl-1.9.18.jar",
+      "sha256": "6bb9c90d007098004749c867da2eaf5785fc1139907718749c1097bdb2929bf8"
+    },
+    {
+      "path": "server\\libraries\\org\\apache\\maven\\resolver\\maven-resolver-named-locks\\1.9.18\\maven-resolver-named-locks-1.9.18.jar",
+      "sha256": "098de7bbc5b0b26c3eff74ac30ffba6680fdab9bf4aebab95c3f5e2fe9eaeea8"
+    },
+    {
+      "path": "server\\libraries\\org\\apache\\maven\\resolver\\maven-resolver-spi\\1.9.18\\maven-resolver-spi-1.9.18.jar",
+      "sha256": "d364fce9a17b0e0b073c26efa92af95b29c00c42943dced4a1168a7923fd3fe1"
+    },
+    {
+      "path": "server\\libraries\\org\\apache\\maven\\resolver\\maven-resolver-transport-http\\1.9.18\\maven-resolver-transport-http-1.9.18.jar",
+      "sha256": "1fa02272da7a604718f22e2bc9775f14350487548ffc30a2ffaae1c2d1d1a58a"
+    },
+    {
+      "path": "server\\libraries\\org\\apache\\maven\\resolver\\maven-resolver-util\\1.9.18\\maven-resolver-util-1.9.18.jar",
+      "sha256": "2eb0ea667bc489384478231dda7516407d4b5b22a138077229871de9362a7ae2"
+    },
+    {
+      "path": "server\\libraries\\org\\codehaus\\plexus\\plexus-interpolation\\1.26\\plexus-interpolation-1.26.jar",
+      "sha256": "b3b5412ce17889103ea564bcdfcf9fb3dfa540344ffeac6b538a73c9d7182662"
+    },
+    {
+      "path": "server\\libraries\\org\\codehaus\\plexus\\plexus-utils\\3.5.1\\plexus-utils-3.5.1.jar",
+      "sha256": "86e0255d4c879c61b4833ed7f13124e8bb679df47debb127326e7db7dd49a07b"
+    },
+    {
+      "path": "server\\libraries\\org\\eclipse\\sisu\\org.eclipse.sisu.inject\\0.9.0.M2\\org.eclipse.sisu.inject-0.9.0.M2.jar",
+      "sha256": "9b62bcfc352a2ec87da8b01e37c952a54d358bbb1af3f212648aeafe7ab2dbb5"
+    },
+    {
+      "path": "server\\libraries\\org\\jline\\jline-native\\4.4.6\\jline-native-4.4.6.jar",
+      "sha256": "94520da74ad2453c0eb1b041256c99ca41aaf7779d2873c4e251e726baf7e956"
+    },
+    {
+      "path": "server\\libraries\\org\\jline\\jline-reader\\3.20.0\\jline-reader-3.20.0.jar",
+      "sha256": "acd1c94d1e228aa7b7962f69b21ed3a9fd828eb3a63e4baf9086954e626af1f0"
+    },
+    {
+      "path": "server\\libraries\\org\\jline\\jline-terminal-ffm\\4.4.6\\jline-terminal-ffm-4.4.6.jar",
+      "sha256": "3c635ad51a9541bfc1e9c9bce10dd9533b96d27eea1c4d955f723124ade3703a"
+    },
+    {
+      "path": "server\\libraries\\org\\jline\\jline-terminal\\4.4.6\\jline-terminal-4.4.6.jar",
+      "sha256": "48c90d193a3d558979770717539d11801f4fac74b193d9b64299144bda00c11f"
+    },
+    {
+      "path": "server\\libraries\\org\\joml\\joml\\1.10.9\\joml-1.10.9.jar",
+      "sha256": "feca4db853371704338621c120acc5cc32300d8af635fa42414b6213301e216b"
+    },
+    {
+      "path": "server\\libraries\\org\\jspecify\\jspecify\\1.0.0\\jspecify-1.0.0.jar",
+      "sha256": "1fad6e6be7557781e4d33729d49ae1cdc8fdda6fe477bb0cc68ce351eafdfbab"
+    },
+    {
+      "path": "server\\libraries\\org\\ow2\\asm\\asm-commons\\9.9.1\\asm-commons-9.9.1.jar",
+      "sha256": "c2319e014ce7199f2b7f7d56d6bb991863168c3f4b6cd6c9f542a4937ef7ef88"
+    },
+    {
+      "path": "server\\libraries\\org\\ow2\\asm\\asm-tree\\9.9.1\\asm-tree-9.9.1.jar",
+      "sha256": "0f3555096b720b820bbacab0b515589bee0200bee099bda14c561738ae837ba1"
+    },
+    {
+      "path": "server\\libraries\\org\\ow2\\asm\\asm\\9.9.1\\asm-9.9.1.jar",
+      "sha256": "6f3828a215c920059a5efa2fb55c233d6c54ec5cadca99ce1b1bdd10077c7ddd"
+    },
+    {
+      "path": "server\\libraries\\org\\slf4j\\jcl-over-slf4j\\1.7.36\\jcl-over-slf4j-1.7.36.jar",
+      "sha256": "ab57ca8fd223772c17365d121f59e94ecbf0ae59d08c03a3cb5b81071c019195"
+    },
+    {
+      "path": "server\\libraries\\org\\slf4j\\slf4j-api\\2.0.17\\slf4j-api-2.0.17.jar",
+      "sha256": "7b751d952061954d5abfed7181c1f645d336091b679891591d63329c622eb832"
+    },
+    {
+      "path": "server\\libraries\\org\\spongepowered\\configurate-core\\4.2.0\\configurate-core-4.2.0.jar",
+      "sha256": "06c1e9f7789a189af0c0156ebe9f469da7cc674233f43e8133c83131edd9f7e0"
+    },
+    {
+      "path": "server\\libraries\\org\\spongepowered\\configurate-yaml\\4.2.0\\configurate-yaml-4.2.0.jar",
+      "sha256": "6294f085316188bffb71bb05ef36bf8755a288ed925c791952e1e8d7bfc8ba4c"
+    },
+    {
+      "path": "server\\libraries\\org\\xerial\\sqlite-jdbc\\3.49.1.0\\sqlite-jdbc-3.49.1.0.jar",
+      "sha256": "5c8609d2ca341deb8c6f71778974b5ba4995c7d32d7c7c89d9392a3e72c39291"
+    },
+    {
+      "path": "server\\libraries\\org\\yaml\\snakeyaml\\2.2\\snakeyaml-2.2.jar",
+      "sha256": "1467931448a0817696ae2805b7b8b20bfb082652bf9c4efaed528930dc49389b"
+    },
+    {
+      "path": "server\\logs\\latest.log",
+      "sha256": "3a4e0d51f5c7eedd6f9dddeb7aead68c60681f524b7110598546f9440c614939"
+    },
+    {
+      "path": "server\\ops.json",
+      "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+    },
+    {
+      "path": "server\\paper.jar",
+      "sha256": "dbaae37e10e30e44ad1ff65cf00992240c3e79d33e150f9c4e833ed0338e8ccd"
+    },
+    {
+      "path": "server\\plugins\\bStats\\config.yml",
+      "sha256": "6beaa67cf8183437fe7f3452b8abd30ddb92eaf1e7374dff066379dc6d241b86"
+    },
+    {
+      "path": "server\\plugins\\CuuVucCore-0.8.0-SNAPSHOT.jar",
+      "sha256": "d83222cc8daeb4ef773aad6988a846a1eafa20332ad8f38b11df53a0807455e5"
+    },
+    {
+      "path": "server\\plugins\\CuuVucCore\\config.yml",
+      "sha256": "524bf4a18110709c36f3143b813953b7849a79fa7a9a03d0ebd0eb66a3689f59"
+    },
+    {
+      "path": "server\\plugins\\CuuVucCore\\contract-audit-pending.properties",
+      "sha256": "f1eec8eb307a494f3791929926ed875c48229cf6dde03eec751dd42fd45a596c"
+    },
+    {
+      "path": "server\\plugins\\CuuVucCore\\recovery\\a73f0b57-82a4-44be-b3a3-b0b5e60be92f.tsv",
+      "sha256": "a9c9236fe67e9f53e428382c2b5f87da03fe01b9969415b4f3a1a6d2187ab812"
+    },
+    {
+      "path": "server\\plugins\\CuuVucCore\\shutdown-pending.properties",
+      "sha256": "32b301b0098a6995cdeb96c55e1ca2c454a7eb5664a48f438318060d992b0212"
+    },
+    {
+      "path": "server\\plugins\\spark\\config.json",
+      "sha256": "992ba9f3a4a7ce3de112eb95575328956fdc3ce6781c455ebce7b23db7e7da42"
+    },
+    {
+      "path": "server\\plugins\\spark\\tmp\\about.txt",
+      "sha256": "d7514c0ddb6ae8611a281527bf04ca6cbcea1fa21758534fdcd08ed0f51c19c0"
+    },
+    {
+      "path": "server\\server.properties",
+      "sha256": "d73aa8acf12b5ccaf93be575186f01657cd310c8da74a09b7cda5a2da8f11dc5"
+    },
+    {
+      "path": "server\\spigot.yml",
+      "sha256": "dbae85ea5b776a150a21b33063e17f80a54c036f0404e8cea6795555285868ea"
+    },
+    {
+      "path": "server\\usercache.json",
+      "sha256": "ae5d99417694ac5f0011594f57695bd4ed4c99b799e9814291a24926a596c5a6"
+    },
+    {
+      "path": "server\\versions\\26.3\\paper-26.3.jar",
+      "sha256": "5399de460a5fe59683202545c1e4c75acc3fdc491cd803af1829b652a7e80231"
+    },
+    {
+      "path": "server\\whitelist.json",
+      "sha256": "fb9383f42c5371ccb1b5f3e201df173e6cadd987e233d5381c6fb4789daa2980"
+    },
+    {
+      "path": "server\\world\\data\\minecraft\\custom_boss_events.dat",
+      "sha256": "36656630921f70e010eb05f2300473144a420af9dc3bb600ab2797990102a0bc"
+    },
+    {
+      "path": "server\\world\\data\\minecraft\\random_sequences.dat",
+      "sha256": "882f7060dfb34f72e8d063f8d8147213efa2377a7f8166fe6292fc74ad2b7a09"
+    },
+    {
+      "path": "server\\world\\data\\minecraft\\scoreboard.dat",
+      "sha256": "36656630921f70e010eb05f2300473144a420af9dc3bb600ab2797990102a0bc"
+    },
+    {
+      "path": "server\\world\\data\\minecraft\\stopwatches.dat",
+      "sha256": "15ca4b57ca52582a4ca9118e7d1cd8f22cb829482343375b09ee271397b7efcf"
+    },
+    {
+      "path": "server\\world\\data\\minecraft\\world_clocks.dat",
+      "sha256": "92bfb8dbd78bd6c124024165b0b66416927374b92dbb45448bd0de9069d3df3f"
+    },
+    {
+      "path": "server\\world\\dimensions\\minecraft\\cv_prison\\data\\minecraft\\chunk_tickets.dat",
+      "sha256": "36656630921f70e010eb05f2300473144a420af9dc3bb600ab2797990102a0bc"
+    },
+    {
+      "path": "server\\world\\dimensions\\minecraft\\cv_prison\\data\\minecraft\\game_rules.dat",
+      "sha256": "13832111debf8cf9e586354a309bc0b9ccc8aa120d0d3a8c32dff49c5693d0df"
+    },
+    {
+      "path": "server\\world\\dimensions\\minecraft\\cv_prison\\data\\minecraft\\raids.dat",
+      "sha256": "edd97da35fa87ffbe8d48d243c5b273a965ab8e03e5d31b8d361e5a3f84c14ea"
+    },
+    {
+      "path": "server\\world\\dimensions\\minecraft\\cv_prison\\data\\minecraft\\scheduled_events.dat",
+      "sha256": "70476d0306cb312e7381ce2fd5eec50bf6c1ea2f352a9ae7d8fd1b650540abd9"
+    },
+    {
+      "path": "server\\world\\dimensions\\minecraft\\cv_prison\\data\\minecraft\\wandering_trader.dat",
+      "sha256": "a3b7b6ba9cfbbdad2a8b96c87669371272d5f5714a291540f852ff261a18d7ea"
+    },
+    {
+      "path": "server\\world\\dimensions\\minecraft\\cv_prison\\data\\minecraft\\weather.dat",
+      "sha256": "aa370de92afaec0d5b31405fde26e29a22c3f6c1147041c48d1100c81c60e772"
+    },
+    {
+      "path": "server\\world\\dimensions\\minecraft\\cv_prison\\data\\minecraft\\world_border.dat",
+      "sha256": "a513efdff22c63491ee44e677c2e58651e2f3abc9dbad2001c0a7e9adf770ff7"
+    },
+    {
+      "path": "server\\world\\dimensions\\minecraft\\cv_prison\\data\\minecraft\\world_clocks.dat",
+      "sha256": "5846111aa25120b2e1134d45787428d61e42366e4a572561076d33c67c920577"
+    },
+    {
+      "path": "server\\world\\dimensions\\minecraft\\cv_prison\\data\\minecraft\\world_gen_settings.dat",
+      "sha256": "fa99ad283e8139010e36e3e3f87e402b6e48f77ca0640d0fc9c0289dec6a6ade"
+    },
+    {
+      "path": "server\\world\\dimensions\\minecraft\\cv_prison\\data\\paper\\level_overrides.dat",
+      "sha256": "b0f6f3a6daf17553c16c25ca79e50027114e14bc695b9c42a53671d81e767012"
+    },
+    {
+      "path": "server\\world\\dimensions\\minecraft\\cv_prison\\data\\paper\\metadata.dat",
+      "sha256": "e066d9b61eb688643169ca40c913159ac4fb2bf192f2351cbd1a93ec8c9932cc"
+    },
+    {
+      "path": "server\\world\\dimensions\\minecraft\\cv_prison\\data\\paper\\persistent_data_container.dat",
+      "sha256": "18d8ff0895f645b8bebb31c20800aef3f102e86a9aded738f4d2a9b1f151a3a4"
+    },
+    {
+      "path": "server\\world\\dimensions\\minecraft\\cv_prison\\paper-world.yml",
+      "sha256": "2e2af238343d25706ff27485b40e013780de0cb8b13bfe0bb9a8dfba7b04f404"
+    },
+    {
+      "path": "server\\world\\dimensions\\minecraft\\cv_prison\\poi\\r.0.0.mca",
+      "sha256": "f6ebce30746e55e09b79f97d7d7cef7b245f4e83b7891c9525dd4c0d26c3f51c"
+    },
+    {
+      "path": "server\\world\\dimensions\\minecraft\\cv_prison\\region\\r.-1.-1.mca",
+      "sha256": "a702022497d219e759a8a7230c48c3cc96d42624f9a61cc4043878d413b1e1e1"
+    },
+    {
+      "path": "server\\world\\dimensions\\minecraft\\cv_prison\\region\\r.-1.0.mca",
+      "sha256": "4b29adccc4607558bb295467b87b58c8e838fbf8cdd30616c74efcee552b91c7"
+    },
+    {
+      "path": "server\\world\\dimensions\\minecraft\\cv_prison\\region\\r.0.-1.mca",
+      "sha256": "ae2467a6b9ecdd886b2b271b73bb8ce12c7b71ee2f7dab32b6e9977b951a65e4"
+    },
+    {
+      "path": "server\\world\\dimensions\\minecraft\\cv_prison\\region\\r.0.0.mca",
+      "sha256": "676ac296505b288ed2871b6e1823967b83ad3c49e72a796b241404f76dab7636"
+    },
+    {
+      "path": "server\\world\\dimensions\\minecraft\\cv_sky\\data\\minecraft\\chunk_tickets.dat",
+      "sha256": "36656630921f70e010eb05f2300473144a420af9dc3bb600ab2797990102a0bc"
+    },
+    {
+      "path": "server\\world\\dimensions\\minecraft\\cv_sky\\data\\minecraft\\game_rules.dat",
+      "sha256": "13832111debf8cf9e586354a309bc0b9ccc8aa120d0d3a8c32dff49c5693d0df"
+    },
+    {
+      "path": "server\\world\\dimensions\\minecraft\\cv_sky\\data\\minecraft\\raids.dat",
+      "sha256": "edd97da35fa87ffbe8d48d243c5b273a965ab8e03e5d31b8d361e5a3f84c14ea"
+    },
+    {
+      "path": "server\\world\\dimensions\\minecraft\\cv_sky\\data\\minecraft\\scheduled_events.dat",
+      "sha256": "70476d0306cb312e7381ce2fd5eec50bf6c1ea2f352a9ae7d8fd1b650540abd9"
+    },
+    {
+      "path": "server\\world\\dimensions\\minecraft\\cv_sky\\data\\minecraft\\wandering_trader.dat",
+      "sha256": "70f11d294cb43b7c26e29d51af3744509b2e1b240591c9cdd1c5c39a1878a323"
+    },
+    {
+      "path": "server\\world\\dimensions\\minecraft\\cv_sky\\data\\minecraft\\weather.dat",
+      "sha256": "c1fa61d3095e28ebf035565bdd7c5e4fd5639ac6542545e840e9e678398b93f3"
+    },
+    {
+      "path": "server\\world\\dimensions\\minecraft\\cv_sky\\data\\minecraft\\world_border.dat",
+      "sha256": "a513efdff22c63491ee44e677c2e58651e2f3abc9dbad2001c0a7e9adf770ff7"
+    },
+    {
+      "path": "server\\world\\dimensions\\minecraft\\cv_sky\\data\\minecraft\\world_clocks.dat",
+      "sha256": "5846111aa25120b2e1134d45787428d61e42366e4a572561076d33c67c920577"
+    },
+    {
+      "path": "server\\world\\dimensions\\minecraft\\cv_sky\\data\\minecraft\\world_gen_settings.dat",
+      "sha256": "a0e68bf3a9478c26371e6efdc97194adc7cd7d5273bfb65334a4dae7dd8e6371"
+    },
+    {
+      "path": "server\\world\\dimensions\\minecraft\\cv_sky\\data\\paper\\level_overrides.dat",
+      "sha256": "feb511daeeb2d4794c26aeb039a4e88c8988cb62c16cfbd72ac2ce3c3135ceba"
+    },
+    {
+      "path": "server\\world\\dimensions\\minecraft\\cv_sky\\data\\paper\\metadata.dat",
+      "sha256": "97b2f6eef31589477bd1514313a3aee8d00da084420a15a2b37e46ce8e6e08fe"
+    },
+    {
+      "path": "server\\world\\dimensions\\minecraft\\cv_sky\\data\\paper\\persistent_data_container.dat",
+      "sha256": "51c515e5b96ace03ef799d99df549affca4a7f733af801b4062dca48d4629c32"
+    },
+    {
+      "path": "server\\world\\dimensions\\minecraft\\cv_sky\\paper-world.yml",
+      "sha256": "da3a15f55b94a7837167b68e497521dd3a45a2f2c37cf17936939d5fd2aaac2e"
+    },
+    {
+      "path": "server\\world\\dimensions\\minecraft\\cv_sky\\region\\r.-1.-1.mca",
+      "sha256": "ff0318bef2cc06c5a3de65e88fa9b60fb1aa870d5e10711e52762674f06839a8"
+    },
+    {
+      "path": "server\\world\\dimensions\\minecraft\\cv_sky\\region\\r.-1.0.mca",
+      "sha256": "07e0565f1e024fbbeb816e768db14afcff97b2334f73621cf14ccc3704aa8d20"
+    },
+    {
+      "path": "server\\world\\dimensions\\minecraft\\cv_sky\\region\\r.0.-1.mca",
+      "sha256": "0992164ea031043d48cd9b4f518c09ba570a6b6010e6d93c732b5f86e98b8e88"
+    },
+    {
+      "path": "server\\world\\dimensions\\minecraft\\cv_sky\\region\\r.0.0.mca",
+      "sha256": "79fd0856f32558457462f8f75bff1dc88511683259b45261a694a4fcf3dc851d"
+    },
+    {
+      "path": "server\\world\\dimensions\\minecraft\\overworld\\data\\minecraft\\chunk_tickets.dat",
+      "sha256": "36656630921f70e010eb05f2300473144a420af9dc3bb600ab2797990102a0bc"
+    },
+    {
+      "path": "server\\world\\dimensions\\minecraft\\overworld\\data\\minecraft\\game_rules.dat",
+      "sha256": "13832111debf8cf9e586354a309bc0b9ccc8aa120d0d3a8c32dff49c5693d0df"
+    },
+    {
+      "path": "server\\world\\dimensions\\minecraft\\overworld\\data\\minecraft\\raids.dat",
+      "sha256": "edd97da35fa87ffbe8d48d243c5b273a965ab8e03e5d31b8d361e5a3f84c14ea"
+    },
+    {
+      "path": "server\\world\\dimensions\\minecraft\\overworld\\data\\minecraft\\scheduled_events.dat",
+      "sha256": "70476d0306cb312e7381ce2fd5eec50bf6c1ea2f352a9ae7d8fd1b650540abd9"
+    },
+    {
+      "path": "server\\world\\dimensions\\minecraft\\overworld\\data\\minecraft\\wandering_trader.dat",
+      "sha256": "ca27436f530fed10eb3013f97bcd97232ab0153fffecb2f14e934cc7d2bf1a3f"
+    },
+    {
+      "path": "server\\world\\dimensions\\minecraft\\overworld\\data\\minecraft\\weather.dat",
+      "sha256": "24e2d02199106ccc2f507e4f5d1f3bafaf9c405bd86bf5de736469277d1403d8"
+    },
+    {
+      "path": "server\\world\\dimensions\\minecraft\\overworld\\data\\minecraft\\world_border.dat",
+      "sha256": "a513efdff22c63491ee44e677c2e58651e2f3abc9dbad2001c0a7e9adf770ff7"
+    },
+    {
+      "path": "server\\world\\dimensions\\minecraft\\overworld\\data\\minecraft\\world_clocks.dat",
+      "sha256": "5846111aa25120b2e1134d45787428d61e42366e4a572561076d33c67c920577"
+    },
+    {
+      "path": "server\\world\\dimensions\\minecraft\\overworld\\data\\minecraft\\world_gen_settings.dat",
+      "sha256": "93818d45a5a7ab67a4779166ab3509e611b8631b0d557ac16663fd6df89c4bc4"
+    },
+    {
+      "path": "server\\world\\dimensions\\minecraft\\overworld\\data\\paper\\level_overrides.dat",
+      "sha256": "b316a2d5f4f60f61cb127b4ebbb5a166d8df4e02d5e5d894102a16d82ef9fe0e"
+    },
+    {
+      "path": "server\\world\\dimensions\\minecraft\\overworld\\data\\paper\\metadata.dat",
+      "sha256": "5494d090ee5a047aa648d598b571118a9d7f0a98023a3e8130626a824e2e5799"
+    },
+    {
+      "path": "server\\world\\dimensions\\minecraft\\overworld\\data\\paper\\persistent_data_container.dat",
+      "sha256": "36656630921f70e010eb05f2300473144a420af9dc3bb600ab2797990102a0bc"
+    },
+    {
+      "path": "server\\world\\dimensions\\minecraft\\overworld\\entities\\r.-1.-1.mca",
+      "sha256": "dc9b0a2ff741ab975c4945f28bf26064783a4743e7429367e0835ced2469315e"
+    },
+    {
+      "path": "server\\world\\dimensions\\minecraft\\overworld\\entities\\r.-1.0.mca",
+      "sha256": "8067fd9b6f88347d969fe154d64b2358a8b3c8b8ded8d138e78c2026900016d0"
+    },
+    {
+      "path": "server\\world\\dimensions\\minecraft\\overworld\\entities\\r.0.-1.mca",
+      "sha256": "cb469dfd294e639cb4f6725c798dc26cb9df22de39e780e606e32ae142afeab6"
+    },
+    {
+      "path": "server\\world\\dimensions\\minecraft\\overworld\\entities\\r.0.0.mca",
+      "sha256": "f31ecb1e76d8cf4de036378a01d2938253fd0d7cb2d0474b72e687011add0f7b"
+    },
+    {
+      "path": "server\\world\\dimensions\\minecraft\\overworld\\paper-world.yml",
+      "sha256": "7192ac3fed398b282e53d8ee561cb7d5ffe90c718eacf7020d2c8a857a1728e7"
+    },
+    {
+      "path": "server\\world\\dimensions\\minecraft\\overworld\\poi\\r.0.-1.mca",
+      "sha256": "0076612ca4b39c044f46918713af8ea43c2e95200d8b4a2903c095e927a62ffe"
+    },
+    {
+      "path": "server\\world\\dimensions\\minecraft\\overworld\\poi\\r.0.0.mca",
+      "sha256": "3933dc51c22e4ac1897dd10c4228527be281738a47ba13e7b4d16326178b7285"
+    },
+    {
+      "path": "server\\world\\dimensions\\minecraft\\overworld\\region\\r.-1.-1.mca",
+      "sha256": "2523fb8a7738fe11cb3a722d2e8c114fcb0b8e7f13a58bf44f432731db14181c"
+    },
+    {
+      "path": "server\\world\\dimensions\\minecraft\\overworld\\region\\r.-1.0.mca",
+      "sha256": "49f9deb83ac1d4ae7dd085d12f5e133372937efd1919a0e6e87cde7809b6da0b"
+    },
+    {
+      "path": "server\\world\\dimensions\\minecraft\\overworld\\region\\r.0.-1.mca",
+      "sha256": "1ff8de5244e96264d6572a8ce6d523519130ddcaab379da927c90d2d7cee597e"
+    },
+    {
+      "path": "server\\world\\dimensions\\minecraft\\overworld\\region\\r.0.0.mca",
+      "sha256": "38d95a355e62964b4a9fef896b9e2dacece34a714b0ea0d7108d8a0573acad6d"
+    },
+    {
+      "path": "server\\world\\dimensions\\minecraft\\the_end\\data\\minecraft\\chunk_tickets.dat",
+      "sha256": "36656630921f70e010eb05f2300473144a420af9dc3bb600ab2797990102a0bc"
+    },
+    {
+      "path": "server\\world\\dimensions\\minecraft\\the_end\\data\\minecraft\\ender_dragon_fight.dat",
+      "sha256": "d9ebe1953b470c8f625f82cbb824589db3f3bd38931a3eba2b8cc04c9277344a"
+    },
+    {
+      "path": "server\\world\\dimensions\\minecraft\\the_end\\data\\minecraft\\game_rules.dat",
+      "sha256": "13832111debf8cf9e586354a309bc0b9ccc8aa120d0d3a8c32dff49c5693d0df"
+    },
+    {
+      "path": "server\\world\\dimensions\\minecraft\\the_end\\data\\minecraft\\raids.dat",
+      "sha256": "edd97da35fa87ffbe8d48d243c5b273a965ab8e03e5d31b8d361e5a3f84c14ea"
+    },
+    {
+      "path": "server\\world\\dimensions\\minecraft\\the_end\\data\\minecraft\\scheduled_events.dat",
+      "sha256": "70476d0306cb312e7381ce2fd5eec50bf6c1ea2f352a9ae7d8fd1b650540abd9"
+    },
+    {
+      "path": "server\\world\\dimensions\\minecraft\\the_end\\data\\minecraft\\weather.dat",
+      "sha256": "f6ad166f5510cb1e84db37b17dd88457fdaad9bb94c427072788d1897184f055"
+    },
+    {
+      "path": "server\\world\\dimensions\\minecraft\\the_end\\data\\minecraft\\world_border.dat",
+      "sha256": "a513efdff22c63491ee44e677c2e58651e2f3abc9dbad2001c0a7e9adf770ff7"
+    },
+    {
+      "path": "server\\world\\dimensions\\minecraft\\the_end\\data\\minecraft\\world_clocks.dat",
+      "sha256": "5846111aa25120b2e1134d45787428d61e42366e4a572561076d33c67c920577"
+    },
+    {
+      "path": "server\\world\\dimensions\\minecraft\\the_end\\data\\minecraft\\world_gen_settings.dat",
+      "sha256": "93818d45a5a7ab67a4779166ab3509e611b8631b0d557ac16663fd6df89c4bc4"
+    },
+    {
+      "path": "server\\world\\dimensions\\minecraft\\the_end\\data\\paper\\level_overrides.dat",
+      "sha256": "bf0771cb3dd3eb1e9432f85816f1e09830544303aa98f33a3edb629e8d8fac08"
+    },
+    {
+      "path": "server\\world\\dimensions\\minecraft\\the_end\\data\\paper\\metadata.dat",
+      "sha256": "03e961b972070b5f293ba047d533ab73bbce06cfff7326b0f307fb65392183d3"
+    },
+    {
+      "path": "server\\world\\dimensions\\minecraft\\the_end\\data\\paper\\persistent_data_container.dat",
+      "sha256": "36656630921f70e010eb05f2300473144a420af9dc3bb600ab2797990102a0bc"
+    },
+    {
+      "path": "server\\world\\dimensions\\minecraft\\the_end\\paper-world.yml",
+      "sha256": "ae6616229189f9f12b4c2317b580b969d481ce5207b003bef0a3c9898da34059"
+    },
+    {
+      "path": "server\\world\\dimensions\\minecraft\\the_end\\region\\r.-1.-1.mca",
+      "sha256": "f61b9b7f5e1904cbe02431d7afc80c756032a0cec19eaf6e91dd5ba15373f33a"
+    },
+    {
+      "path": "server\\world\\dimensions\\minecraft\\the_end\\region\\r.-1.0.mca",
+      "sha256": "a9bfc4cbd44f823b54faeee720e0209fc26ed31ab61ffb0400da27acbc97a48b"
+    },
+    {
+      "path": "server\\world\\dimensions\\minecraft\\the_end\\region\\r.0.-1.mca",
+      "sha256": "4207f5625c7b312a80635bb42649e35ca7079658367e4b0559eb0bc779551941"
+    },
+    {
+      "path": "server\\world\\dimensions\\minecraft\\the_end\\region\\r.0.0.mca",
+      "sha256": "001a31198b1840387caedcf5440233f89e568483e03f4e438d301cfdf9e252c8"
+    },
+    {
+      "path": "server\\world\\dimensions\\minecraft\\the_nether\\data\\minecraft\\chunk_tickets.dat",
+      "sha256": "36656630921f70e010eb05f2300473144a420af9dc3bb600ab2797990102a0bc"
+    },
+    {
+      "path": "server\\world\\dimensions\\minecraft\\the_nether\\data\\minecraft\\game_rules.dat",
+      "sha256": "13832111debf8cf9e586354a309bc0b9ccc8aa120d0d3a8c32dff49c5693d0df"
+    },
+    {
+      "path": "server\\world\\dimensions\\minecraft\\the_nether\\data\\minecraft\\raids.dat",
+      "sha256": "edd97da35fa87ffbe8d48d243c5b273a965ab8e03e5d31b8d361e5a3f84c14ea"
+    },
+    {
+      "path": "server\\world\\dimensions\\minecraft\\the_nether\\data\\minecraft\\scheduled_events.dat",
+      "sha256": "70476d0306cb312e7381ce2fd5eec50bf6c1ea2f352a9ae7d8fd1b650540abd9"
+    },
+    {
+      "path": "server\\world\\dimensions\\minecraft\\the_nether\\data\\minecraft\\weather.dat",
+      "sha256": "f6ad166f5510cb1e84db37b17dd88457fdaad9bb94c427072788d1897184f055"
+    },
+    {
+      "path": "server\\world\\dimensions\\minecraft\\the_nether\\data\\minecraft\\world_border.dat",
+      "sha256": "a513efdff22c63491ee44e677c2e58651e2f3abc9dbad2001c0a7e9adf770ff7"
+    },
+    {
+      "path": "server\\world\\dimensions\\minecraft\\the_nether\\data\\minecraft\\world_clocks.dat",
+      "sha256": "5846111aa25120b2e1134d45787428d61e42366e4a572561076d33c67c920577"
+    },
+    {
+      "path": "server\\world\\dimensions\\minecraft\\the_nether\\data\\minecraft\\world_gen_settings.dat",
+      "sha256": "93818d45a5a7ab67a4779166ab3509e611b8631b0d557ac16663fd6df89c4bc4"
+    },
+    {
+      "path": "server\\world\\dimensions\\minecraft\\the_nether\\data\\paper\\level_overrides.dat",
+      "sha256": "8760fb13b12c21e3bcba127e1209d44c63c10e07c9e9b6a1183fda3b2cdd6503"
+    },
+    {
+      "path": "server\\world\\dimensions\\minecraft\\the_nether\\data\\paper\\metadata.dat",
+      "sha256": "8ceb03972adb34332d8a73f9684aa0f74505e733dba821d4d891edb625dd1d11"
+    },
+    {
+      "path": "server\\world\\dimensions\\minecraft\\the_nether\\data\\paper\\persistent_data_container.dat",
+      "sha256": "36656630921f70e010eb05f2300473144a420af9dc3bb600ab2797990102a0bc"
+    },
+    {
+      "path": "server\\world\\dimensions\\minecraft\\the_nether\\paper-world.yml",
+      "sha256": "55050c9cf6265bf08d2a41d279708acc3ca3a0bb1959d8fa93eca8ba3a5d308e"
+    },
+    {
+      "path": "server\\world\\dimensions\\minecraft\\the_nether\\region\\r.-1.-1.mca",
+      "sha256": "82028ea093daa35863dae1335b88491a3abb80a7ce5262f8e654995de75b4f33"
+    },
+    {
+      "path": "server\\world\\dimensions\\minecraft\\the_nether\\region\\r.-1.0.mca",
+      "sha256": "7a31d5d83d0a58637fd5619280d2aa320d8328023948bb75e968acc0ac7ffa19"
+    },
+    {
+      "path": "server\\world\\dimensions\\minecraft\\the_nether\\region\\r.0.-1.mca",
+      "sha256": "9258f40c9a9ccaa2f20b5ec910d180cd4b605315df050b5d25ca078c0cc44afb"
+    },
+    {
+      "path": "server\\world\\dimensions\\minecraft\\the_nether\\region\\r.0.0.mca",
+      "sha256": "97d6451e3254707c97d4d8f8aac1591ae7e71fdc953a700bc3d4b55ecd469bf9"
+    },
+    {
+      "path": "server\\world\\level.dat",
+      "sha256": "eca8c6bc578c1db21f5f810fcc584439397163e034aa6b917caad596c3a91b67"
+    },
+    {
+      "path": "server\\world\\level.dat_old",
+      "sha256": "e5cbdb39eecedf60a5657c4a6e417cb2f295dccbe750e82a0b8ee19e0eb38760"
+    },
+    {
+      "path": "server\\world\\players\\advancements\\3bb5ddbc-5b75-377f-8647-6f25c51f252a.json",
+      "sha256": "6ce3057d95017988d8b885d19e3c12066b348914379eac50c3b4abac1522328d"
+    },
+    {
+      "path": "server\\world\\players\\data\\3bb5ddbc-5b75-377f-8647-6f25c51f252a.dat",
+      "sha256": "92e4237b57d9c840f95703f67c75619e0d62f7f90d71518684f2c3f0a8bb8d7a"
+    },
+    {
+      "path": "server\\world\\players\\data\\3bb5ddbc-5b75-377f-8647-6f25c51f252a.dat_old",
+      "sha256": "9dd8b5af5f91ecf222a1496afcf55115ac00e19859089bffaa1044e870844157"
+    },
+    {
+      "path": "server\\world\\players\\stats\\3bb5ddbc-5b75-377f-8647-6f25c51f252a.json",
+      "sha256": "7995391848f44911ff77ed8c543c7a9b44a4ec83bc79d9cf73c4a014d8293bed"
+    },
+    {
+      "path": "server\\world\\session.lock",
+      "sha256": "51643361c79ecaef25a8de802de24f570ba25d9c2df1d22d94fade11b4f466cc"
+    }
+  ]
+}

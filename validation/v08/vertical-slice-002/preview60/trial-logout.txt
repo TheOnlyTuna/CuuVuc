@@ -1,0 +1,6 @@
+9|11
+FAILED|0|Chọn sai phù ấn 1
+INTERRUPTED|0|Người chơi đăng xuất
+huyen_thiet|3
+linh_thach|2
+linh_thach_tho|6

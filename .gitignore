@@ -37,6 +37,10 @@
 !/validation/v08/prealpha-builder/*.log
 /run-b01-*/
 /run-b02-*/
+/run-vs002-*/
+!/validation/v08/vertical-slice-002/*.log
+!/validation/v08/vertical-slice-002/pre-final/*.log
+!/validation/v08/vertical-slice-002/preview60/*.log
 /validation/b02/agent/target/
 /validation/b02/__pycache__/
 !/validation/b02/*/*.log

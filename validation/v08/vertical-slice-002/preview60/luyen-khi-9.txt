@@ -1,0 +1,13 @@
+9|9
+huyen_thiet|7
+linh_thach|6
+linh_thach_tho|6
+TRAIN|1|20
+TRAIN|2|904
+TRAIN|3|904
+TRAIN|4|904
+TRAIN|5|904
+TRAIN|6|904
+TRAIN|7|904
+TRAIN|8|904
+TRAIN|9|904

@@ -1,0 +1,2 @@
+MIGRATION_ONLY_PASS 37/37 existing business tables identical; 11/11 old migration history/checksums preserved; schema 11->12; four new cultivation tables
+PAPER_STARTUP separate upgrade DB also expires one pre-existing overdue personal contract and refunds 2 LT; not attributed to migration

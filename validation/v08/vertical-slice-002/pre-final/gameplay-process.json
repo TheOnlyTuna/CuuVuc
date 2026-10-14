@@ -1,0 +1,5 @@
+{
+  "ProcessId": 27920,
+  "CommandLine": "\"D:\\CuuVucCore\\CuuVuc-GitHub\\.tools\\jdk25\\jdk25.0.4_10\\bin\\java.exe\" -Dterminal.jline=false -Dterminal.ansi=false -Xms256M -Xmx1024M -jar D:/CuuVucCore/CuuVuc-GitHub/run-vs002-client01/paper.jar --nogui",
+  "CreationDate": "2026-10-15T04:11:40.778427+07:00"
+}

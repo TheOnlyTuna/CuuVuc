@@ -1,0 +1,6 @@
+[main] INFO vn.cuuvuc.internal.hikari.HikariDataSource - HikariPool-1 - Starting...
+[main] INFO vn.cuuvuc.internal.hikari.HikariDataSource - HikariPool-1 - Start completed.
+V012_INITIALIZED_FROM_FINAL_JAR
+[main] INFO vn.cuuvuc.internal.hikari.HikariDataSource - HikariPool-1 - Shutdown initiated...
+[main] INFO vn.cuuvuc.internal.hikari.HikariDataSource - HikariPool-1 - Shutdown completed.
+[main] INFO vn.cuuvuc.core.GameDatabase - database_drain_complete

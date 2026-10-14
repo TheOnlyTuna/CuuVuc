@@ -1,0 +1,12 @@
+TyninWorld|600|0|6|6
+huyen_thiet|4
+linh_thach|3
+linh_thach_tho|15
+TRAIN|1|600
+TRAIN|2|600
+TRAIN|3|600
+TRAIN|4|600
+TRAIN|5|600
+TRAIN|6|600
+0
+0

@@ -1,0 +1,5 @@
+9|10
+FAILED|0|Chọn sai phù ấn 1
+huyen_thiet|5
+linh_thach|4
+linh_thach_tho|6

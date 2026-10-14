@@ -43,6 +43,7 @@ public final class CuuVucPlugin extends JavaPlugin implements Listener {
     private TreasuryMenu treasury;
     private ProjectMenu projects;
     private RecoveryCommands recoveryCommands;
+    private CultivationMenu cultivation;
     private boolean contractAuditSaved;
     private Duration shutdownTimeout;
 
@@ -71,7 +72,9 @@ public final class CuuVucPlugin extends JavaPlugin implements Listener {
         contracts = new ContractWorld(this, database, tasks);
         world = new PlayableWorld(this, database, mine, this::isReady, contracts);
         contractMenu = new ContractMenu(this, database, tasks, contracts, world);
-        menu = new PlayableMenu(database, tasks, items, catalog, world, contractMenu);
+        cultivation = new CultivationMenu(this, database, tasks, items, world);
+        getServer().getPluginManager().registerEvents(cultivation, this);
+        menu = new PlayableMenu(database, tasks, items, catalog, world, contractMenu, cultivation);
         transfers = new MaterialTransfers(this, database, tasks, items, catalog);
         sects = new SectMenu(this, database, tasks);
         treasury = new TreasuryMenu(this, database, tasks, contracts, world);
@@ -143,7 +146,7 @@ public final class CuuVucPlugin extends JavaPlugin implements Listener {
             player.sendPlainMessage("UNRECOVERABLE: incident-hold <review> <lý do> | incident-settle <review> <LT bồi thường từ escrow> <lý do>; người khác dùng case/approve-case/reject-case <case>.");
             player.sendPlainMessage("/cv treasury | contribute/withdraw/hire <số> | grant/revoke <UUID> (dùng /cv treasury)");
             player.sendPlainMessage("/cv sect | sect create <tên> | invite/kick <UUID> | accept/cancel <UUID-lời-mời> | role <UUID> <ELDER/MEMBER> | leave (các thao tác dùng /cv sect)");
-            player.sendPlainMessage("/cv menu | prison | home | visit/invite/revoke <UUID> | start | profile | kho | catalog | craft <recipe> <1..1000> | buy/sell <resource> <1..1000> | pay <UUID> <1..1000> | transfer <UUID> <resource> <1..1000> | materials | ledger | receipt <UUID> | economy (OP)");
+            player.sendPlainMessage("/cv tuluyen: tiến tầng tại động phủ, Trận Tâm Ma và Kết tinh Trúc Cơ | /cv menu | prison | home | visit/invite/revoke <UUID> | start | profile | kho | catalog | craft <recipe> <1..1000> | buy/sell <resource> <1..1000> | pay <UUID> <1..1000> | transfer <UUID> <resource> <1..1000> | materials | ledger | receipt <UUID> | economy (OP)");
             return true;
         }
         UUID id = player.getUniqueId();
@@ -157,6 +160,7 @@ public final class CuuVucPlugin extends JavaPlugin implements Listener {
                 case "projects" -> projects.command(player, arguments);
                 case "start" -> register(player);
                 case "profile" -> showProfile(player);
+                case "tuluyen", "cultivate" -> cultivation.request(player);
                 case "menu", "kho" -> menu.request(player);
                 case "contracts" -> contractMenu.open(player, 0);
                 case "prison" -> world.prison(player);
@@ -174,6 +178,8 @@ public final class CuuVucPlugin extends JavaPlugin implements Listener {
                 case "catalog" -> {
                     for (Domain.Resource resource : catalog.resources().values()) player.sendPlainMessage(resource.id() + " | " + resource.name() + " | mua=" + resource.buy() + " bán=" + resource.sell());
                     for (Domain.Recipe recipe : catalog.recipes().values()) player.sendPlainMessage(recipe.id() + " | " + recipe.inputCount() + " " + recipe.input() + " → " + recipe.outputCount() + " " + recipe.output());
+                    Domain.Recipe advanced = database.cultivationRules().advanced();
+                    player.sendPlainMessage(advanced.id() + " | " + advanced.inputCount() + " thô → " + advanced.outputCount() + " Linh Thạch | cần Trúc Cơ");
                     player.sendPlainMessage("UUID của bạn: " + id);
                 }
                 case "ledger" -> tasks.submit(player, request, () -> database.history(id));
@@ -197,7 +203,7 @@ public final class CuuVucPlugin extends JavaPlugin implements Listener {
                 }
                 case "craft" -> {
                     requireThree(arguments); String recipe = arguments[1]; long count = Domain.quantity(arguments[2]);
-                    Domain.recipe(catalog, recipe);
+                    database.recipe(recipe);
                     tasks.submitView(player, request, () -> database.view(id, database.craft(request, id, name, recipe, count)), view -> items.sync(player, view));
                 }
                 case "sell" -> {

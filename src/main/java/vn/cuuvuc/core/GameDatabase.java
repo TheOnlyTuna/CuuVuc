@@ -11,6 +11,7 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.security.SecureRandom;
 import java.time.Duration;
 import java.time.Instant;
 import java.util.Optional;
@@ -34,6 +35,7 @@ public final class GameDatabase implements AutoCloseable {
     private final HikariDataSource pool;
     private final Domain.Catalog catalog;
     private final Domain.EconomyPolicy policy;
+    private final Cultivation.Rules cultivationRules = Cultivation.load();
     private final Object lifecycle = new Object();
     private final Map<UUID, String> inFlight = new ConcurrentHashMap<>();
     private boolean closing;
@@ -72,6 +74,8 @@ public final class GameDatabase implements AutoCloseable {
         retry("schema", connection -> {
             Migrations.apply(connection, migrations, fingerprintSql);
             verifyPolicy(connection);
+            CultivationStore.verifyPolicy(connection, cultivationRules);
+            CultivationStore.interruptAll(connection, cultivationRules);
             return "schema_ready";
         });
     }
@@ -79,10 +83,11 @@ public final class GameDatabase implements AutoCloseable {
     public String register(UUID player, String name) throws SQLException {
         return retry("register:" + player, connection -> {
             ensureProfile(connection, player, name);
+            CultivationStore.interrupt(connection, player, "Đăng nhập/đăng ký lại", cultivationRules);
             try (PreparedStatement statement = connection.prepareStatement("UPDATE profiles SET player_name=? WHERE player_id=?")) {
                 statement.setString(1, name); statement.setObject(2, player); statement.executeUpdate();
             }
-            return "Hồ sơ sẵn sàng. /cv profile để xem.";
+            return "Hồ sơ sẵn sàng. /cv → Động phủ để lấy cuốc, khai thác Prison, rồi /cv tuluyen. Lượt Tâm Ma gián đoạn không tự tiếp tục.";
         });
     }
 
@@ -94,7 +99,7 @@ public final class GameDatabase implements AutoCloseable {
                 try (ResultSet result = statement.executeQuery()) {
                     if (!result.next()) throw new IllegalArgumentException("Hồ sơ chưa được đăng ký. Dùng /cv start.");
                     long xp = result.getLong(1);
-                    description = result.getString(3) + " | " + Domain.stage(xp, catalog.stages()).name() + " | XP=" + xp + " | Linh tệ=" + result.getLong(2);
+                    description = result.getString(3) + " | " + Cultivation.title(CultivationStore.state(connection, player)) + " | XP=" + xp + " | Linh tệ=" + result.getLong(2);
                 }
             }
             StringBuilder inventory = new StringBuilder(description).append(" | Kho:");
@@ -114,6 +119,7 @@ public final class GameDatabase implements AutoCloseable {
         return operation(request, player, "mine:" + player + ":" + node + ":" + resourceId + ":" + cooldown, connection -> {
             ensureProfile(connection, player, name);
             lockPlayer(connection, player);
+            long earnedXp = Math.addExact(resource.xp(), Math.multiplyExact(CultivationStore.state(connection, player).rank(), cultivationRules.bonus()));
             try (PreparedStatement statement = connection.prepareStatement("INSERT INTO mine_nodes(node_id,available_at) VALUES (?,clock_timestamp() + (? * interval '1 second')) ON CONFLICT(node_id) DO UPDATE SET available_at=EXCLUDED.available_at WHERE mine_nodes.available_at<=clock_timestamp()")) {
                 statement.setString(1, node);
                 statement.setInt(2, cooldown);
@@ -121,19 +127,21 @@ public final class GameDatabase implements AutoCloseable {
             }
             changeInventory(connection, player, resourceId, 1);
             try (PreparedStatement statement = connection.prepareStatement("UPDATE profiles SET cultivation_xp=cultivation_xp+? WHERE player_id=?")) {
-                statement.setLong(1, resource.xp()); statement.setObject(2, player); statement.executeUpdate();
+                statement.setLong(1, earnedXp); statement.setObject(2, player); statement.executeUpdate();
             }
-            return "+1 " + resource.name() + " | +" + resource.xp() + " XP. /cv profile để xem cảnh giới.";
+            return "+1 " + resource.name() + " | +" + earnedXp + " XP. /cv tuluyen để xem điều kiện tiến tầng.";
         });
     }
 
     public String craft(UUID request, UUID player, String name, String recipeId, long count) throws SQLException {
         validateCount(count);
-        Domain.Recipe recipe = Domain.recipe(catalog, recipeId);
+        Domain.Recipe recipe = recipe(recipeId);
         long input = Math.multiplyExact(recipe.inputCount(), count);
         long output = Math.multiplyExact(recipe.outputCount(), count);
         return operation(request, player, "craft:" + player + ":" + recipeId + ":" + count, connection -> {
             ensureProfile(connection, player, name); lockPlayer(connection, player);
+            if (recipeId.equals(cultivationRules.advanced().id()) && CultivationStore.state(connection, player).rank() < 10)
+                throw new IllegalArgumentException("Kết tinh Trúc Cơ cần vượt Trận Tâm Ma và đạt Trúc Cơ.");
             changeInventory(connection, player, recipe.input(), -input);
             changeInventory(connection, player, recipe.output(), output);
             return "Chế tạo thành công: " + output + " " + recipe.output();
@@ -428,9 +436,16 @@ public final class GameDatabase implements AutoCloseable {
     }
 
     private static void ensureProfile(Connection connection, UUID player, String name) throws SQLException {
+        boolean created;
         try (PreparedStatement statement = connection.prepareStatement("INSERT INTO profiles(player_id,player_name) VALUES (?,?) ON CONFLICT(player_id) DO NOTHING")) {
-            statement.setObject(1, player); statement.setString(2, name); statement.executeUpdate();
+            statement.setObject(1, player); statement.setString(2, name); created = statement.executeUpdate() == 1;
         }
+        if (created) {
+            try (PreparedStatement statement = connection.prepareStatement("INSERT INTO cultivation_progress(player_id,rank) VALUES (?,0)")) {
+                statement.setObject(1, player); statement.executeUpdate();
+            }
+        }
+        CultivationStore.state(connection, player);
     }
 
     static void lockPlayer(Connection connection, UUID player) throws SQLException {
@@ -467,32 +482,75 @@ public final class GameDatabase implements AutoCloseable {
 
     /** Vật phẩm là bản thể hiện quyền sở hữu đã commit; tối đa 36 token mỗi loại, phần còn lại chờ trong kho. */
     public Domain.PlayerView view(UUID player, String message) throws SQLException {
-        return retry("items:" + player, connection -> {
+        return retry("items:" + player, connection -> readView(connection, player, message));
+    }
+
+    private static Domain.PlayerView readView(Connection connection, UUID player, String message) throws SQLException {
+        lockPlayer(connection, player);
+        long revision; long xp; long balance;
+        try (PreparedStatement statement = connection.prepareStatement("SELECT inventory_revision,cultivation_xp,balance FROM profiles WHERE player_id=?")) {
+            statement.setObject(1, player);
+            try (ResultSet result = statement.executeQuery()) {
+                result.next(); revision = result.getLong(1); xp = result.getLong(2); balance = result.getLong(3);
+            }
+        }
+        try (PreparedStatement statement = connection.prepareStatement("INSERT INTO item_tokens(player_id,resource_id,ordinal) SELECT i.player_id,i.resource_id,n FROM inventory i CROSS JOIN LATERAL generate_series(1,least(i.quantity,36)::integer) n WHERE i.player_id=? ON CONFLICT(player_id,resource_id,ordinal) DO NOTHING")) {
+            statement.setObject(1, player); statement.executeUpdate();
+        }
+        Map<String, Long> stock = new HashMap<>();
+        try (PreparedStatement statement = connection.prepareStatement("SELECT resource_id,quantity FROM inventory WHERE player_id=? AND quantity>0 ORDER BY resource_id")) {
+            statement.setObject(1, player);
+            try (ResultSet result = statement.executeQuery()) { while (result.next()) stock.put(result.getString(1), result.getLong(2)); }
+        }
+        List<Domain.ItemToken> items = new ArrayList<>();
+        try (PreparedStatement statement = connection.prepareStatement("SELECT token_id,resource_id FROM item_tokens WHERE player_id=? ORDER BY ordinal,resource_id")) {
+            statement.setObject(1, player);
+            try (ResultSet result = statement.executeQuery()) {
+                while (result.next()) items.add(new Domain.ItemToken(result.getObject(1, UUID.class), player, result.getString(2)));
+            }
+        }
+        return new Domain.PlayerView(player, revision, xp, balance, stock, items, message, CultivationStore.state(connection, player));
+    }
+
+    public Cultivation.Rules cultivationRules() { return cultivationRules; }
+
+    public Domain.Recipe recipe(String id) {
+        return id.equals(cultivationRules.advanced().id()) ? cultivationRules.advanced() : Domain.recipe(catalog, id);
+    }
+
+    public Cultivation.Snapshot cultivationView(UUID player, String message) throws SQLException {
+        return retry("cultivation:view:" + player, connection -> {
             lockPlayer(connection, player);
-            long revision; long xp; long balance;
-            try (PreparedStatement statement = connection.prepareStatement("SELECT inventory_revision,cultivation_xp,balance FROM profiles WHERE player_id=?")) {
-                statement.setObject(1, player);
-                try (ResultSet result = statement.executeQuery()) {
-                    result.next(); revision = result.getLong(1); xp = result.getLong(2); balance = result.getLong(3);
-                }
-            }
-            try (PreparedStatement statement = connection.prepareStatement("INSERT INTO item_tokens(player_id,resource_id,ordinal) SELECT i.player_id,i.resource_id,n FROM inventory i CROSS JOIN LATERAL generate_series(1,least(i.quantity,36)::integer) n WHERE i.player_id=? ON CONFLICT(player_id,resource_id,ordinal) DO NOTHING")) {
-                statement.setObject(1, player); statement.executeUpdate();
-            }
-            Map<String, Long> stock = new HashMap<>();
-            try (PreparedStatement statement = connection.prepareStatement("SELECT resource_id,quantity FROM inventory WHERE player_id=? AND quantity>0 ORDER BY resource_id")) {
-                statement.setObject(1, player);
-                try (ResultSet result = statement.executeQuery()) { while (result.next()) stock.put(result.getString(1), result.getLong(2)); }
-            }
-            List<Domain.ItemToken> items = new ArrayList<>();
-            try (PreparedStatement statement = connection.prepareStatement("SELECT token_id,resource_id FROM item_tokens WHERE player_id=? ORDER BY ordinal,resource_id")) {
-                statement.setObject(1, player);
-                try (ResultSet result = statement.executeQuery()) {
-                    while (result.next()) items.add(new Domain.ItemToken(result.getObject(1, UUID.class), player, result.getString(2)));
-                }
-            }
-            return new Domain.PlayerView(player, revision, xp, balance, stock, items, message);
+            CultivationStore.expire(connection, player, cultivationRules);
+            return new Cultivation.Snapshot(readView(connection, player, message), CultivationStore.latest(connection, player), CultivationStore.now(connection));
         });
+    }
+
+    public String trainCultivation(UUID request, UUID player, int rank, long revision) throws SQLException {
+        return operation(request, player, "cultivation:train:" + player + ":" + rank + ":" + revision, connection -> {
+            lockPlayer(connection, player);
+            return CultivationStore.train(connection, request, player, rank, revision, cultivationRules);
+        });
+    }
+
+    public String startCultivationTrial(UUID request, UUID player, long revision) throws SQLException {
+        SecureRandom random = new SecureRandom();
+        List<Integer> sequence = random.ints(5, 0, 5).boxed().toList();
+        return operation(request, player, "cultivation:start:" + player + ":" + revision, connection -> {
+            lockPlayer(connection, player);
+            return CultivationStore.start(connection, request, player, revision, sequence, cultivationRules);
+        });
+    }
+
+    public String answerCultivationTrial(UUID request, UUID player, UUID trial, int step, int choice) throws SQLException {
+        return operation(request, player, "cultivation:answer:" + player + ":" + trial + ":" + step + ":" + choice, connection -> {
+            lockPlayer(connection, player);
+            return CultivationStore.answer(connection, request, player, trial, step, choice, cultivationRules);
+        });
+    }
+
+    public String interruptCultivation(UUID player, String reason) throws SQLException {
+        return retry("cultivation:interrupt:" + player + ":" + reason, connection -> CultivationStore.interrupt(connection, player, reason, cultivationRules));
     }
 
     public Domain.Island reserveIsland(UUID player, String name) throws SQLException {

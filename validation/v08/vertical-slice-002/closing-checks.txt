@@ -1,0 +1,15 @@
+PASS: 43/43 DB tables identical before/after controlled stop. Restart/reconnect not run on final JAR.
+PASS: PID 22312 exited; Paper log confirms database_drain_complete and all RegionFile I/O completion.
+PASS: native Client Attack/Destroy restored from Toggle to Hold.
+contract_block_journal: rows=0
+contract_recovery_fences: rows=0
+cultivation_history: rows=6
+cultivation_progress: rows=1
+cultivation_trials: rows=0
+inventory: rows=3
+item_tokens: rows=22
+ledger: rows=0
+operations: rows=63
+profiles: rows=1
+recovery_decisions: rows=0
+resource_ledger: rows=8

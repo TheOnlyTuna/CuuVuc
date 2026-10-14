@@ -11,6 +11,7 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.BlockBreakEvent;
+import org.bukkit.event.block.BlockDamageEvent;
 import org.bukkit.event.block.BlockExplodeEvent;
 import org.bukkit.event.block.BlockPistonExtendEvent;
 import org.bukkit.event.block.BlockPistonRetractEvent;
@@ -81,20 +82,31 @@ public final class MineNodes implements Listener {
         Optional<Node> match = node(event.getBlock());
         if (match.isEmpty()) return;
         event.setCancelled(true);
-        Player player = event.getPlayer();
+        harvest(event.getPlayer(), event.getBlock(), match.orElseThrow());
+    }
+
+    /** Một cú chạm cuốc vào mạch riêng thay thao tác giữ chuột; cooldown/receipt vẫn là quyền DB. */
+    @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
+    public void touch(BlockDamageEvent event) {
+        Optional<Node> match = node(event.getBlock());
+        if (match.isEmpty()) return;
+        event.setCancelled(true);
+        harvest(event.getPlayer(), event.getBlock(), match.orElseThrow());
+    }
+
+    private void harvest(Player player, Block block, Node node) {
         if (!ready.getAsBoolean()) { player.sendPlainMessage("Cơ sở dữ liệu chưa sẵn sàng."); return; }
         if (!player.hasPermission("cuuvuc.play") || player.getGameMode() != GameMode.SURVIVAL) return;
-        Node node = match.get();
         Domain.Resource resource = Domain.resource(catalog, node.resource());
-        if (event.getBlock().getType() != Material.valueOf(resource.block())) return;
+        if (block.getType() != Material.valueOf(resource.block())) return;
         if (!player.getInventory().getItemInMainHand().getType().name().endsWith("_PICKAXE")) {
             player.sendPlainMessage("Cần dùng cuốc để khai thác mạch quặng."); return;
         }
         UUID playerId = player.getUniqueId();
         String playerName = player.getName();
-        String nodeId = event.getBlock().getWorld().getUID() + ":" + node.x() + ":" + node.y() + ":" + node.z();
+        String nodeId = block.getWorld().getUID() + ":" + node.x() + ":" + node.y() + ":" + node.z();
         UUID request = UUID.randomUUID();
-        Location location = event.getBlock().getLocation();
+        Location location = block.getLocation();
         tasks.submitView(player, request, () -> database.view(playerId, database.mine(request, playerId, playerName, nodeId, resource.id(), cooldown)), view -> {
             items.sync(player, view);
             if (view.message().startsWith("+1")) {
