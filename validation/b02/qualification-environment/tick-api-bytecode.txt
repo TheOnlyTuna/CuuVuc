@@ -1,0 +1,65 @@
+Compiled from "ServerTickEndEvent.java"
+public class com.destroystokyo.paper.event.server.ServerTickEndEvent extends org.bukkit.event.Event {
+  private static final org.bukkit.event.HandlerList HANDLER_LIST;
+
+  private final int tickNumber;
+
+  private final double tickDuration;
+
+  private final long timeEnd;
+
+  public com.destroystokyo.paper.event.server.ServerTickEndEvent(int, double, long);
+    Code:
+         0: aload_0
+         1: invokespecial #1                  // Method org/bukkit/event/Event."<init>":()V
+         4: aload_0
+         5: iload_1
+         6: putfield      #7                  // Field tickNumber:I
+         9: aload_0
+        10: dload_2
+        11: putfield      #13                 // Field tickDuration:D
+        14: aload_0
+        15: invokestatic  #17                 // Method java/lang/System.nanoTime:()J
+        18: lload         4
+        20: ladd
+        21: putfield      #23                 // Field timeEnd:J
+        24: return
+
+  public int getTickNumber();
+    Code:
+         0: aload_0
+         1: getfield      #7                  // Field tickNumber:I
+         4: ireturn
+
+  public double getTickDuration();
+    Code:
+         0: aload_0
+         1: getfield      #13                 // Field tickDuration:D
+         4: dreturn
+
+  public long getTimeRemaining();
+    Code:
+         0: aload_0
+         1: getfield      #23                 // Field timeEnd:J
+         4: invokestatic  #17                 // Method java/lang/System.nanoTime:()J
+         7: lsub
+         8: lreturn
+
+  public org.bukkit.event.HandlerList getHandlers();
+    Code:
+         0: getstatic     #27                 // Field HANDLER_LIST:Lorg/bukkit/event/HandlerList;
+         3: areturn
+
+  public static org.bukkit.event.HandlerList getHandlerList();
+    Code:
+         0: getstatic     #27                 // Field HANDLER_LIST:Lorg/bukkit/event/HandlerList;
+         3: areturn
+
+  static {};
+    Code:
+         0: new           #31                 // class org/bukkit/event/HandlerList
+         3: dup
+         4: invokespecial #33                 // Method org/bukkit/event/HandlerList."<init>":()V
+         7: putstatic     #27                 // Field HANDLER_LIST:Lorg/bukkit/event/HandlerList;
+        10: return
+}

@@ -1,0 +1,17 @@
+
+Algorithm : SHA256
+Hash      : 7EABCF63292DC5EA19788381071847EB7C9EB4F87120514A139D4F3ED5F63CC1
+Path      : D:\CuuVucCore\CuuVuc-GitHub\target\BaselineProbe.jar
+
+Algorithm : SHA256
+Hash      : 2A7CEE38C770617E8B55AECA825F07CBE1CD317FB369818430858FC18DAAD719
+Path      : D:\CuuVucCore\CuuVuc-GitHub\validation\b02\agent\target\b02-agent-1.0.jar
+
+Algorithm : SHA256
+Hash      : A281CD8EDE223D0B6406E69A6BB29573A515D8B0B93819BC9D0D9E3772DCF79C
+Path      : D:\CuuVucCore\CuuVuc-GitHub\validation\b02\agent\target\b02-agent-1.0-hooks.jar
+
+Algorithm : SHA256
+Hash      : A54A30F01407D3D46B64837C35D841C310A62D0B6299E7B53D76E858B23B5991
+Path      : D:\CuuVucCore\CuuVuc-GitHub\target\CuuVucCore-0.8.0-SNAPSHOT.jar
+

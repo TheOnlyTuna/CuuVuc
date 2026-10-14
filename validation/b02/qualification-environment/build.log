@@ -1,0 +1,86 @@
+WARNING: A terminally deprecated method in sun.misc.Unsafe has been called
+WARNING: sun.misc.Unsafe::staticFieldBase has been called by com.google.inject.internal.aop.HiddenClassDefiner (file:/D:/CuuVucCore/CuuVuc-GitHub/.tools/maven/apache-maven-3.9.11/lib/guice-5.1.0-classes.jar)
+WARNING: Please consider reporting this to the maintainers of class com.google.inject.internal.aop.HiddenClassDefiner
+WARNING: sun.misc.Unsafe::staticFieldBase will be removed in a future release
+[INFO] Scanning for projects...
+[INFO] 
+[INFO] -------------------< vn.cuuvuc.validation:b02-agent >-------------------
+[INFO] Building b02-agent 1.0
+[INFO]   from pom.xml
+[INFO] --------------------------------[ jar ]---------------------------------
+[INFO] 
+[INFO] --- resources:3.3.1:resources (default-resources) @ b02-agent ---
+[INFO] skip non existing resourceDirectory D:\CuuVucCore\CuuVuc-GitHub\validation\b02\agent\src\main\resources
+[INFO] 
+[INFO] --- compiler:3.14.1:compile (default-compile) @ b02-agent ---
+[INFO] Nothing to compile - all classes are up to date.
+[INFO] 
+[INFO] --- resources:3.3.1:testResources (default-testResources) @ b02-agent ---
+[INFO] skip non existing resourceDirectory D:\CuuVucCore\CuuVuc-GitHub\validation\b02\agent\src\test\resources
+[INFO] 
+[INFO] --- compiler:3.14.1:testCompile (default-testCompile) @ b02-agent ---
+[INFO] No sources to compile
+[INFO] 
+[INFO] --- surefire:3.2.5:test (default-test) @ b02-agent ---
+[INFO] No tests to run.
+[INFO] 
+[INFO] --- jar:3.4.2:jar (default-jar) @ b02-agent ---
+[INFO] 
+[INFO] --- jar:3.4.2:jar (hooks) @ b02-agent ---
+[INFO] 
+[INFO] --- shade:3.6.1:shade (default) @ b02-agent ---
+[WARNING] Discovered module-info.class. Shading will break its strong encapsulation.
+[WARNING] Discovered module-info.class. Shading will break its strong encapsulation.
+[WARNING] Discovered module-info.class. Shading will break its strong encapsulation.
+[WARNING] asm-9.8.jar, asm-commons-9.8.jar, asm-tree-9.8.jar, b02-agent-1.0.jar define 1 overlapping resource: 
+[WARNING]   - META-INF/MANIFEST.MF
+[WARNING] asm-9.8.jar, b02-agent-1.0.jar define 38 overlapping classes: 
+[WARNING]   - org.objectweb.asm.AnnotationVisitor
+[WARNING]   - org.objectweb.asm.AnnotationWriter
+[WARNING]   - org.objectweb.asm.Attribute
+[WARNING]   - org.objectweb.asm.Attribute$Set
+[WARNING]   - org.objectweb.asm.ByteVector
+[WARNING]   - org.objectweb.asm.ClassReader
+[WARNING]   - org.objectweb.asm.ClassTooLargeException
+[WARNING]   - org.objectweb.asm.ClassVisitor
+[WARNING]   - org.objectweb.asm.ClassWriter
+[WARNING]   - org.objectweb.asm.ConstantDynamic
+[WARNING]   - 28 more...
+[WARNING] asm-tree-9.8.jar, b02-agent-1.0.jar define 38 overlapping classes: 
+[WARNING]   - org.objectweb.asm.tree.AbstractInsnNode
+[WARNING]   - org.objectweb.asm.tree.AnnotationNode
+[WARNING]   - org.objectweb.asm.tree.ClassNode
+[WARNING]   - org.objectweb.asm.tree.FieldInsnNode
+[WARNING]   - org.objectweb.asm.tree.FieldNode
+[WARNING]   - org.objectweb.asm.tree.FrameNode
+[WARNING]   - org.objectweb.asm.tree.IincInsnNode
+[WARNING]   - org.objectweb.asm.tree.InnerClassNode
+[WARNING]   - org.objectweb.asm.tree.InsnList
+[WARNING]   - org.objectweb.asm.tree.InsnList$InsnListIterator
+[WARNING]   - 28 more...
+[WARNING] asm-commons-9.8.jar, b02-agent-1.0.jar define 27 overlapping classes: 
+[WARNING]   - org.objectweb.asm.commons.AdviceAdapter
+[WARNING]   - org.objectweb.asm.commons.AnalyzerAdapter
+[WARNING]   - org.objectweb.asm.commons.AnnotationRemapper
+[WARNING]   - org.objectweb.asm.commons.ClassRemapper
+[WARNING]   - org.objectweb.asm.commons.CodeSizeEvaluator
+[WARNING]   - org.objectweb.asm.commons.FieldRemapper
+[WARNING]   - org.objectweb.asm.commons.GeneratorAdapter
+[WARNING]   - org.objectweb.asm.commons.InstructionAdapter
+[WARNING]   - org.objectweb.asm.commons.JSRInlinerAdapter
+[WARNING]   - org.objectweb.asm.commons.JSRInlinerAdapter$Instantiation
+[WARNING]   - 17 more...
+[WARNING] maven-shade-plugin has detected that some files are
+[WARNING] present in two or more JARs. When this happens, only one
+[WARNING] single version of the file is copied to the uber jar.
+[WARNING] Usually this is not harmful and you can skip these warnings,
+[WARNING] otherwise try to manually exclude artifacts based on
+[WARNING] mvn dependency:tree -Ddetail=true and the above output.
+[WARNING] See https://maven.apache.org/plugins/maven-shade-plugin/
+[INFO] Replacing original artifact with shaded artifact.
+[INFO] ------------------------------------------------------------------------
+[INFO] BUILD SUCCESS
+[INFO] ------------------------------------------------------------------------
+[INFO] Total time:  0.778 s
+[INFO] Finished at: 2026-10-14T23:18:33+07:00
+[INFO] ------------------------------------------------------------------------

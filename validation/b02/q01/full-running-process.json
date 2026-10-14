@@ -1,0 +1,4 @@
+{
+  "ProcessId": 48424,
+  "CommandLine": "\"D:\\CuuVucCore\\CuuVuc-GitHub\\.tools\\jdk25\\jdk25.0.4_10\\bin\\java.exe\" -Dterminal.jline=false -Dterminal.ansi=false -Db02.mode=full -Xms256M -Xmx1024M -javaagent:D:\\CuuVucCore\\CuuVuc-GitHub\\validation\\b02\\agent\\target\\b02-agent-1.0.jar -jar D:\\CuuVucCore\\CuuVuc-GitHub\\run-b02-q01-full\\paper.jar --nogui"
+}

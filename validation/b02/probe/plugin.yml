@@ -1,0 +1,5 @@
+name: BaselineProbe
+version: '1.0'
+main: vn.cuuvuc.validation.baseline.BaselineProbe
+api-version: '26.3'
+depend: [CuuVucCore]

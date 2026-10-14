@@ -10,3 +10,5 @@
 /validation/b01/if11/** -text
 /validation/b01/unrecoverable-environment/** -text
 /validation/b01/client-final01/** -text
+/validation/b02/q01/** -text
+/validation/b02/qualification-environment/** -text

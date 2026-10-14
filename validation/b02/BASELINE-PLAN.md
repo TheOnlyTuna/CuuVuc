@@ -1,6 +1,6 @@
 # B02 — Baseline hiệu năng world.save()
 
-**NEXT — chưa chạy benchmark, chưa có kết quả hiệu năng.** B01 CLOSED WITH SCOPE LIMIT theo quyết định người dùng ngày 14/10/2026 tại `c062adf`; các giới hạn ngoài phạm vi được giữ tại [BACKLOG.md](../../BACKLOG.md). B02 đo baseline trước khi sửa production source. V0.8 giữ mức nghiệm thu hiện tại, không merge main hoặc bật CI.
+**IN PROGRESS — đã đo ban đầu idle/một request, chưa hoàn tất baseline.** [Kết quả q01](BASELINE-RESULTS.md) ghi protocol kiểm chuẩn ngắn và các giới hạn; protocol đầy đủ dưới đây cùng tải 2/4/8 chưa chạy. B01 CLOSED WITH SCOPE LIMIT theo quyết định người dùng ngày 14/10/2026 tại `c062adf`; các giới hạn ngoài phạm vi được giữ tại [BACKLOG.md](../../BACKLOG.md). B02 đo baseline trước khi sửa production source. V0.8 giữ mức nghiệm thu hiện tại, không merge main hoặc bật CI.
 
 ## Binary và ranh giới đo
 

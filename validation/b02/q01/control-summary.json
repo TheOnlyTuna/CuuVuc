@@ -1,0 +1,909 @@
+{
+  "mode": "control",
+  "rows": 57702,
+  "windows": [
+    {
+      "phase": "idle-r1-measure",
+      "seconds": 60.0481535,
+      "mspt": {
+        "n": 1201,
+        "p50": 0.522599,
+        "p95": 0.6452,
+        "p99": 0.7191,
+        "maximum": 9.5787,
+        "minimum": 0.3441
+      },
+      "tps": {
+        "n": 60,
+        "p50": 20.0,
+        "p95": 20.0,
+        "p99": 20.0,
+        "maximum": 20.0,
+        "minimum": 20.0
+      },
+      "save_ms": {
+        "n": 0,
+        "p50": null,
+        "p95": null,
+        "p99": null,
+        "maximum": null,
+        "minimum": null
+      },
+      "submit_ms": {
+        "n": 0,
+        "p50": null,
+        "p95": null,
+        "p99": null,
+        "maximum": null,
+        "minimum": null
+      },
+      "approve_ms": {
+        "n": 0,
+        "p50": null,
+        "p95": null,
+        "p99": null,
+        "maximum": null,
+        "minimum": null
+      },
+      "request_to_save_ms": {
+        "n": 0,
+        "p50": null,
+        "p95": null,
+        "p99": null,
+        "maximum": null,
+        "minimum": null
+      },
+      "save_to_db_ms": {
+        "n": 0,
+        "p50": null,
+        "p95": null,
+        "p99": null,
+        "maximum": null,
+        "minimum": null
+      },
+      "db_to_response_ms": {
+        "n": 0,
+        "p50": null,
+        "p95": null,
+        "p99": null,
+        "maximum": null,
+        "minimum": null
+      },
+      "overhead_ms": {
+        "n": 1201,
+        "p50": 0.0077,
+        "p95": 0.0123,
+        "p99": 0.0133,
+        "maximum": 0.0373,
+        "minimum": 0.0043
+      },
+      "peak_inflight": 0,
+      "peak_saves": 0,
+      "active_rows_metadata": 2,
+      "requests": 0,
+      "throughput_per_second": 0.0,
+      "duty_cycle": 0.0
+    },
+    {
+      "phase": "clean-r1-measure",
+      "seconds": 60.1073397,
+      "mspt": {
+        "n": 1202,
+        "p50": 0.6167,
+        "p95": 1.3789,
+        "p99": 1.5175,
+        "maximum": 16.9138,
+        "minimum": 0.3535
+      },
+      "tps": {
+        "n": 60,
+        "p50": 20.0,
+        "p95": 20.0,
+        "p99": 20.0,
+        "maximum": 20.0,
+        "minimum": 20.0
+      },
+      "save_ms": {
+        "n": 0,
+        "p50": null,
+        "p95": null,
+        "p99": null,
+        "maximum": null,
+        "minimum": null
+      },
+      "submit_ms": {
+        "n": 120,
+        "p50": 149.9475,
+        "p95": 151.5654,
+        "p99": 151.7115,
+        "maximum": 151.7902,
+        "minimum": 148.0351
+      },
+      "approve_ms": {
+        "n": 120,
+        "p50": 149.9301,
+        "p95": 150.9898,
+        "p99": 151.6785,
+        "maximum": 151.879,
+        "minimum": 148.0243
+      },
+      "request_to_save_ms": {
+        "n": 0,
+        "p50": null,
+        "p95": null,
+        "p99": null,
+        "maximum": null,
+        "minimum": null
+      },
+      "save_to_db_ms": {
+        "n": 0,
+        "p50": null,
+        "p95": null,
+        "p99": null,
+        "maximum": null,
+        "minimum": null
+      },
+      "db_to_response_ms": {
+        "n": 0,
+        "p50": null,
+        "p95": null,
+        "p99": null,
+        "maximum": null,
+        "minimum": null
+      },
+      "overhead_ms": {
+        "n": 1682,
+        "p50": 0.0129,
+        "p95": 0.0836,
+        "p99": 0.094,
+        "maximum": 0.4734,
+        "minimum": 0.0031
+      },
+      "peak_inflight": 1,
+      "peak_saves": 0,
+      "active_rows_metadata": 2,
+      "requests": 240,
+      "throughput_per_second": 3.9928567991506037,
+      "duty_cycle": 0.5988218407210593
+    },
+    {
+      "phase": "dirty-r1-measure",
+      "seconds": 60.1311891,
+      "mspt": {
+        "n": 1203,
+        "p50": 0.5876,
+        "p95": 1.3163,
+        "p99": 1.4401,
+        "maximum": 2.7331,
+        "minimum": 0.3422
+      },
+      "tps": {
+        "n": 60,
+        "p50": 20.0,
+        "p95": 20.0,
+        "p99": 20.0,
+        "maximum": 20.0,
+        "minimum": 20.0
+      },
+      "save_ms": {
+        "n": 0,
+        "p50": null,
+        "p95": null,
+        "p99": null,
+        "maximum": null,
+        "minimum": null
+      },
+      "submit_ms": {
+        "n": 120,
+        "p50": 150.0022,
+        "p95": 151.0078,
+        "p99": 151.5271,
+        "maximum": 151.8346,
+        "minimum": 148.2453
+      },
+      "approve_ms": {
+        "n": 120,
+        "p50": 149.9165,
+        "p95": 151.5572,
+        "p99": 151.7471,
+        "maximum": 151.8472,
+        "minimum": 148.0849
+      },
+      "request_to_save_ms": {
+        "n": 0,
+        "p50": null,
+        "p95": null,
+        "p99": null,
+        "maximum": null,
+        "minimum": null
+      },
+      "save_to_db_ms": {
+        "n": 0,
+        "p50": null,
+        "p95": null,
+        "p99": null,
+        "maximum": null,
+        "minimum": null
+      },
+      "db_to_response_ms": {
+        "n": 0,
+        "p50": null,
+        "p95": null,
+        "p99": null,
+        "maximum": null,
+        "minimum": null
+      },
+      "overhead_ms": {
+        "n": 1683,
+        "p50": 0.0077,
+        "p95": 0.0696,
+        "p99": 0.0733,
+        "maximum": 0.1166,
+        "minimum": 0.0026
+      },
+      "peak_inflight": 1,
+      "peak_saves": 0,
+      "active_rows_metadata": 2,
+      "requests": 240,
+      "throughput_per_second": 3.991273141145981,
+      "duty_cycle": 0.5988210317962929
+    },
+    {
+      "phase": "idle-r2-measure",
+      "seconds": 60.0698148,
+      "mspt": {
+        "n": 1202,
+        "p50": 0.4463,
+        "p95": 0.5536,
+        "p99": 0.6023,
+        "maximum": 0.9753,
+        "minimum": 0.292
+      },
+      "tps": {
+        "n": 60,
+        "p50": 20.0,
+        "p95": 20.0,
+        "p99": 20.0,
+        "maximum": 20.0,
+        "minimum": 20.0
+      },
+      "save_ms": {
+        "n": 0,
+        "p50": null,
+        "p95": null,
+        "p99": null,
+        "maximum": null,
+        "minimum": null
+      },
+      "submit_ms": {
+        "n": 0,
+        "p50": null,
+        "p95": null,
+        "p99": null,
+        "maximum": null,
+        "minimum": null
+      },
+      "approve_ms": {
+        "n": 0,
+        "p50": null,
+        "p95": null,
+        "p99": null,
+        "maximum": null,
+        "minimum": null
+      },
+      "request_to_save_ms": {
+        "n": 0,
+        "p50": null,
+        "p95": null,
+        "p99": null,
+        "maximum": null,
+        "minimum": null
+      },
+      "save_to_db_ms": {
+        "n": 0,
+        "p50": null,
+        "p95": null,
+        "p99": null,
+        "maximum": null,
+        "minimum": null
+      },
+      "db_to_response_ms": {
+        "n": 0,
+        "p50": null,
+        "p95": null,
+        "p99": null,
+        "maximum": null,
+        "minimum": null
+      },
+      "overhead_ms": {
+        "n": 1202,
+        "p50": 0.0074,
+        "p95": 0.0092,
+        "p99": 0.0099,
+        "maximum": 0.0884,
+        "minimum": 0.0042
+      },
+      "peak_inflight": 0,
+      "peak_saves": 0,
+      "active_rows_metadata": 2,
+      "requests": 0,
+      "throughput_per_second": 0.0,
+      "duty_cycle": 0.0
+    },
+    {
+      "phase": "clean-r2-measure",
+      "seconds": 60.0999802,
+      "mspt": {
+        "n": 1202,
+        "p50": 0.5326,
+        "p95": 1.1086,
+        "p99": 1.2471,
+        "maximum": 11.1806,
+        "minimum": 0.3059
+      },
+      "tps": {
+        "n": 60,
+        "p50": 20.0,
+        "p95": 20.0,
+        "p99": 20.0,
+        "maximum": 20.0,
+        "minimum": 20.0
+      },
+      "save_ms": {
+        "n": 0,
+        "p50": null,
+        "p95": null,
+        "p99": null,
+        "maximum": null,
+        "minimum": null
+      },
+      "submit_ms": {
+        "n": 120,
+        "p50": 150.0014,
+        "p95": 151.0765,
+        "p99": 151.5738,
+        "maximum": 152.1076,
+        "minimum": 148.3928
+      },
+      "approve_ms": {
+        "n": 120,
+        "p50": 150.0021,
+        "p95": 151.1713,
+        "p99": 151.5811,
+        "maximum": 151.7474,
+        "minimum": 146.6779
+      },
+      "request_to_save_ms": {
+        "n": 0,
+        "p50": null,
+        "p95": null,
+        "p99": null,
+        "maximum": null,
+        "minimum": null
+      },
+      "save_to_db_ms": {
+        "n": 0,
+        "p50": null,
+        "p95": null,
+        "p99": null,
+        "maximum": null,
+        "minimum": null
+      },
+      "db_to_response_ms": {
+        "n": 0,
+        "p50": null,
+        "p95": null,
+        "p99": null,
+        "maximum": null,
+        "minimum": null
+      },
+      "overhead_ms": {
+        "n": 1682,
+        "p50": 0.0069,
+        "p95": 0.0678,
+        "p99": 0.0737,
+        "maximum": 0.1224,
+        "minimum": 0.0026
+      },
+      "peak_inflight": 1,
+      "peak_saves": 0,
+      "active_rows_metadata": 2,
+      "requests": 240,
+      "throughput_per_second": 3.993345741568148,
+      "duty_cycle": 0.5989484302692
+    },
+    {
+      "phase": "dirty-r2-measure",
+      "seconds": 60.1284841,
+      "mspt": {
+        "n": 1203,
+        "p50": 0.5493,
+        "p95": 1.2539,
+        "p99": 1.3993,
+        "maximum": 13.6805,
+        "minimum": 0.3153
+      },
+      "tps": {
+        "n": 60,
+        "p50": 20.0,
+        "p95": 20.0,
+        "p99": 20.0,
+        "maximum": 20.0,
+        "minimum": 20.0
+      },
+      "save_ms": {
+        "n": 0,
+        "p50": null,
+        "p95": null,
+        "p99": null,
+        "maximum": null,
+        "minimum": null
+      },
+      "submit_ms": {
+        "n": 120,
+        "p50": 150.1014,
+        "p95": 151.0982,
+        "p99": 151.5962,
+        "maximum": 151.7124,
+        "minimum": 148.1315
+      },
+      "approve_ms": {
+        "n": 120,
+        "p50": 150.0528,
+        "p95": 151.2361,
+        "p99": 151.7577,
+        "maximum": 151.8009,
+        "minimum": 142.2876
+      },
+      "request_to_save_ms": {
+        "n": 0,
+        "p50": null,
+        "p95": null,
+        "p99": null,
+        "maximum": null,
+        "minimum": null
+      },
+      "save_to_db_ms": {
+        "n": 0,
+        "p50": null,
+        "p95": null,
+        "p99": null,
+        "maximum": null,
+        "minimum": null
+      },
+      "db_to_response_ms": {
+        "n": 0,
+        "p50": null,
+        "p95": null,
+        "p99": null,
+        "maximum": null,
+        "minimum": null
+      },
+      "overhead_ms": {
+        "n": 1683,
+        "p50": 0.0068,
+        "p95": 0.067,
+        "p99": 0.0732,
+        "maximum": 0.1515,
+        "minimum": 0.0028
+      },
+      "peak_inflight": 1,
+      "peak_saves": 0,
+      "active_rows_metadata": 2,
+      "requests": 240,
+      "throughput_per_second": 3.991452696543201,
+      "duty_cycle": 0.59914283952487
+    },
+    {
+      "phase": "idle-r3-measure",
+      "seconds": 60.0684623,
+      "mspt": {
+        "n": 1201,
+        "p50": 0.4723,
+        "p95": 0.5549,
+        "p99": 0.6073,
+        "maximum": 2.1325,
+        "minimum": 0.2974
+      },
+      "tps": {
+        "n": 60,
+        "p50": 20.0,
+        "p95": 20.0,
+        "p99": 20.0,
+        "maximum": 20.0,
+        "minimum": 20.0
+      },
+      "save_ms": {
+        "n": 0,
+        "p50": null,
+        "p95": null,
+        "p99": null,
+        "maximum": null,
+        "minimum": null
+      },
+      "submit_ms": {
+        "n": 0,
+        "p50": null,
+        "p95": null,
+        "p99": null,
+        "maximum": null,
+        "minimum": null
+      },
+      "approve_ms": {
+        "n": 0,
+        "p50": null,
+        "p95": null,
+        "p99": null,
+        "maximum": null,
+        "minimum": null
+      },
+      "request_to_save_ms": {
+        "n": 0,
+        "p50": null,
+        "p95": null,
+        "p99": null,
+        "maximum": null,
+        "minimum": null
+      },
+      "save_to_db_ms": {
+        "n": 0,
+        "p50": null,
+        "p95": null,
+        "p99": null,
+        "maximum": null,
+        "minimum": null
+      },
+      "db_to_response_ms": {
+        "n": 0,
+        "p50": null,
+        "p95": null,
+        "p99": null,
+        "maximum": null,
+        "minimum": null
+      },
+      "overhead_ms": {
+        "n": 1201,
+        "p50": 0.008,
+        "p95": 0.0093,
+        "p99": 0.0099,
+        "maximum": 0.0356,
+        "minimum": 0.0044
+      },
+      "peak_inflight": 0,
+      "peak_saves": 0,
+      "active_rows_metadata": 2,
+      "requests": 0,
+      "throughput_per_second": 0.0,
+      "duty_cycle": 0.0
+    },
+    {
+      "phase": "clean-r3-measure",
+      "seconds": 60.1006543,
+      "mspt": {
+        "n": 1202,
+        "p50": 0.525,
+        "p95": 1.1209,
+        "p99": 1.2178,
+        "maximum": 4.9851,
+        "minimum": 0.3089
+      },
+      "tps": {
+        "n": 60,
+        "p50": 20.0,
+        "p95": 20.0,
+        "p99": 20.0,
+        "maximum": 20.0,
+        "minimum": 20.0
+      },
+      "save_ms": {
+        "n": 0,
+        "p50": null,
+        "p95": null,
+        "p99": null,
+        "maximum": null,
+        "minimum": null
+      },
+      "submit_ms": {
+        "n": 120,
+        "p50": 150.1841,
+        "p95": 151.0935,
+        "p99": 151.3196,
+        "maximum": 151.3277,
+        "minimum": 148.4051
+      },
+      "approve_ms": {
+        "n": 120,
+        "p50": 150.5974,
+        "p95": 151.1306,
+        "p99": 151.5293,
+        "maximum": 151.5399,
+        "minimum": 148.4864
+      },
+      "request_to_save_ms": {
+        "n": 0,
+        "p50": null,
+        "p95": null,
+        "p99": null,
+        "maximum": null,
+        "minimum": null
+      },
+      "save_to_db_ms": {
+        "n": 0,
+        "p50": null,
+        "p95": null,
+        "p99": null,
+        "maximum": null,
+        "minimum": null
+      },
+      "db_to_response_ms": {
+        "n": 0,
+        "p50": null,
+        "p95": null,
+        "p99": null,
+        "maximum": null,
+        "minimum": null
+      },
+      "overhead_ms": {
+        "n": 1682,
+        "p50": 0.0068,
+        "p95": 0.0692,
+        "p99": 0.0723,
+        "maximum": 0.0896,
+        "minimum": 0.0025
+      },
+      "peak_inflight": 1,
+      "peak_saves": 0,
+      "active_rows_metadata": 2,
+      "requests": 240,
+      "throughput_per_second": 3.993300951467345,
+      "duty_cycle": 0.6006816634606922
+    },
+    {
+      "phase": "dirty-r3-measure",
+      "seconds": 60.1252278,
+      "mspt": {
+        "n": 1202,
+        "p50": 0.5409,
+        "p95": 1.1818,
+        "p99": 1.3222,
+        "maximum": 6.2027,
+        "minimum": 0.3295
+      },
+      "tps": {
+        "n": 60,
+        "p50": 20.0,
+        "p95": 20.0,
+        "p99": 20.0,
+        "maximum": 20.0,
+        "minimum": 20.0
+      },
+      "save_ms": {
+        "n": 0,
+        "p50": null,
+        "p95": null,
+        "p99": null,
+        "maximum": null,
+        "minimum": null
+      },
+      "submit_ms": {
+        "n": 120,
+        "p50": 149.9967,
+        "p95": 151.0081,
+        "p99": 151.0948,
+        "maximum": 151.4256,
+        "minimum": 148.6072
+      },
+      "approve_ms": {
+        "n": 120,
+        "p50": 150.0633,
+        "p95": 151.0684,
+        "p99": 151.3166,
+        "maximum": 151.5481,
+        "minimum": 144.6519
+      },
+      "request_to_save_ms": {
+        "n": 0,
+        "p50": null,
+        "p95": null,
+        "p99": null,
+        "maximum": null,
+        "minimum": null
+      },
+      "save_to_db_ms": {
+        "n": 0,
+        "p50": null,
+        "p95": null,
+        "p99": null,
+        "maximum": null,
+        "minimum": null
+      },
+      "db_to_response_ms": {
+        "n": 0,
+        "p50": null,
+        "p95": null,
+        "p99": null,
+        "maximum": null,
+        "minimum": null
+      },
+      "overhead_ms": {
+        "n": 1682,
+        "p50": 0.0068,
+        "p95": 0.0691,
+        "p99": 0.0721,
+        "maximum": 0.127,
+        "minimum": 0.0029
+      },
+      "peak_inflight": 1,
+      "peak_saves": 0,
+      "active_rows_metadata": 2,
+      "requests": 240,
+      "throughput_per_second": 3.9916688681552075,
+      "duty_cycle": 0.599025108392188
+    }
+  ],
+  "pooled": {
+    "idle": {
+      "mspt": {
+        "n": 3604,
+        "p50": 0.4711,
+        "p95": 0.6058,
+        "p99": 0.6844,
+        "maximum": 9.5787,
+        "minimum": 0.292
+      },
+      "tps": {
+        "n": 180,
+        "p50": 20.0,
+        "p95": 20.0,
+        "p99": 20.0,
+        "maximum": 20.0,
+        "minimum": 20.0
+      },
+      "save_ms": {
+        "n": 0,
+        "p50": null,
+        "p95": null,
+        "p99": null,
+        "maximum": null,
+        "minimum": null
+      },
+      "submit_ms": {
+        "n": 0,
+        "p50": null,
+        "p95": null,
+        "p99": null,
+        "maximum": null,
+        "minimum": null
+      },
+      "approve_ms": {
+        "n": 0,
+        "p50": null,
+        "p95": null,
+        "p99": null,
+        "maximum": null,
+        "minimum": null
+      }
+    },
+    "clean": {
+      "mspt": {
+        "n": 3606,
+        "p50": 0.5559,
+        "p95": 1.2015,
+        "p99": 1.4595,
+        "maximum": 16.9138,
+        "minimum": 0.3059
+      },
+      "tps": {
+        "n": 180,
+        "p50": 20.0,
+        "p95": 20.0,
+        "p99": 20.0,
+        "maximum": 20.0,
+        "minimum": 20.0
+      },
+      "save_ms": {
+        "n": 0,
+        "p50": null,
+        "p95": null,
+        "p99": null,
+        "maximum": null,
+        "minimum": null
+      },
+      "submit_ms": {
+        "n": 360,
+        "p50": 150.0518,
+        "p95": 151.1023,
+        "p99": 151.6812,
+        "maximum": 152.1076,
+        "minimum": 148.0351
+      },
+      "approve_ms": {
+        "n": 360,
+        "p50": 150.041,
+        "p95": 151.1603,
+        "p99": 151.6471,
+        "maximum": 151.879,
+        "minimum": 146.6779
+      }
+    },
+    "dirty": {
+      "mspt": {
+        "n": 3608,
+        "p50": 0.5564,
+        "p95": 1.2634,
+        "p99": 1.3993,
+        "maximum": 13.6805,
+        "minimum": 0.3153
+      },
+      "tps": {
+        "n": 180,
+        "p50": 20.0,
+        "p95": 20.0,
+        "p99": 20.0,
+        "maximum": 20.0,
+        "minimum": 20.0
+      },
+      "save_ms": {
+        "n": 0,
+        "p50": null,
+        "p95": null,
+        "p99": null,
+        "maximum": null,
+        "minimum": null
+      },
+      "submit_ms": {
+        "n": 360,
+        "p50": 150.0275,
+        "p95": 151.0498,
+        "p99": 151.5791,
+        "maximum": 151.8346,
+        "minimum": 148.1315
+      },
+      "approve_ms": {
+        "n": 360,
+        "p50": 150.0202,
+        "p95": 151.2226,
+        "p99": 151.7471,
+        "maximum": 151.8472,
+        "minimum": 142.2876
+      }
+    }
+  },
+  "calibration_delay_ms": 2100.0868,
+  "calibration_api_ms": 2101.9412,
+  "calibration_zero_windows": 2,
+  "calibration_outer_ms": {
+    "n": 5,
+    "p50": 1.2407,
+    "p95": 12.5869,
+    "p99": 12.5869,
+    "maximum": 12.5869,
+    "minimum": 1.0561
+  },
+  "calibration_delegate_ms": {
+    "n": 0,
+    "p50": null,
+    "p95": null,
+    "p99": null,
+    "maximum": null,
+    "minimum": null
+  },
+  "tick_boundary_delta_ms": {
+    "n": 0,
+    "p50": null,
+    "p95": null,
+    "p99": null,
+    "maximum": null,
+    "minimum": null
+  },
+  "verified_requests": 2160,
+  "verified_saves": 0,
+  "probe_overhead_ms": {
+    "n": 13698,
+    "p50": 0.0078,
+    "p95": 0.0679,
+    "p99": 0.0785,
+    "maximum": 0.4734,
+    "minimum": 0.0025
+  }
+}

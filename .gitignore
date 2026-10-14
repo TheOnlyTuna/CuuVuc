@@ -36,5 +36,9 @@
 /run-v08-builder-rights/
 !/validation/v08/prealpha-builder/*.log
 /run-b01-*/
+/run-b02-*/
+/validation/b02/agent/target/
+/validation/b02/__pycache__/
+!/validation/b02/*/*.log
 !/validation/b01/*.log
 !/validation/b01/*/*.log

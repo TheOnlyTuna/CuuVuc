@@ -1,0 +1,294 @@
+{
+  "q01/backup-verification.txt": {
+    "bytes": 181,
+    "sha256": "863a04ee33d811494b14f34a5df5ef51fbfc0f07f275873d6785d52d13c8cf73"
+  },
+  "q01/cold-world-size.json": {
+    "bytes": 254,
+    "sha256": "91131d0ac55e926f41348150ba5c19eb689d8cac319ad8ad1d2f5288f943c401"
+  },
+  "q01/control-after-restart.jsonl": {
+    "bytes": 5998806,
+    "sha256": "0e4520ca103b13671a46bb88b4ae0d18b225b9ba4574a68efac653a43b921f3a"
+  },
+  "q01/control-after-run.jsonl": {
+    "bytes": 5998806,
+    "sha256": "0e4520ca103b13671a46bb88b4ae0d18b225b9ba4574a68efac653a43b921f3a"
+  },
+  "q01/control-backup.txt": {
+    "bytes": 92,
+    "sha256": "652518bf8c247b68f465e564de383795bf57ee5f41c514701ac12f63caa528d3"
+  },
+  "q01/control-final-manifest.json": {
+    "bytes": 73308,
+    "sha256": "5ec281255faad9716d112f18dc501bdab5cf8cb9cbcd7b311f3d2466c0949891"
+  },
+  "q01/control-paper-global.yml": {
+    "bytes": 4417,
+    "sha256": "e9943756e62f7c6037c494247555d3ca264208bb6b733fa0d7fba6ba3abc8eea"
+  },
+  "q01/control-paper-world-defaults.yml": {
+    "bytes": 8681,
+    "sha256": "97735c874f52c88fd32f7962a1ca9d0e563def17588c8bc1e5055e6869e85624"
+  },
+  "q01/control-prepared.jsonl": {
+    "bytes": 75985,
+    "sha256": "c67320320e00bdede94a5395c0e394771ce45986c5c2c14d764b5b71057fe656"
+  },
+  "q01/control-process.json": {
+    "bytes": 163,
+    "sha256": "c572b28585a8b167a146b2e5b813186fd2deb15573a0bd98404a0f5be6a48de0"
+  },
+  "q01/control-raw.tsv": {
+    "bytes": 5946806,
+    "sha256": "c266c69dc76b08cb7131127fecfd2ad13975073edaccb00de421c3bc23709901"
+  },
+  "q01/control-reconciliation.txt": {
+    "bytes": 156,
+    "sha256": "2838150a01ca78a11e44e195b1263dea08338c0cffcb30a441bc373d9ebb8d8d"
+  },
+  "q01/control-resource-mid.json": {
+    "bytes": 148,
+    "sha256": "4eddcdd8856329c18b2091d9d28a1b3d11fa077af143736c89f4fa1c88b5e2f5"
+  },
+  "q01/control-restart-process.json": {
+    "bytes": 163,
+    "sha256": "2b1d00c49c8e7693e1689bcf5e307c6263abcfc86dd6c63c655e2cdf8a20435e"
+  },
+  "q01/control-restart-server.log": {
+    "bytes": 13376,
+    "sha256": "6ff5f06f1e8fe69eb963c3799dcecc4afd34b4a9494c46747f25eb468f7eab61"
+  },
+  "q01/control-restart.stderr.log": {
+    "bytes": 582,
+    "sha256": "75b42eb8dbc62851d6da4cf25933bbd23c7d1380d4385d472848f615ada73910"
+  },
+  "q01/control-restart.stdout.log": {
+    "bytes": 11576,
+    "sha256": "2588ebfa478432d30d3c3877f91d1b548f72bcb34882b664f9ed3f14b0ee6d3f"
+  },
+  "q01/control-server.log": {
+    "bytes": 167919,
+    "sha256": "0529787c3384175f57442181529a9b3d1485ab73c6263d83e140c94dab76b770"
+  },
+  "q01/control-server.properties": {
+    "bytes": 1838,
+    "sha256": "8357a0ecc9f11e2776bf27b941bb7b932c9f254ff057160b0f3042f6c0acad55"
+  },
+  "q01/control-source.jsonl": {
+    "bytes": 68849,
+    "sha256": "52542af8e824e2a779e0e6a3bc119efcf9a85349384131d9e90e250007aa32d2"
+  },
+  "q01/control-summary.json": {
+    "bytes": 19988,
+    "sha256": "67fe2bd7e219c56ba97b88b08a9329fa9627ba46394805ac77a28bda8e1682ba"
+  },
+  "q01/control-workload.properties": {
+    "bytes": 75,
+    "sha256": "6ad2ea33615576163e99e855cf7739a0676375d308d72227f1cf7db444bb1816"
+  },
+  "q01/control-world-after-restart.json": {
+    "bytes": 874,
+    "sha256": "78922e42d4eeb47f313e4f6250ed84fa160de8a2b4274387b03f7fb76792cb0f"
+  },
+  "q01/control-world-before-restart.json": {
+    "bytes": 874,
+    "sha256": "78922e42d4eeb47f313e4f6250ed84fa160de8a2b4274387b03f7fb76792cb0f"
+  },
+  "q01/control-world-size-running.json": {
+    "bytes": 436,
+    "sha256": "4e25222f55f48d2734c5a3d7e64f140f3f95fc5a909dba7740ead2e9ec5c432f"
+  },
+  "q01/control.stderr.log": {
+    "bytes": 582,
+    "sha256": "75b42eb8dbc62851d6da4cf25933bbd23c7d1380d4385d472848f615ada73910"
+  },
+  "q01/control.stdout.log": {
+    "bytes": 131351,
+    "sha256": "3b34d66d8353c68d3af5e71457912292e801a32088334c217cd04f595d01821f"
+  },
+  "q01/full-after-restart.jsonl": {
+    "bytes": 5998743,
+    "sha256": "286c372008cac32d5d080f6cfb09113fd4ede14afd0a93fde07201e784d8f998"
+  },
+  "q01/full-after-run.jsonl": {
+    "bytes": 5998743,
+    "sha256": "286c372008cac32d5d080f6cfb09113fd4ede14afd0a93fde07201e784d8f998"
+  },
+  "q01/full-backup.txt": {
+    "bytes": 89,
+    "sha256": "e44538e3ece906a2191c83d380532720b0cb994fab8501e040b9ce72a8462544"
+  },
+  "q01/full-final-manifest.json": {
+    "bytes": 74384,
+    "sha256": "481af0006c2bf685028c4a92a4a2594423acce38ace1d6b0f12557463ee8d288"
+  },
+  "q01/full-paper-global.yml": {
+    "bytes": 4417,
+    "sha256": "e9943756e62f7c6037c494247555d3ca264208bb6b733fa0d7fba6ba3abc8eea"
+  },
+  "q01/full-paper-world-defaults.yml": {
+    "bytes": 8681,
+    "sha256": "97735c874f52c88fd32f7962a1ca9d0e563def17588c8bc1e5055e6869e85624"
+  },
+  "q01/full-prepared.jsonl": {
+    "bytes": 75982,
+    "sha256": "62a2e6dc5fa55cbc2cc9412e0f3665338c8ac87820df3327d5f038ce5af06706"
+  },
+  "q01/full-process.json": {
+    "bytes": 157,
+    "sha256": "bfee7c3540af0ca8b3b5b718b2ede9af7d9e0490f8b5b3537035e46240229a41"
+  },
+  "q01/full-raw.tsv": {
+    "bytes": 9923377,
+    "sha256": "fcaef5dcecd6c6b5b917466d6dbf30862ddf92ebe5b41976c09e8952ee47c0af"
+  },
+  "q01/full-reconciliation.txt": {
+    "bytes": 156,
+    "sha256": "2838150a01ca78a11e44e195b1263dea08338c0cffcb30a441bc373d9ebb8d8d"
+  },
+  "q01/full-restart-process.json": {
+    "bytes": 157,
+    "sha256": "fb400627f63d9b164aeba6b2d2d919b7aa9c02221a58c3e72d14cde87a1c9061"
+  },
+  "q01/full-restart-server.log": {
+    "bytes": 13437,
+    "sha256": "2b8e470bd5d1904f1abfcdce23820f50d87c686dada48890ca31e1429fecde51"
+  },
+  "q01/full-restart.stderr.log": {
+    "bytes": 579,
+    "sha256": "c6e9c6d1ad28b968f952e374fb02b10d8b46fb585e0fa2752a716119aff48e3d"
+  },
+  "q01/full-restart.stdout.log": {
+    "bytes": 11621,
+    "sha256": "2d2feaa753f1ac5d9aa5161ac8632b03309fb7132a44cf6a04f979526026b3b6"
+  },
+  "q01/full-running-process.json": {
+    "bytes": 371,
+    "sha256": "18db410dc758d9a23b479d1b68f98fcdc218c5cf17c4bb9c64aa044971ba8850"
+  },
+  "q01/full-server.log": {
+    "bytes": 5343,
+    "sha256": "f5c39d450028f396e0c7f1761ef4cf26c467e05cfb1f4b83f1ae5e88711b39b3"
+  },
+  "q01/full-server.properties": {
+    "bytes": 1838,
+    "sha256": "055102d467e76ec48f00f8d8691c538e1d710cd5179f5b877d624519f0fafe7a"
+  },
+  "q01/full-source.jsonl": {
+    "bytes": 68850,
+    "sha256": "b2dd197ec87ece420b58646cf915e32222a2bbdb0b5c7a0a07680174d066c839"
+  },
+  "q01/full-summary.json": {
+    "bytes": 20399,
+    "sha256": "c9609e85863dfcf7cbbaa632953e876a5f7010905b43a4621b2af9a8e7b4ad1c"
+  },
+  "q01/full-workload.properties": {
+    "bytes": 75,
+    "sha256": "6ad2ea33615576163e99e855cf7739a0676375d308d72227f1cf7db444bb1816"
+  },
+  "q01/full-world-after-restart.json": {
+    "bytes": 874,
+    "sha256": "78922e42d4eeb47f313e4f6250ed84fa160de8a2b4274387b03f7fb76792cb0f"
+  },
+  "q01/full-world-before-restart.json": {
+    "bytes": 874,
+    "sha256": "78922e42d4eeb47f313e4f6250ed84fa160de8a2b4274387b03f7fb76792cb0f"
+  },
+  "q01/full.stderr.log": {
+    "bytes": 579,
+    "sha256": "c6e9c6d1ad28b968f952e374fb02b10d8b46fb585e0fa2752a716119aff48e3d"
+  },
+  "q01/full.stdout.log": {
+    "bytes": 131396,
+    "sha256": "450b87503ae7b1ea5c09fb2c16e71f9d8b595f9ccfa45a66122de5650a89a605"
+  },
+  "q01/restart-reconciliation.txt": {
+    "bytes": 472,
+    "sha256": "1b4c391426af3325326d0438f1dde56e3e4b4aee8d05e80df52470cd10b9d5e3"
+  },
+  "q01/source-world.json": {
+    "bytes": 808,
+    "sha256": "0a1efaa10f5fd80446d28c7717caaa63a98fb39a1adaf74f647d0b2929d6a484"
+  },
+  "qualification-environment/binary-hashes.txt": {
+    "bytes": 726,
+    "sha256": "70ead1eecb0b8979da4ff6114b51c73a90d6ec45eb2568468600825aa0b718e1"
+  },
+  "qualification-environment/build.log": {
+    "bytes": 4850,
+    "sha256": "41545db78f47a52e466d66982349e375cad7552fac2b42eb6c8dfc438a130e70"
+  },
+  "qualification-environment/contract-world-bytecode.txt": {
+    "bytes": 113111,
+    "sha256": "d6d180909dd99821414e06e16b846e5bf20779fe25b3e68d1ef2efc4433824f9"
+  },
+  "qualification-environment/cpu.json": {
+    "bytes": 110,
+    "sha256": "412ab57aef9377a29508f98c9f4cac6601ce3ddc8b930b6b158eb53d036e03d6"
+  },
+  "qualification-environment/craft-world-bytecode.txt": {
+    "bytes": 319663,
+    "sha256": "97db935cb931b3004fbb92697398c7e0fe919320019a1a08f45a26b12d2fc7b3"
+  },
+  "qualification-environment/disks.json": {
+    "bytes": 223,
+    "sha256": "d06ed9966a25cc0319f12df5b59722fd599af6ef6b499cc8be2c272d63c11c4c"
+  },
+  "qualification-environment/final-runtime-hashes.txt": {
+    "bytes": 946,
+    "sha256": "0fa3e66567802e520a459ee872f1596409001725c7ac048eefadf73b17863304"
+  },
+  "qualification-environment/maven-test.log": {
+    "bytes": 2297,
+    "sha256": "fd7f791a7431afc0ddff0f8ceb975ed672938b80848825f858449f9dea09c49d"
+  },
+  "qualification-environment/memory.json": {
+    "bytes": 45,
+    "sha256": "10ca71d9b1eda119a1b17669c4599e2022474c30eea6865be73e70e03b24b223"
+  },
+  "qualification-environment/net_minecraft_server_MinecraftServer-tickServer.hook": {
+    "bytes": 39,
+    "sha256": "47e5b4805084b5d79b066e9d8634909fa6646cb3517cb6147718d41f1f92a9c1"
+  },
+  "qualification-environment/org_bukkit_craftbukkit_CraftWorld-save.hook": {
+    "bytes": 4,
+    "sha256": "f633c984d8bbe91b53e7b5c482b471fe5954bf0766e47d6559704f10ed164a55"
+  },
+  "qualification-environment/other-clients.json": {
+    "bytes": 562,
+    "sha256": "f0d40ffb5cc813c14c5d6e1662b83f29c414d5aa2ca97afae6fd84d7425c6bbb"
+  },
+  "qualification-environment/source-manifest.json": {
+    "bytes": 70819,
+    "sha256": "f9503c1e9640b0434a72922799244a75ef1cd462609241d7c78c069e6a13abec"
+  },
+  "qualification-environment/tick-api-bytecode.txt": {
+    "bytes": 2312,
+    "sha256": "9dddc3993c674ca917aeb2198927725aeb0fe9ded40d048c8068bface6e676ac"
+  },
+  "qualification-environment/vn_cuuvuc_core_ContractWorld-checkAndSave.hook": {
+    "bytes": 118,
+    "sha256": "b2de57d5b7fa39f957ddebf3346bb992a63201372f91988572badcbcf6318517"
+  },
+  "qualification-environment/vn_cuuvuc_core_ContractWorld-lambda$checkAndSave$1.hook": {
+    "bytes": 136,
+    "sha256": "7f2d103046a4dcff6f458b160476558fcb80b48ec5697883c41a434d7000df97"
+  },
+  "qualification-environment/vn_cuuvuc_core_GameDatabase-completeContract.hook": {
+    "bytes": 52,
+    "sha256": "6d937f6bc2a6f40180cfa097cbbea1ad039433a016e7ee7bc3e0e6b883f37c2b"
+  },
+  "qualification-environment/vn_cuuvuc_core_GameDatabase-submitContract.hook": {
+    "bytes": 52,
+    "sha256": "6d937f6bc2a6f40180cfa097cbbea1ad039433a016e7ee7bc3e0e6b883f37c2b"
+  },
+  "qualification-environment/vn_cuuvuc_core_PlayerTasks-lambda$reply$0.hook": {
+    "bytes": 121,
+    "sha256": "ef707b62099ea78f3d900bbe67250b015f90a715b510cf833def0f1337fc1acc"
+  },
+  "qualification-environment/workspace-disk.json": {
+    "bytes": 67,
+    "sha256": "352582f27678be3c0e035da59c04968454033d95717bda34df7d6b3b14bae521"
+  }
+}

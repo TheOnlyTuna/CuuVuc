@@ -1,0 +1,32 @@
+[
+  {
+    "Name": ".dat",
+    "Count": 68,
+    "bytes": 16599.0
+  },
+  {
+    "Name": ".dat_old",
+    "Count": 4,
+    "bytes": 5776.0
+  },
+  {
+    "Name": ".json",
+    "Count": 6,
+    "bytes": 10604.0
+  },
+  {
+    "Name": ".lock",
+    "Count": 1,
+    "bytes": 3.0
+  },
+  {
+    "Name": ".mca",
+    "Count": 25,
+    "bytes": 20842986.0
+  },
+  {
+    "Name": ".yml",
+    "Count": 5,
+    "bytes": 1631.0
+  }
+]

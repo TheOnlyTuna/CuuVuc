@@ -1,0 +1,12 @@
+{
+  "b02-q01-control-final": {
+    "region_files": 25,
+    "region_bytes": 20842986,
+    "world_file_bytes": 20877594
+  },
+  "b02-q01-full-final": {
+    "region_files": 25,
+    "region_bytes": 20842986,
+    "world_file_bytes": 20877604
+  }
+}
